@@ -39,7 +39,7 @@ export default function Projects() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {PROJECTS.map((project, i) => (
-            <RevealWrapper key={project.title} delay={i * 120}>
+            <RevealWrapper key={project.title} delay={(i + 1) * 100}>
               <ProjectCard {...project} />
             </RevealWrapper>
           ))}

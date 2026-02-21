@@ -2,8 +2,9 @@ export default function ProjectCard({ title, subtitle, description, tags, liveUr
   return (
     <article
       className="group bg-card border border-border rounded-xl p-7 flex flex-col relative overflow-hidden
-                 transition-all duration-300 ease-out hover:border-border-hover hover:bg-card-hover
-                 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3),0_0_40px_var(--color-accent-dim)]"
+                 float-2 will-change-transform transition-[box-shadow,border-color,background-color] duration-300 ease-out
+                 hover:border-border-hover hover:bg-card-hover
+                 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3),0_0_40px_var(--color-accent-dim)]"
       style={{ transitionDelay: `${delay}ms` }}
     >
       {/* Top gradient bar */}
@@ -38,7 +39,7 @@ export default function ProjectCard({ title, subtitle, description, tags, liveUr
         {tags.map((tag) => (
           <span key={tag}
             className="font-mono text-[0.72rem] text-dim px-2.5 py-1 bg-primary rounded-full border border-border
-                       transition-all duration-300 group-hover:border-border-hover group-hover:text-accent">
+                       transition-[border-color,color] duration-300 group-hover:border-border-hover group-hover:text-accent">
             {tag}
           </span>
         ))}

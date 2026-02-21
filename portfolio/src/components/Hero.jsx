@@ -40,17 +40,22 @@ export default function Hero() {
 
         <RevealWrapper delay={300}>
           <h2 className="text-[clamp(1.4rem,3.5vw,2.2rem)] font-semibold text-dim mb-6 tracking-tight">
-            I build things for the web.
+            I build scalable backend systems and modern web applications.
           </h2>
         </RevealWrapper>
 
         <RevealWrapper delay={450}>
           <p className="text-[1.05rem] text-muted max-w-[540px] mb-10 leading-relaxed">
-            Full-Stack Web Developer specializing in{' '}
-            <strong className="text-heading font-semibold">Node.js</strong>,{' '}
-            <strong className="text-heading font-semibold">Express</strong>, and{' '}
-            <strong className="text-heading font-semibold">MongoDB</strong>.
-            I craft real-world applications with clean code, OTP authentication, product search engines, and more.
+            Full-Stack Developer focused on building{' '}
+            <strong className="text-heading font-semibold">scalable backend systems</strong> and{' '}
+            <strong className="text-heading font-semibold">clean, responsive web applications</strong>.
+          </p>
+          <p className="text-[1.05rem] text-muted max-w-[540px] mb-10 leading-relaxed">
+            Strong in backend development with hands-on experience in{' '}
+            <strong className="text-heading font-semibold">APIs</strong>,{' '}
+            <strong className="text-heading font-semibold">databases</strong>, and{' '}
+            <strong className="text-heading font-semibold">server-side logic</strong>.
+            I also create modern, beautiful user interfaces using AI-assisted tools.
           </p>
         </RevealWrapper>
 
@@ -60,14 +65,12 @@ export default function Hero() {
               <span>View My Work</span>
               <i className="fa-solid fa-arrow-down" />
             </Button>
-            <Button href="#contact" variant="outline">Get In Touch</Button>
+            <Button href="#contact" variant="outline">
+              <span>Get In Touch</span>
+              <i className="fa-solid fa-arrow-right" />
+            </Button>
           </div>
         </RevealWrapper>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
-        <div className="w-px h-[60px] bg-gradient-to-b from-accent to-transparent animate-[scroll-pulse_2s_ease-in-out_infinite]" />
       </div>
     </section>
   );

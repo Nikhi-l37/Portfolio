@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ===== Custom Theme ===== */
+/* ===== Custom Theme (Dark — Default) ===== */
 @theme {
   --color-primary: #0a0a0f;
   --color-secondary: #111118;
@@ -25,10 +25,37 @@
   --font-mono: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
 }
 
+/* ===== Light Theme Override ===== */
+[data-theme="light"] {
+  --color-primary: #f8fafc;
+  --color-secondary: #f1f5f9;
+  --color-surface: #e2e8f0;
+  --color-card: #ffffff;
+  --color-card-hover: #f8fafc;
+
+  --color-accent: #0891b2;
+  --color-accent-dim: rgba(8, 145, 178, 0.1);
+  --color-accent-glow: rgba(8, 145, 178, 0.25);
+  --color-accent-alt: #6d28d9;
+
+  --color-heading: #0f172a;
+  --color-text: #1e293b;
+  --color-muted: #475569;
+  --color-dim: #64748b;
+
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-hover: rgba(8, 145, 178, 0.35);
+}
+
 /* ===== Base ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 70px;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -38,6 +65,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+/* ===== GPU-accelerate interactive elements to prevent layout shift ===== */
+a, button, [role="button"],
+.group, article, .gpu-layer {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 ::selection {
@@ -50,6 +85,11 @@ body {
 ::-webkit-scrollbar-track { background: var(--color-primary); }
 ::-webkit-scrollbar-thumb { background: var(--color-card); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+/* ===== Light theme shadow adjustments ===== */
+[data-theme="light"] .shadow-light-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
 
 /* ===== Blinking Caret ===== */
 @keyframes blink-caret {
@@ -65,6 +105,131 @@ body {
 
 /* ===== Scroll pulse ===== */
 @keyframes scroll-pulse {
-  0%, 100% { opacity: 0.3; height: 60px; }
-  50% { opacity: 1; height: 40px; }
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(0.67); }
+}
+
+/* ===== Global floating container — very slow, gentle ===== */
+@keyframes gentle-float {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-14px); }
+}
+
+#floating-container {
+  animation: gentle-float 2.8s ease-in-out infinite alternate;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  pointer-events: auto;          /* children stay interactive */
+  transform: translateZ(0);      /* force GPU layer */
+}
+
+/* ===== Scroll-Reveal system (GPU-accelerated, transform+opacity only) ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px) translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) translateZ(0);
+}
+
+/* ===== Unified card/button float — same amplitude, staggered start ===== */
+@keyframes card-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+.float-1 {
+  animation: card-float 2.8s ease-in-out infinite;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.float-2 {
+  animation: card-float 2.8s ease-in-out 0.4s infinite;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.float-3 {
+  animation: card-float 2.8s ease-in-out 0.8s infinite;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* ===== Profile photo shine sweep on hover ===== */
+@keyframes shine-sweep {
+  0%   { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(200%) rotate(25deg); }
+}
+
+.photo-card .shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.12) 45%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.12) 55%,
+    transparent 60%
+  );
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.photo-card:hover .shine {
+  opacity: 1;
+  animation: shine-sweep 0.8s ease-out forwards;
+}
+
+/* ===== Resume download icon bounce (vertical) ===== */
+@keyframes arrow-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(4px); }
+}
+
+.resume-arrow {
+  animation: arrow-bounce 1.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+}
+
+/* On parent hover: stop bounce */
+.resume-btn:hover .resume-arrow {
+  animation: none;
+  transform: translateY(0);
+}
+
+/* ===== Resume button glowing border pulse ===== */
+@keyframes border-glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.08), 0 0 20px rgba(16, 185, 129, 0.04); }
+  50%      { box-shadow: 0 0 14px rgba(16, 185, 129, 0.2), 0 0 35px rgba(16, 185, 129, 0.08); }
+}
+
+.resume-btn {
+  animation: border-glow-pulse 3s ease-in-out infinite;
+}
+
+.resume-btn:hover {
+  animation: none;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.2), 0 0 50px rgba(16, 185, 129, 0.08);
+}
+
+/* ===== Keep background fixed while content floats ===== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-primary);
+  pointer-events: none;
 }
