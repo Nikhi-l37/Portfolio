@@ -71,13 +71,6 @@ export default function Hero() {
             </Button>
           </div>
         </RevealWrapper>
-
-        {/* Scroll indicator — below buttons */}
-        <RevealWrapper delay={750}>
-          <div className="mt-8">
-            <div className="w-px h-[60px] bg-gradient-to-b from-accent to-transparent animate-[scroll-pulse_2s_ease-in-out_infinite]" />
-          </div>
-        </RevealWrapper>
       </div>
     </section>
   );

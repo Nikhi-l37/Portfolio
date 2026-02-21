@@ -33,7 +33,8 @@ function BentoCard({ children, className = '', glow = 'emerald' }) {
     <motion.div
       variants={cardAnim}
       className={`relative overflow-hidden bg-card/80 backdrop-blur-sm border border-border
-                  rounded-[16px] p-6 transition-[transform,box-shadow,border-color] duration-400 ease-out hover:-translate-y-1
+                  rounded-[16px] p-6 transition-[transform,box-shadow,border-color] duration-400 ease-out
+                  will-change-transform
                   ${glows[glow]} ${className}`}
     >
       {children}
@@ -108,25 +109,28 @@ export default function About() {
             className="flex items-center justify-center aspect-square"
             glow="cyan"
           >
-            <div className="relative group">
-              <div className="absolute -inset-4 rounded-full bg-gradient-to-br from-emerald-500/20 to-cyan-500/20
-                              blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative group cursor-pointer">
+              <div className="absolute -inset-4 rounded-full bg-gradient-to-br from-emerald-500/30 to-cyan-500/30
+                              blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
               <div className="relative w-44 h-44 lg:w-52 lg:h-52 rounded-full overflow-hidden
                               ring-2 ring-emerald-500/20 ring-offset-2 ring-offset-card
-                              transition-all duration-500
-                              group-hover:ring-emerald-400/50 group-hover:shadow-[0_0_50px_rgba(16,185,129,0.15)]">
+                              transition-[ring-color,box-shadow,transform] duration-700 ease-out
+                              group-hover:ring-emerald-400/60 group-hover:shadow-[0_0_60px_rgba(16,185,129,0.25)]
+                              group-hover:scale-105">
                 <img
                   src={profileImg}
                   alt="Sivada Nikhil Reddy"
                   className="w-full h-full object-cover object-top
                              grayscale-[20%] contrast-[1.05]
-                             transition-all duration-500
-                             group-hover:grayscale-0 group-hover:scale-110"
+                             transition-[filter,transform] duration-700 ease-out
+                             group-hover:grayscale-0 group-hover:contrast-[1.1] group-hover:scale-115"
                 />
               </div>
 
               <div className="absolute -inset-3 rounded-full border border-emerald-500/10 pointer-events-none
+                              transition-[border-color,opacity] duration-700
+                              group-hover:border-emerald-400/30 group-hover:opacity-80
                               animate-[pulse_3s_ease-in-out_infinite]" />
             </div>
           </BentoCard>
@@ -226,7 +230,7 @@ export default function About() {
               </p>
 
               <div className="flex items-center gap-2 opacity-0 translate-y-2
-                              transition-all duration-400 ease-out
+                              transition-[opacity,transform] duration-400 ease-out
                               group-hover/lead:opacity-100 group-hover/lead:translate-y-0">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1
                                  bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full
@@ -256,10 +260,10 @@ export default function About() {
               className="inline-flex items-center gap-2 px-5 py-2.5
                          bg-accent-dim backdrop-blur-md
                          border border-emerald-500/25 text-emerald-400 text-sm font-semibold rounded-full
-                         transition-[transform,box-shadow,background-color,border-color,color] duration-300
+                         float-1 transition-[box-shadow,background-color,border-color,color] duration-300
                          hover:bg-emerald-500/10 hover:border-emerald-400/40
                          hover:shadow-[0_0_25px_rgba(16,185,129,0.15)]
-                         hover:-translate-y-0.5 active:scale-95"
+                         active:scale-95"
             >
               Download Resume
               <ExternalLink className="w-3.5 h-3.5" />

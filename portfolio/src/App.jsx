@@ -19,13 +19,15 @@ function App() {
   return (
     <>
       <Navbar />
-      <Hero />
-      <About />
-      <Education />
-      <Projects />
-      <Skills />
-      <Contact />
-      <Footer />
+      <div id="page-wrapper">
+        <Hero />
+        <About />
+        <Education />
+        <Projects />
+        <Skills />
+        <Contact />
+        <Footer />
+      </div>
     </>
   );
 }

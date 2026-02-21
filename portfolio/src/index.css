@@ -48,9 +48,14 @@
 }
 
 /* ===== Base ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 70px;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -60,6 +65,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+/* ===== GPU-accelerate interactive elements to prevent layout shift ===== */
+a, button, [role="button"],
+.group, article, .gpu-layer {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 ::selection {
@@ -92,6 +105,63 @@ body {
 
 /* ===== Scroll pulse ===== */
 @keyframes scroll-pulse {
-  0%, 100% { opacity: 0.3; height: 60px; }
-  50% { opacity: 1; height: 40px; }
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(0.67); }
+}
+
+/* ===== Global page bounce — slow, gentle ===== */
+@keyframes page-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+#page-wrapper {
+  animation: page-bounce 3.5s ease-in-out infinite;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  pointer-events: auto;        /* children stay interactive */
+}
+
+/* ===== Subtle card/button float — 2-3px, staggered ===== */
+@keyframes subtle-float-1 {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+@keyframes subtle-float-2 {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+@keyframes subtle-float-3 {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4.5px); }
+}
+
+.float-1 {
+  animation: subtle-float-1 3s ease-in-out infinite;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.float-2 {
+  animation: subtle-float-2 3.5s ease-in-out 0.6s infinite;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.float-3 {
+  animation: subtle-float-3 3.8s ease-in-out 1.2s infinite;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* ===== Keep background fixed while content floats ===== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-primary);
+  pointer-events: none;
 }

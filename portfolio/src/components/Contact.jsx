@@ -158,7 +158,7 @@ export default function Contact() {
                 { icon: 'fa-solid fa-location-dot', label: 'Location', value: 'India' },
               ].map(({ icon, label, value, href }) => (
                 <div key={label}
-                  className="flex items-center gap-4 p-5 bg-card border border-border rounded-lg transition-[border-color,box-shadow] duration-300 ease-out hover:border-border-hover">
+                  className="flex items-center gap-4 p-5 bg-card border border-border rounded-lg float-3 transition-[border-color,box-shadow] duration-300 ease-out hover:border-border-hover">
                   <div className="w-11 h-11 rounded-full bg-accent-dim flex items-center justify-center text-xl text-accent shrink-0">
                     <i className={icon} />
                   </div>
@@ -178,8 +178,9 @@ export default function Contact() {
                 {SOCIALS.map(({ icon, url, label }) => (
                   <a key={label} href={url} target="_blank" rel="noopener" aria-label={label}
                      className="w-12 h-12 flex items-center justify-center bg-card border border-border rounded-full
-                                text-muted text-lg transition-[transform,box-shadow,background-color,border-color,color] duration-300 ease-out
-                                hover:bg-accent hover:border-accent hover:text-primary hover:-translate-y-1
+                                text-muted text-lg float-2 will-change-transform
+                                transition-[box-shadow,background-color,border-color,color] duration-300 ease-out
+                                hover:bg-accent hover:border-accent hover:text-primary
                                 hover:shadow-[0_8px_25px_var(--color-accent-dim)]">
                     <i className={icon} />
                   </a>

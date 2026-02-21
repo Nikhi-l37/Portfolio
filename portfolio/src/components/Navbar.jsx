@@ -70,9 +70,9 @@ export default function Navbar() {
           {/* Hamburger (mobile) */}
           <button onClick={toggleMenu} aria-label="Toggle navigation"
                   className="md:hidden w-9 h-9 relative z-[1001] bg-transparent border-none cursor-pointer">
-            <span className={`block absolute left-1.5 w-6 h-0.5 bg-text rounded transition-all duration-300
+            <span className={`block absolute left-1.5 w-6 h-0.5 bg-text rounded transition-[top,transform] duration-300
               ${menuOpen ? 'top-[17px] rotate-45' : 'top-[11px]'}`} />
-            <span className={`block absolute left-1.5 w-6 h-0.5 bg-text rounded transition-all duration-300
+            <span className={`block absolute left-1.5 w-6 h-0.5 bg-text rounded transition-[top,transform] duration-300
               ${menuOpen ? 'top-[17px] -rotate-45' : 'top-[21px]'}`} />
           </button>
 

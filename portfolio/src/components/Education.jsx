@@ -53,8 +53,9 @@ export default function Education() {
 
                   {/* Card — mobile: full width, desktop: 45% on alternating sides */}
                   <div className={`w-full md:w-[45%] ${isRight ? 'md:ml-auto md:pl-0' : 'md:mr-auto md:pr-0'} order-2 md:order-none`}>
-                    <div className="group relative bg-card border border-border rounded-xl p-7 transition-[transform,box-shadow,border-color] duration-300 ease-out
-                                    hover:border-border-hover hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,0,0,0.3),0_0_30px_var(--color-accent-dim)]">
+                    <div className="group relative bg-card border border-border rounded-xl p-7
+                                    float-1 will-change-transform transition-[box-shadow,border-color] duration-300 ease-out
+                                    hover:border-border-hover hover:shadow-[0_16px_40px_rgba(0,0,0,0.3),0_0_30px_var(--color-accent-dim)]">
 
                       {/* Top gradient bar on hover */}
                       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-accent to-accent-alt rounded-t-xl scale-x-0 origin-left transition-transform duration-400 group-hover:scale-x-100" />
