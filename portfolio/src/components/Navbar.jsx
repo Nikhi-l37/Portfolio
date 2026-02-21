@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTheme } from '../hooks/useTheme';
 
 const NAV_LINKS = [
   { label: 'Home', href: '#hero' },
@@ -10,6 +11,7 @@ const NAV_LINKS = [
 ];
 
 export default function Navbar() {
+  const { theme, toggleTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
@@ -94,6 +96,15 @@ export default function Navbar() {
               </a>
             </li>
           ))}
+          <li>
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="block px-4 py-2 text-lg text-muted hover:text-accent hover:bg-accent-dim rounded-lg transition-colors cursor-pointer"
+            >
+              <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} />
+            </button>
+          </li>
           <li>
             <a href="https://github.com/Nikhi-I37" target="_blank" rel="noopener"
                className="block px-4 py-2 text-lg text-muted hover:text-accent hover:bg-accent-dim rounded-lg transition-colors">

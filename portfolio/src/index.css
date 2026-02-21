@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ===== Custom Theme ===== */
+/* ===== Custom Theme (Dark — Default) ===== */
 @theme {
   --color-primary: #0a0a0f;
   --color-secondary: #111118;
@@ -23,6 +23,28 @@
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+}
+
+/* ===== Light Theme Override ===== */
+[data-theme="light"] {
+  --color-primary: #f8fafc;
+  --color-secondary: #f1f5f9;
+  --color-surface: #e2e8f0;
+  --color-card: #ffffff;
+  --color-card-hover: #f8fafc;
+
+  --color-accent: #0891b2;
+  --color-accent-dim: rgba(8, 145, 178, 0.1);
+  --color-accent-glow: rgba(8, 145, 178, 0.25);
+  --color-accent-alt: #6d28d9;
+
+  --color-heading: #0f172a;
+  --color-text: #1e293b;
+  --color-muted: #475569;
+  --color-dim: #64748b;
+
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-hover: rgba(8, 145, 178, 0.35);
 }
 
 /* ===== Base ===== */
@@ -50,6 +72,11 @@ body {
 ::-webkit-scrollbar-track { background: var(--color-primary); }
 ::-webkit-scrollbar-thumb { background: var(--color-card); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+/* ===== Light theme shadow adjustments ===== */
+[data-theme="light"] .shadow-light-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
 
 /* ===== Blinking Caret ===== */
 @keyframes blink-caret {

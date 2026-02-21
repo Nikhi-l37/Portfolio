@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import {
-  GraduationCap, Rocket, Brain,
-  Download, ExternalLink, Trophy, Sparkles,
+  Brain, Users, GitBranch,
+  Download, ExternalLink, Sparkles,
 } from 'lucide-react';
 import SectionHeader from './SectionHeader';
 import profileImg from '../assets/Nikhil.jpg';
@@ -95,17 +95,13 @@ export default function About() {
 
               {/* Description */}
               <p className="text-muted text-[0.95rem] leading-relaxed mb-3 max-w-xl">
-                A passionate developer and <span className="text-heading font-medium">B.Tech CS student</span> at
-                Rajeev Gandhi Memorial College (2023 – 2027), focused on
-                <span className="text-emerald-400 font-medium"> turning ideas into real, functional applications</span>.
+                I'm a <span className="text-heading font-medium">backend-focused developer</span> with strong knowledge in building server-side applications, APIs, and working with databases.
+              </p>
+              <p className="text-muted text-sm leading-relaxed mb-3 max-w-xl">
+                While my strength lies in backend development, I also understand frontend fundamentals and create clean, responsive interfaces using modern <span className="text-emerald-400 font-medium">AI-assisted tools</span>.
               </p>
               <p className="text-muted text-sm leading-relaxed max-w-xl">
-                I build across the full stack — designing databases, crafting REST APIs, and
-                creating responsive front-ends. From a
-                <span className="text-heading font-medium"> product availability finder </span> to a
-                <span className="text-heading font-medium"> resume screening system </span> and an
-                <span className="text-heading font-medium"> Android screen-time tracker</span>,
-                I ship products that solve real problems.
+                I enjoy solving real-world problems and continuously improving my technical skills.
               </p>
             </div>
           </BentoCard>
@@ -141,34 +137,8 @@ export default function About() {
             </div>
           </BentoCard>
 
-          {/* ─── 3-5  Stat Cards ─── */}
-          <BentoCard className="flex flex-col justify-center items-center text-center py-8" glow="emerald">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-4">
-              <Rocket className="w-7 h-7 text-emerald-400" />
-            </div>
-            <span className="text-3xl font-extrabold text-heading">3+</span>
-            <span className="text-xs text-dim uppercase tracking-widest mt-1.5 font-semibold">Projects Shipped</span>
-          </BentoCard>
-
-          <BentoCard className="flex flex-col justify-center items-center text-center py-8" glow="purple">
-            <div className="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-4">
-              <GraduationCap className="w-7 h-7 text-purple-400" />
-            </div>
-            <span className="text-3xl font-extrabold text-heading">B.Tech</span>
-            <span className="text-xs text-dim uppercase tracking-widest mt-1.5 font-semibold">CS Student</span>
-            <span className="text-[11px] text-muted mt-1">RGMCET • CGPA 8.0</span>
-          </BentoCard>
-
-          <BentoCard className="flex flex-col justify-center items-center text-center py-8" glow="cyan">
-            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-4">
-              <Trophy className="w-7 h-7 text-cyan-400" />
-            </div>
-            <span className="text-3xl font-extrabold text-heading">500</span>
-            <span className="text-xs text-dim uppercase tracking-widest mt-1.5 font-semibold">CodeChef Rating</span>
-          </BentoCard>
-
-          {/* ─── 6  DSA & AI Focus Card ─── */}
-          <BentoCard className="md:col-span-2 lg:col-span-2 flex flex-col justify-center" glow="emerald">
+          {/* ─── 3  Problem Solving & DSA Card ─── */}
+          <BentoCard className="flex flex-col justify-center" glow="emerald">
             <div className="absolute -bottom-16 -right-16 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10">
@@ -176,25 +146,28 @@ export default function About() {
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                   <Brain className="w-5 h-5 text-emerald-400" />
                 </div>
-                <h4 className="text-lg font-bold text-heading">DSA & AI-Assisted Workflows</h4>
+                <h4 className="text-lg font-bold text-heading">Problem Solving & DSA</h4>
               </div>
 
-              <p className="text-muted text-sm leading-relaxed mb-4">
-                Sharpening problem-solving daily on{' '}
+              <p className="text-muted text-sm leading-relaxed mb-2">
+                Actively solving data structures and algorithms problems on platforms like{' '}
                 <a href="https://leetcode.com/u/NikhilReddy3446/" target="_blank" rel="noopener"
                    className="text-emerald-400 hover:text-emerald-300 transition-colors font-medium underline decoration-emerald-400/30 underline-offset-2">
                   LeetCode
                 </a>{' '}
-                &{' '}
+                and{' '}
                 <a href="https://www.geeksforgeeks.org/profile/snikhilre097c" target="_blank" rel="noopener"
                    className="text-emerald-400 hover:text-emerald-300 transition-colors font-medium underline decoration-emerald-400/30 underline-offset-2">
                   GeeksforGeeks
-                </a>
-                , while leveraging AI tools to code smarter and ship faster.
+                </a>.
+              </p>
+              <p className="text-muted text-sm leading-relaxed mb-4">
+                Strong understanding of problem-solving patterns, logical thinking, and writing optimized solutions.
+                Regular practice strengthens my core computer science fundamentals and analytical skills.
               </p>
 
               <div className="flex flex-wrap gap-2">
-                {['Data Structures', 'Algorithms', 'AI Tools', 'Problem Solving', 'Competitive Coding'].map(tag => (
+                {['Data Structures', 'Algorithms', 'Logical Thinking', 'Optimization', 'Competitive Coding'].map(tag => (
                   <span key={tag}
                     className="px-2.5 py-1 bg-emerald-500/8 text-emerald-400/80 text-xs font-medium rounded-lg
                                border border-emerald-500/10">
@@ -205,7 +178,74 @@ export default function About() {
             </div>
           </BentoCard>
 
-          {/* ─── 7  Resume Download CTA (Glassmorphism) ─── */}
+          {/* ─── 4  GitHub & Development Workflow Card ─── */}
+          <BentoCard className="flex flex-col justify-center" glow="cyan">
+            <div className="absolute -top-12 -left-12 w-40 h-40 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
+                  <GitBranch className="w-5 h-5 text-cyan-400" />
+                </div>
+                <h4 className="text-lg font-bold text-heading">GitHub & Development Workflow</h4>
+              </div>
+
+              <p className="text-muted text-sm leading-relaxed mb-2">
+                Experienced in using GitHub for version control, collaboration, and project management.
+              </p>
+              <p className="text-muted text-sm leading-relaxed mb-4">
+                Comfortable with branching strategies, pull requests, code reviews, and maintaining clean
+                repository structures. I focus on writing organized, maintainable code and following
+                professional development practices.
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {['Git & GitHub', 'Version Control', 'Clean Code', 'Collaboration', 'Project Management'].map(tag => (
+                  <span key={tag}
+                    className="px-2.5 py-1 bg-cyan-500/8 text-cyan-400/80 text-xs font-medium rounded-lg
+                               border border-cyan-500/10">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </BentoCard>
+
+          {/* ─── 7  Leadership Card ─── */}
+          <BentoCard className="group/lead relative flex flex-col justify-center overflow-hidden" glow="emerald">
+            <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center
+                                transition-colors duration-300 group-hover/lead:bg-emerald-500/20">
+                  <Users className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-heading leading-tight">Community Leadership</h4>
+                  <span className="text-[11px] text-emerald-400/70 font-semibold uppercase tracking-wider">Lead @ Vedic Vox</span>
+                </div>
+              </div>
+
+              <p className="text-muted text-sm leading-relaxed mb-4">
+                Spearheading a student-led club focused on discussing and building
+                innovative solutions to real-world problems.
+              </p>
+
+              {/* Hover-reveal tagline */}
+              <div className="flex items-center gap-2 opacity-0 translate-y-2
+                              transition-all duration-400 ease-out
+                              group-hover/lead:opacity-100 group-hover/lead:translate-y-0">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1
+                                 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full
+                                 border border-emerald-500/20">
+                  <Sparkles className="w-3 h-3" /> Let's Collaborate
+                </span>
+              </div>
+            </div>
+          </BentoCard>
+
+          {/* ─── 8  Resume Download CTA (Glassmorphism) ─── */}
           <BentoCard
             className="flex flex-col justify-center items-center text-center
                        bg-gradient-to-br from-emerald-500/5 via-transparent to-cyan-500/5"
@@ -222,7 +262,7 @@ export default function About() {
               rel="noopener"
               onClick={fireCenterConfetti}
               className="inline-flex items-center gap-2 px-5 py-2.5
-                         bg-white/[0.04] backdrop-blur-md
+                         bg-accent-dim backdrop-blur-md
                          border border-emerald-500/25 text-emerald-400 text-sm font-semibold rounded-full
                          transition-all duration-300
                          hover:bg-emerald-500/10 hover:border-emerald-400/40

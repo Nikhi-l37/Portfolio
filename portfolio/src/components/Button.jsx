@@ -4,7 +4,7 @@ export default function Button({ children, href, variant = 'primary', className 
 
   const variants = {
     primary:
-      'bg-accent text-primary shadow-[0_0_20px_var(--color-accent-dim)] hover:bg-white hover:text-primary hover:shadow-[0_0_30px_rgba(0,212,255,0.35)] hover:-translate-y-0.5',
+      'bg-accent text-primary shadow-[0_0_20px_var(--color-accent-dim)] hover:opacity-90 hover:shadow-[0_0_30px_var(--color-accent-glow)] hover:-translate-y-0.5',
     outline:
       'bg-transparent text-accent border-[1.5px] border-accent hover:bg-accent-dim hover:-translate-y-0.5',
   };

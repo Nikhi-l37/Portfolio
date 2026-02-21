@@ -7,7 +7,7 @@ const EDUCATION = [
     degree: 'B.Tech in Computer Science',
     institution: 'Rajeev Gandhi Memorial College of Engineering and Technology (RGMCET)',
     description:
-      'Currently pursuing 3rd year with a CGPA of 8.0. Specializing in full-stack web development with hands-on experience in Node.js, Express, MongoDB, and modern web technologies.',
+      'Currently pursuing 3rd year with a CGPA of 8.0. Strong foundation in core computer science subjects such as data structures, algorithms, databases, and computer networks.',
     icon: 'fa-solid fa-graduation-cap',
     current: true,
   },
@@ -16,7 +16,7 @@ const EDUCATION = [
     degree: 'Intermediate MPC',
     institution: 'VBR College',
     description:
-      'Completed with an excellent score of 970/1000, demonstrating strong analytical and problem-solving abilities in Mathematics, Physics, and Chemistry.',
+      'Completed with an excellent score of 970, Maintained consistent academic performance and demonstrated dedication, discipline, and commitment toward long-term goals.',
     icon: 'fa-solid fa-book-open',
     current: false,
   },
@@ -25,7 +25,7 @@ const EDUCATION = [
     degree: 'Secondary School (SSC)',
     institution: 'Sri Chaitanya College',
     description:
-      'Completed secondary education with a strong academic foundation, building early interest in technology and problem-solving.',
+      'Established a strong educational foundation and commitment to continuous growth.',
     icon: 'fa-solid fa-school',
     current: false,
   },
