@@ -2,7 +2,7 @@ export default function ProjectCard({ title, subtitle, description, tags, liveUr
   return (
     <article
       className="group bg-card border border-border rounded-xl p-7 flex flex-col relative overflow-hidden
-                 transition-all duration-300 ease-out hover:border-border-hover hover:bg-card-hover
+                 transition-[transform,box-shadow,border-color,background-color] duration-300 ease-out hover:border-border-hover hover:bg-card-hover
                  hover:-translate-y-1.5 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3),0_0_40px_var(--color-accent-dim)]"
       style={{ transitionDelay: `${delay}ms` }}
     >

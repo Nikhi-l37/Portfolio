@@ -32,8 +32,8 @@ function BentoCard({ children, className = '', glow = 'emerald' }) {
   return (
     <motion.div
       variants={cardAnim}
-      className={`relative overflow-hidden bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-6
-                  transition-all duration-400 ease-out hover:-translate-y-1
+      className={`relative overflow-hidden bg-card/80 backdrop-blur-sm border border-border
+                  rounded-[16px] p-6 transition-[transform,box-shadow,border-color] duration-400 ease-out hover:-translate-y-1
                   ${glows[glow]} ${className}`}
     >
       {children}
@@ -56,21 +56,20 @@ export default function About() {
           <SectionHeader number="01" title="About Me" />
         </motion.div>
 
-        {/* ===== Bento Grid ===== */}
+        {/* ===== Bento Grid — 3 col, 24px gap ===== */}
         <motion.div
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-40px' }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
 
-          {/* ─── 1  Hero Card (large) ─── */}
+          {/* ─── ROW 1 — Hero Card (col 1-2) ─── */}
           <BentoCard
-            className="md:col-span-2 lg:col-span-2 md:row-span-2 flex flex-col justify-center"
+            className="md:col-span-2 flex flex-col justify-center"
             glow="emerald"
           >
-            {/* Decorative gradient blob */}
             <div className="absolute -top-20 -left-20 w-60 h-60 bg-emerald-500/8 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10">
@@ -85,7 +84,6 @@ export default function About() {
                 </span>
               </div>
 
-              {/* Heading */}
               <h3 className="text-3xl lg:text-4xl font-extrabold text-heading mb-5 leading-tight">
                 Hi, I'm{' '}
                 <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
@@ -93,7 +91,6 @@ export default function About() {
                 </span>
               </h3>
 
-              {/* Description */}
               <p className="text-muted text-[0.95rem] leading-relaxed mb-3 max-w-xl">
                 I'm a <span className="text-heading font-medium">backend-focused developer</span> with strong knowledge in building server-side applications, APIs, and working with databases.
               </p>
@@ -106,17 +103,15 @@ export default function About() {
             </div>
           </BentoCard>
 
-          {/* ─── 2  Photo Card (circular) ─── */}
+          {/* ─── ROW 1 — Photo Card (col 3, square) ─── */}
           <BentoCard
-            className="md:row-span-2 flex items-center justify-center min-h-[320px]"
+            className="flex items-center justify-center aspect-square"
             glow="cyan"
           >
             <div className="relative group">
-              {/* Hover glow ring */}
               <div className="absolute -inset-4 rounded-full bg-gradient-to-br from-emerald-500/20 to-cyan-500/20
                               blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-              {/* Photo circle */}
               <div className="relative w-44 h-44 lg:w-52 lg:h-52 rounded-full overflow-hidden
                               ring-2 ring-emerald-500/20 ring-offset-2 ring-offset-card
                               transition-all duration-500
@@ -131,14 +126,13 @@ export default function About() {
                 />
               </div>
 
-              {/* Animated ring */}
               <div className="absolute -inset-3 rounded-full border border-emerald-500/10 pointer-events-none
                               animate-[pulse_3s_ease-in-out_infinite]" />
             </div>
           </BentoCard>
 
-          {/* ─── 3  Problem Solving & DSA Card ─── */}
-          <BentoCard className="flex flex-col justify-center" glow="emerald">
+          {/* ─── ROW 2 — Problem Solving & DSA (col 1-2, wide) ─── */}
+          <BentoCard className="md:col-span-2 flex flex-col justify-center" glow="emerald">
             <div className="absolute -bottom-16 -right-16 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10">
@@ -178,7 +172,7 @@ export default function About() {
             </div>
           </BentoCard>
 
-          {/* ─── 4  GitHub & Development Workflow Card ─── */}
+          {/* ─── ROW 2 — GitHub & Workflow (col 3, square) ─── */}
           <BentoCard className="flex flex-col justify-center" glow="cyan">
             <div className="absolute -top-12 -left-12 w-40 h-40 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -187,7 +181,7 @@ export default function About() {
                 <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
                   <GitBranch className="w-5 h-5 text-cyan-400" />
                 </div>
-                <h4 className="text-lg font-bold text-heading">GitHub & Development Workflow</h4>
+                <h4 className="text-lg font-bold text-heading">GitHub & Workflow</h4>
               </div>
 
               <p className="text-muted text-sm leading-relaxed mb-2">
@@ -195,8 +189,7 @@ export default function About() {
               </p>
               <p className="text-muted text-sm leading-relaxed mb-4">
                 Comfortable with branching strategies, pull requests, code reviews, and maintaining clean
-                repository structures. I focus on writing organized, maintainable code and following
-                professional development practices.
+                repository structures.
               </p>
 
               <div className="flex flex-wrap gap-2">
@@ -211,8 +204,8 @@ export default function About() {
             </div>
           </BentoCard>
 
-          {/* ─── 7  Leadership Card ─── */}
-          <BentoCard className="group/lead relative flex flex-col justify-center overflow-hidden" glow="emerald">
+          {/* ─── ROW 3 — Leadership (col 1, tall/square) ─── */}
+          <BentoCard className="group/lead flex flex-col justify-center" glow="emerald">
             <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10">
@@ -232,7 +225,6 @@ export default function About() {
                 innovative solutions to real-world problems.
               </p>
 
-              {/* Hover-reveal tagline */}
               <div className="flex items-center gap-2 opacity-0 translate-y-2
                               transition-all duration-400 ease-out
                               group-hover/lead:opacity-100 group-hover/lead:translate-y-0">
@@ -245,9 +237,9 @@ export default function About() {
             </div>
           </BentoCard>
 
-          {/* ─── 8  Resume Download CTA (Glassmorphism) ─── */}
+          {/* ─── ROW 3 — Resume CTA (col 2-3, wide) ─── */}
           <BentoCard
-            className="flex flex-col justify-center items-center text-center
+            className="md:col-span-2 flex flex-col justify-center items-center text-center
                        bg-gradient-to-br from-emerald-500/5 via-transparent to-cyan-500/5"
             glow="emerald"
           >
@@ -264,7 +256,7 @@ export default function About() {
               className="inline-flex items-center gap-2 px-5 py-2.5
                          bg-accent-dim backdrop-blur-md
                          border border-emerald-500/25 text-emerald-400 text-sm font-semibold rounded-full
-                         transition-all duration-300
+                         transition-[transform,box-shadow,background-color,border-color,color] duration-300
                          hover:bg-emerald-500/10 hover:border-emerald-400/40
                          hover:shadow-[0_0_25px_rgba(16,185,129,0.15)]
                          hover:-translate-y-0.5 active:scale-95"

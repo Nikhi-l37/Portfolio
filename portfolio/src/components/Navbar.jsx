@@ -55,7 +55,7 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-[1000] h-[70px] flex items-center border-b border-border
-        backdrop-blur-2xl transition-all duration-300
+        backdrop-blur-2xl transition-[background-color,box-shadow] duration-300
         ${scrolled ? 'bg-primary/92 shadow-[0_4px_30px_rgba(0,0,0,0.4)]' : 'bg-primary/70'}`}
     >
       <div className="max-w-[1100px] w-full mx-auto px-6 flex items-center justify-between">
@@ -65,53 +65,57 @@ export default function Navbar() {
           &lt;NR /&gt;
         </a>
 
-        {/* Hamburger */}
-        <button onClick={toggleMenu} aria-label="Toggle navigation"
-                className="md:hidden w-9 h-9 relative z-[1001] bg-transparent border-none cursor-pointer">
-          <span className={`block absolute left-1.5 w-6 h-0.5 bg-text rounded transition-all duration-300
-            ${menuOpen ? 'top-[17px] rotate-45' : 'top-[11px]'}`} />
-          <span className={`block absolute left-1.5 w-6 h-0.5 bg-text rounded transition-all duration-300
-            ${menuOpen ? 'top-[17px] -rotate-45' : 'top-[21px]'}`} />
-        </button>
+        {/* Right side: links + icons */}
+        <div className="flex items-center gap-1">
+          {/* Hamburger (mobile) */}
+          <button onClick={toggleMenu} aria-label="Toggle navigation"
+                  className="md:hidden w-9 h-9 relative z-[1001] bg-transparent border-none cursor-pointer">
+            <span className={`block absolute left-1.5 w-6 h-0.5 bg-text rounded transition-all duration-300
+              ${menuOpen ? 'top-[17px] rotate-45' : 'top-[11px]'}`} />
+            <span className={`block absolute left-1.5 w-6 h-0.5 bg-text rounded transition-all duration-300
+              ${menuOpen ? 'top-[17px] -rotate-45' : 'top-[21px]'}`} />
+          </button>
 
-        {/* Menu */}
-        <ul className={`list-none flex items-center gap-2
-          md:flex md:static md:w-auto md:h-auto md:flex-row md:p-0 md:bg-transparent md:border-none md:shadow-none
-          ${menuOpen
-            ? 'fixed top-0 right-0 w-[70%] max-w-[320px] h-screen bg-secondary flex-col items-start pt-24 px-8 gap-1 border-l border-border shadow-[-10px_0_40px_rgba(0,0,0,0.5)]'
-            : 'fixed top-0 -right-full w-[70%] max-w-[320px] h-screen bg-secondary flex-col items-start pt-24 px-8 gap-1 border-l border-border md:relative md:right-0 md:h-auto md:flex-row md:items-center md:pt-0 md:px-0'
-          }
-          transition-[right] duration-400 ease-out`}
-        >
-          {NAV_LINKS.map(({ label, href }) => (
-            <li key={href}>
-              <a
-                href={href}
-                onClick={(e) => handleClick(e, href)}
-                className={`block px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-300
-                  ${activeSection === href.slice(1) ? 'text-accent bg-accent-dim' : 'text-muted hover:text-accent hover:bg-accent-dim'}
-                  md:text-sm md:px-4 md:py-2 w-full md:w-auto`}
-              >
-                {label}
-              </a>
-            </li>
-          ))}
-          <li>
+          {/* Nav Links */}
+          <ul className={`list-none flex items-center gap-1
+            md:flex md:static md:w-auto md:max-w-none md:h-auto md:flex-row md:p-0 md:bg-transparent md:border-none md:shadow-none
+            ${menuOpen
+              ? 'fixed top-0 right-0 w-[70%] max-w-[320px] h-screen bg-secondary flex-col items-start pt-24 px-8 gap-1 border-l border-border shadow-[-10px_0_40px_rgba(0,0,0,0.5)]'
+              : 'fixed top-0 -right-full w-[70%] max-w-[320px] h-screen bg-secondary flex-col items-start pt-24 px-8 gap-1 border-l border-border md:relative md:right-0 md:h-auto md:flex-row md:items-center md:pt-0 md:px-0'
+            }
+            transition-[right] duration-400 ease-out`}
+          >
+            {NAV_LINKS.map(({ label, href }) => (
+              <li key={href}>
+                <a
+                  href={href}
+                  onClick={(e) => handleClick(e, href)}
+                  className={`block px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-300
+                    ${activeSection === href.slice(1) ? 'text-accent bg-accent-dim' : 'text-muted hover:text-accent hover:bg-accent-dim'}
+                    md:text-[13px] md:px-3 md:py-2 w-full md:w-auto`}
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          {/* Divider + Icon buttons — always visible on desktop */}
+          <div className="hidden md:flex items-center gap-1 ml-3 pl-3 border-l border-border">
             <button
               onClick={toggleTheme}
               aria-label="Toggle theme"
-              className="block px-4 py-2 text-lg text-muted hover:text-accent hover:bg-accent-dim rounded-lg transition-colors cursor-pointer"
+              className="w-9 h-9 flex items-center justify-center text-muted hover:text-accent
+                         hover:bg-accent-dim rounded-lg transition-colors duration-300 cursor-pointer"
             >
-              <i className={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} />
+              <i className={`text-base ${theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'}`} />
             </button>
-          </li>
-          <li>
             <a href="https://github.com/Nikhi-I37" target="_blank" rel="noopener"
-               className="block px-4 py-2 text-lg text-muted hover:text-accent hover:bg-accent-dim rounded-lg transition-colors">
-              <i className="fa-brands fa-github" />
+               className="w-9 h-9 flex items-center justify-center text-muted hover:text-accent hover:bg-accent-dim rounded-lg transition-colors">
+              <i className="fa-brands fa-github text-base" />
             </a>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     </nav>
   );

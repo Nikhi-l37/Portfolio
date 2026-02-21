@@ -65,14 +65,19 @@ export default function Hero() {
               <span>View My Work</span>
               <i className="fa-solid fa-arrow-down" />
             </Button>
-            <Button href="#contact" variant="outline">Get In Touch</Button>
+            <Button href="#contact" variant="outline">
+              <span>Get In Touch</span>
+              <i className="fa-solid fa-arrow-right" />
+            </Button>
           </div>
         </RevealWrapper>
-      </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
-        <div className="w-px h-[60px] bg-gradient-to-b from-accent to-transparent animate-[scroll-pulse_2s_ease-in-out_infinite]" />
+        {/* Scroll indicator — below buttons */}
+        <RevealWrapper delay={750}>
+          <div className="mt-8">
+            <div className="w-px h-[60px] bg-gradient-to-b from-accent to-transparent animate-[scroll-pulse_2s_ease-in-out_infinite]" />
+          </div>
+        </RevealWrapper>
       </div>
     </section>
   );
