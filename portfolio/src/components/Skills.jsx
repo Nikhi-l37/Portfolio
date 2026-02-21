@@ -4,10 +4,10 @@ import SkillCategory from './SkillCategory';
 
 const SKILLS = [
   { icon: 'fa-solid fa-palette', title: 'Frontend', skills: ['HTML5', 'CSS3', 'JavaScript'] },
-  { icon: 'fa-solid fa-server', title: 'Backend', skills: ['Node.js', 'Express.js', 'REST APIs', 'CRUD'] },
+  { icon: 'fa-solid fa-server', title: 'Backend', skills: ['Java', 'Node.js', 'Express.js', 'REST APIs', 'CRUD'] },
   { icon: 'fa-solid fa-database', title: 'Database', skills: ['Supabase', 'MongoDB Atlas', 'SQL'] },
   { icon: 'fa-solid fa-wrench', title: 'Tools & Platforms', skills: ['GitHub', 'Postman', 'Figma', 'Render'] },
-  { icon: 'fa-solid fa-code', title: 'Concepts', skills: ['SMTP', 'Nodemailer', 'HTTPS', 'Promises', 'Async/Await'] },
+  { icon: 'fa-solid fa-code', title: 'Concepts', skills: ['OOPs', 'SMTP', 'Nodemailer', 'HTTPS', 'Promises', 'Async/Await'] },
   { icon: 'fa-solid fa-trophy', title: 'Certifications', skills: ['UiPath AI Associate', 'CodeChef 500'] },
 ];
 

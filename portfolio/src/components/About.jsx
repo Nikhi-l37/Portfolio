@@ -24,17 +24,17 @@ const cardAnim = {
 /* ===== reusable Bento Card ===== */
 function BentoCard({ children, className = '', glow = 'emerald' }) {
   const glows = {
-    emerald: 'hover:shadow-[0_0_40px_rgba(16,185,129,0.12)] hover:border-emerald-500/30',
-    cyan:    'hover:shadow-[0_0_40px_rgba(0,212,255,0.12)]   hover:border-cyan-400/30',
-    purple:  'hover:shadow-[0_0_40px_rgba(124,58,237,0.12)]  hover:border-purple-500/30',
+    emerald: 'hover:shadow-[0_20px_50px_rgba(0,0,0,0.3),0_0_40px_rgba(16,185,129,0.12)] hover:border-emerald-500/30',
+    cyan:    'hover:shadow-[0_20px_50px_rgba(0,0,0,0.3),0_0_40px_rgba(0,212,255,0.12)]   hover:border-cyan-400/30',
+    purple:  'hover:shadow-[0_20px_50px_rgba(0,0,0,0.3),0_0_40px_rgba(124,58,237,0.12)]  hover:border-purple-500/30',
   };
 
   return (
     <motion.div
       variants={cardAnim}
-      className={`relative overflow-hidden bg-card/80 backdrop-blur-sm border border-border
-                  rounded-[16px] p-6 float-2 transition-[transform,box-shadow,border-color] duration-400 ease-out
-                  will-change-transform backface-hidden
+      className={`group relative overflow-hidden bg-card/80 backdrop-blur-sm border border-border
+                  rounded-[16px] p-6 float-2 transition-[transform,box-shadow,border-color,background-color] duration-400 ease-out
+                  will-change-transform backface-hidden hover:bg-card-hover
                   ${glows[glow]} ${className}`}
       style={{ backfaceVisibility: 'hidden' }}
     >
@@ -112,24 +112,24 @@ export default function About() {
           >
             <div className="photo-card relative group cursor-pointer">
               {/* Glow backdrop */}
-              <div className="absolute -inset-5 rounded-full bg-gradient-to-br from-emerald-500/25 to-cyan-500/25
+              <div className="absolute -inset-5 rounded-full bg-gradient-to-br from-emerald-500/12 to-cyan-500/12
                               blur-2xl opacity-0 group-hover:opacity-100
-                              transition-opacity duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-none" />
+                              transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-none" />
 
               {/* Photo circle */}
               <div className="relative w-44 h-44 lg:w-52 lg:h-52 rounded-full overflow-hidden
                               ring-2 ring-emerald-500/20 ring-offset-2 ring-offset-card
-                              transition-[ring-color,box-shadow,transform] duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)]
-                              group-hover:ring-emerald-400/60 group-hover:shadow-[0_0_70px_rgba(16,185,129,0.3)]
-                              group-hover:scale-[1.06] group-hover:rotate-[1.5deg]">
+                              transition-[ring-color,box-shadow,transform] duration-[2200ms] ease-[cubic-bezier(0.22,1,0.36,1)]
+                              group-hover:ring-emerald-400/40 group-hover:shadow-[0_0_50px_rgba(16,185,129,0.15)]
+                              group-hover:scale-[1.02] group-hover:rotate-[0.3deg]">
                 <img
                   src={profileImg}
                   alt="Sivada Nikhil Reddy"
                   className="w-full h-full object-cover object-top
                              grayscale-[20%] contrast-[1.05] brightness-[0.95]
-                             transition-[filter,transform] duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)]
+                             transition-[filter,transform] duration-[2200ms] ease-[cubic-bezier(0.22,1,0.36,1)]
                              group-hover:grayscale-0 group-hover:contrast-[1.08] group-hover:brightness-100
-                             group-hover:scale-[1.12]"
+                             group-hover:scale-[1.03]"
                 />
                 {/* Shine sweep overlay */}
                 <div className="shine rounded-full" />
@@ -137,8 +137,8 @@ export default function About() {
 
               {/* Outer ring — breathing */}
               <div className="absolute -inset-3 rounded-full border border-emerald-500/10 pointer-events-none
-                              transition-[border-color,opacity] duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)]
-                              group-hover:border-emerald-400/40 group-hover:opacity-90
+                              transition-[border-color,opacity] duration-[1600ms] ease-[cubic-bezier(0.22,1,0.36,1)]
+                              group-hover:border-emerald-400/25 group-hover:opacity-90
                               animate-[pulse_3s_ease-in-out_infinite]" />
             </div>
           </BentoCard>
@@ -256,7 +256,7 @@ export default function About() {
             glow="emerald"
           >
             <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-4">
-              <Download className="w-7 h-7 text-emerald-400" />
+              <Download className="resume-arrow w-7 h-7 text-emerald-400" />
             </div>
             <h4 className="text-base font-bold text-heading mb-1">Want to know more?</h4>
             <p className="text-xs text-muted mb-5">Grab a copy of my resume</p>
@@ -273,7 +273,7 @@ export default function About() {
                          active:scale-95"
             >
               Download Resume
-              <ExternalLink className="resume-arrow w-3.5 h-3.5" />
+              <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </BentoCard>
 
