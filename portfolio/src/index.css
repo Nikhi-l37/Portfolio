@@ -128,12 +128,15 @@ a, button, [role="button"],
   transform: translateZ(0);
 }
 
-/* Disable page float on mobile — prevents jank and saves battery */
+/* Subtle page float on mobile — lighter than desktop to stay smooth */
 @media (max-width: 767px) {
   #floating-container {
-    animation: none;
-    will-change: auto;
+    animation: gentle-float-mobile 4s ease-in-out infinite alternate;
   }
+}
+@keyframes gentle-float-mobile {
+  0%   { transform: translateY(0) translateZ(0); }
+  100% { transform: translateY(-4px) translateZ(0); }
 }
 
 /* ===== Scroll-Reveal system (GPU-accelerated, transform+opacity only) ===== */
@@ -177,11 +180,20 @@ a, button, [role="button"],
   backface-visibility: hidden;
 }
 
-/* Disable card floats on mobile — prevents GPU jank on low-end devices */
+/* Subtle card floats on mobile — reduced amplitude */
+@keyframes card-float-mobile {
+  0%, 100% { transform: translateY(0) translateZ(0); }
+  50%      { transform: translateY(-4px) translateZ(0); }
+}
 @media (max-width: 767px) {
-  .float-1, .float-2, .float-3 {
-    animation: none;
-    will-change: auto;
+  .float-1 {
+    animation: card-float-mobile 3s ease-in-out infinite;
+  }
+  .float-2 {
+    animation: card-float-mobile 3s ease-in-out 0.4s infinite;
+  }
+  .float-3 {
+    animation: card-float-mobile 3s ease-in-out 0.8s infinite;
   }
 }
 
