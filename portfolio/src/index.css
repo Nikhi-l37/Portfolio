@@ -136,7 +136,7 @@ a, button, [role="button"],
 }
 @keyframes gentle-float-mobile {
   0%   { transform: translateY(0) translateZ(0); }
-  100% { transform: translateY(-4px) translateZ(0); }
+  100% { transform: translateY(-7px) translateZ(0); }
 }
 
 /* ===== Scroll-Reveal system (GPU-accelerated, transform+opacity only) ===== */
@@ -183,7 +183,7 @@ a, button, [role="button"],
 /* Subtle card floats on mobile — reduced amplitude */
 @keyframes card-float-mobile {
   0%, 100% { transform: translateY(0) translateZ(0); }
-  50%      { transform: translateY(-4px) translateZ(0); }
+  50%      { transform: translateY(-6px) translateZ(0); }
 }
 @media (max-width: 767px) {
   .float-1 {
