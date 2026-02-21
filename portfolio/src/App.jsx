@@ -19,7 +19,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <div id="page-wrapper">
+      <div id="floating-container">
         <Hero />
         <About />
         <Education />

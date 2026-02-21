@@ -48,7 +48,7 @@ export default function Education() {
             const isRight = i % 2 === 0;
 
             return (
-              <RevealWrapper key={item.degree} delay={i * 150}>
+              <RevealWrapper key={item.degree} delay={(i + 1) * 100}>
                 <div className={`relative flex flex-col md:flex-row items-center mb-16 last:mb-0 ${isRight ? 'md:justify-end' : 'md:justify-start'}`}>
 
                   {/* Card — mobile: full width, desktop: 45% on alternating sides */}

@@ -21,7 +21,7 @@ export default function Skills() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {SKILLS.map((category, i) => (
-            <RevealWrapper key={category.title} delay={i * 120}>
+            <RevealWrapper key={category.title} delay={(i + 1) * 100}>
               <SkillCategory {...category} />
             </RevealWrapper>
           ))}

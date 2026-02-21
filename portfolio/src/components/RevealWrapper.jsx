@@ -6,12 +6,8 @@ export default function RevealWrapper({ children, className = '', delay = 0, thr
   return (
     <div
       ref={ref}
-      className={`transition-[opacity,transform] duration-700 ease-out ${
-        isVisible
-          ? 'opacity-100 translate-y-0'
-          : 'opacity-0 translate-y-[50px]'
-      } ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
+      className={`reveal${isVisible ? ' is-visible' : ''} ${className}`}
+      style={delay > 0 ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}
     </div>

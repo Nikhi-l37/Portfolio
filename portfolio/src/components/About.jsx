@@ -33,9 +33,10 @@ function BentoCard({ children, className = '', glow = 'emerald' }) {
     <motion.div
       variants={cardAnim}
       className={`relative overflow-hidden bg-card/80 backdrop-blur-sm border border-border
-                  rounded-[16px] p-6 transition-[transform,box-shadow,border-color] duration-400 ease-out
-                  will-change-transform
+                  rounded-[16px] p-6 float-2 transition-[transform,box-shadow,border-color] duration-400 ease-out
+                  will-change-transform backface-hidden
                   ${glows[glow]} ${className}`}
+      style={{ backfaceVisibility: 'hidden' }}
     >
       {children}
     </motion.div>

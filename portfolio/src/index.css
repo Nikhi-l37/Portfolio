@@ -109,48 +109,57 @@ a, button, [role="button"],
   50% { opacity: 1; transform: scaleY(0.67); }
 }
 
-/* ===== Global page bounce — slow, gentle ===== */
-@keyframes page-bounce {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-10px); }
+/* ===== Global floating container — very slow, gentle ===== */
+@keyframes gentle-float {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-14px); }
 }
 
-#page-wrapper {
-  animation: page-bounce 3.5s ease-in-out infinite;
+#floating-container {
+  animation: gentle-float 2.8s ease-in-out infinite alternate;
   will-change: transform;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  pointer-events: auto;        /* children stay interactive */
+  pointer-events: auto;          /* children stay interactive */
+  transform: translateZ(0);      /* force GPU layer */
 }
 
-/* ===== Subtle card/button float — 2-3px, staggered ===== */
-@keyframes subtle-float-1 {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-4px); }
+/* ===== Scroll-Reveal system (GPU-accelerated, transform+opacity only) ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px) translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-@keyframes subtle-float-2 {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-5px); }
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) translateZ(0);
 }
-@keyframes subtle-float-3 {
+
+/* ===== Unified card/button float — same amplitude, staggered start ===== */
+@keyframes card-float {
   0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-4.5px); }
+  50%      { transform: translateY(-8px); }
 }
 
 .float-1 {
-  animation: subtle-float-1 3s ease-in-out infinite;
+  animation: card-float 2.8s ease-in-out infinite;
   will-change: transform;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
 .float-2 {
-  animation: subtle-float-2 3.5s ease-in-out 0.6s infinite;
+  animation: card-float 2.8s ease-in-out 0.4s infinite;
   will-change: transform;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
 .float-3 {
-  animation: subtle-float-3 3.8s ease-in-out 1.2s infinite;
+  animation: card-float 2.8s ease-in-out 0.8s infinite;
   will-change: transform;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
