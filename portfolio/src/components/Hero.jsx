@@ -11,7 +11,7 @@ export default function Hero() {
   });
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center pt-[100px] md:pt-[120px] pb-12 md:pb-20 overflow-hidden">
+    <section id="hero" className="relative min-h-[calc(100vh-70px)] md:min-h-screen flex items-center pt-[80px] md:pt-[120px] pb-10 md:pb-20 overflow-hidden">
       {/* Background glow */}
       <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full top-[-100px] md:top-[-200px] right-[-80px] md:right-[-150px] pointer-events-none opacity-20 md:opacity-30 animate-[float_8s_ease-in-out_infinite]"
            style={{ background: 'radial-gradient(circle, var(--color-accent-glow) 0%, transparent 70%)' }} />

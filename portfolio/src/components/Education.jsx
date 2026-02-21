@@ -40,7 +40,7 @@ export default function Education() {
         </RevealWrapper>
 
         {/* Timeline */}
-        <div className="relative pl-8 md:pl-0">
+        <div className="relative pl-8 md:pl-0 flex flex-col gap-10 md:gap-0">
           {/* Vertical line — left on mobile, center on desktop */}
           <div className="absolute left-[11px] md:left-1/2 top-0 bottom-0 w-[2px] md:-translate-x-1/2 bg-gradient-to-b from-accent via-accent-alt to-accent opacity-30" />
 
@@ -49,7 +49,7 @@ export default function Education() {
 
             return (
               <RevealWrapper key={item.degree} delay={(i + 1) * 100}>
-                <div className={`relative flex flex-col md:flex-row items-center mb-10 md:mb-16 last:mb-0 ${isRight ? 'md:justify-end' : 'md:justify-start'}`}>
+                <div className={`relative flex flex-col md:flex-row items-center md:mb-16 md:last:mb-0 ${isRight ? 'md:justify-end' : 'md:justify-start'}`}>
 
                   {/* Mobile dot — left side */}
                   <div className="md:hidden absolute left-[-21px] top-6 z-10">
