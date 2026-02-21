@@ -33,7 +33,7 @@ function BentoCard({ children, className = '', glow = 'emerald' }) {
     <motion.div
       variants={cardAnim}
       className={`group relative overflow-hidden bg-card/80 backdrop-blur-sm border border-border
-                  rounded-[16px] p-6 float-2 transition-[transform,box-shadow,border-color,background-color] duration-400 ease-out
+                  rounded-[16px] p-5 md:p-6 float-2 transition-[transform,box-shadow,border-color,background-color] duration-400 ease-out
                   will-change-transform backface-hidden hover:bg-card-hover
                   ${glows[glow]} ${className}`}
       style={{ backfaceVisibility: 'hidden' }}
@@ -46,7 +46,7 @@ function BentoCard({ children, className = '', glow = 'emerald' }) {
 /* ===== About Section ===== */
 export default function About() {
   return (
-    <section id="about" className="py-24">
+    <section id="about" className="py-16 md:py-24">
       <div className="max-w-[1100px] mx-auto px-6">
         {/* Section header */}
         <motion.div

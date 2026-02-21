@@ -54,14 +54,14 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24">
+    <section id="contact" className="py-16 md:py-24">
       <div className="max-w-[1100px] mx-auto px-6">
         <RevealWrapper>
           <SectionHeader number="05" title="Get In Touch" />
         </RevealWrapper>
 
         <RevealWrapper>
-          <p className="text-[1.05rem] text-muted max-w-[600px] mb-12">
+          <p className="text-[0.95rem] md:text-[1.05rem] text-muted max-w-[600px] mb-8 md:mb-12">
             I'm currently looking for new opportunities! Whether you have a question, a project idea,
             or just want to say hi — my inbox is always open.
           </p>

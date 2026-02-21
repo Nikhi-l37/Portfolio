@@ -33,16 +33,16 @@ const EDUCATION = [
 
 export default function Education() {
   return (
-    <section id="education" className="py-24">
+    <section id="education" className="py-16 md:py-24">
       <div className="max-w-[1100px] mx-auto px-6">
         <RevealWrapper>
           <SectionHeader number="02" title="Education" />
         </RevealWrapper>
 
         {/* Timeline */}
-        <div className="relative">
-          {/* Vertical center line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-accent via-accent-alt to-accent opacity-30 hidden md:block" />
+        <div className="relative pl-8 md:pl-0">
+          {/* Vertical line — left on mobile, center on desktop */}
+          <div className="absolute left-[11px] md:left-1/2 top-0 bottom-0 w-[2px] md:-translate-x-1/2 bg-gradient-to-b from-accent via-accent-alt to-accent opacity-30" />
 
           {EDUCATION.map((item, i) => {
             const isRight = i % 2 === 0;
@@ -50,6 +50,15 @@ export default function Education() {
             return (
               <RevealWrapper key={item.degree} delay={(i + 1) * 100}>
                 <div className={`relative flex flex-col md:flex-row items-center mb-10 md:mb-16 last:mb-0 ${isRight ? 'md:justify-end' : 'md:justify-start'}`}>
+
+                  {/* Mobile dot — left side */}
+                  <div className="md:hidden absolute left-[-21px] top-6 z-10">
+                    <div className={`w-3.5 h-3.5 rounded-full border-[2.5px]
+                      ${item.current
+                        ? 'bg-accent border-accent shadow-[0_0_10px_var(--color-accent-glow)]'
+                        : 'bg-accent-alt border-accent-alt shadow-[0_0_10px_rgba(124,58,237,0.4)]'
+                      }`} />
+                  </div>
 
                   {/* Card — mobile: full width, desktop: 45% on alternating sides */}
                   <div className={`w-full md:w-[45%] ${isRight ? 'md:ml-auto md:pl-0' : 'md:mr-auto md:pr-0'} order-2 md:order-none`}>

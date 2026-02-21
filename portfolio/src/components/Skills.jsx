@@ -13,7 +13,7 @@ const SKILLS = [
 
 export default function Skills() {
   return (
-    <section id="skills" className="py-24">
+    <section id="skills" className="py-16 md:py-24">
       <div className="max-w-[1100px] mx-auto px-6">
         <RevealWrapper>
           <SectionHeader number="04" title="Skills & Expertise" />

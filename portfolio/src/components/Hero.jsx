@@ -11,7 +11,7 @@ export default function Hero() {
   });
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center pt-[120px] pb-20 overflow-hidden">
+    <section id="hero" className="relative min-h-screen flex items-center pt-[100px] md:pt-[120px] pb-12 md:pb-20 overflow-hidden">
       {/* Background glow */}
       <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full top-[-100px] md:top-[-200px] right-[-80px] md:right-[-150px] pointer-events-none opacity-20 md:opacity-30 animate-[float_8s_ease-in-out_infinite]"
            style={{ background: 'radial-gradient(circle, var(--color-accent-glow) 0%, transparent 70%)' }} />
@@ -22,10 +22,10 @@ export default function Hero() {
         </RevealWrapper>
 
         <RevealWrapper delay={150}>
-          <h1 className="text-[clamp(2.8rem,7vw,5rem)] font-black text-heading leading-[1.1] mb-4 tracking-tighter min-h-[1.15em] relative">
+          <h1 className="text-[clamp(2rem,6vw,5rem)] font-black text-heading leading-[1.1] mb-4 tracking-tighter relative">
             <span className="inline relative">
-              {/* Reserve space */}
-              <span className="invisible font-inherit whitespace-pre pointer-events-none" aria-hidden="true">
+              {/* Reserve space — wraps naturally on mobile so height is correct */}
+              <span className="invisible font-inherit pointer-events-none" aria-hidden="true">
                 Sivada Nikhil Reddy.
               </span>
               {/* Typed text */}
@@ -39,18 +39,18 @@ export default function Hero() {
         </RevealWrapper>
 
         <RevealWrapper delay={300}>
-          <h2 className="text-[clamp(1.4rem,3.5vw,2.2rem)] font-semibold text-dim mb-6 tracking-tight">
+          <h2 className="text-[clamp(1.1rem,3vw,2.2rem)] font-semibold text-dim mb-5 md:mb-6 tracking-tight">
             I build scalable backend systems and modern web applications.
           </h2>
         </RevealWrapper>
 
         <RevealWrapper delay={450}>
-          <p className="text-[1.05rem] text-muted max-w-[540px] mb-6 md:mb-10 leading-relaxed">
+          <p className="text-[0.95rem] md:text-[1.05rem] text-muted max-w-[540px] mb-5 md:mb-10 leading-relaxed">
             Full-Stack Developer focused on building{' '}
             <strong className="text-heading font-semibold">scalable backend systems</strong> and{' '}
             <strong className="text-heading font-semibold">clean, responsive web applications</strong>.
           </p>
-          <p className="text-[1.05rem] text-muted max-w-[540px] mb-6 md:mb-10 leading-relaxed">
+          <p className="text-[0.95rem] md:text-[1.05rem] text-muted max-w-[540px] mb-5 md:mb-10 leading-relaxed">
             Strong in backend development with hands-on experience in{' '}
             <strong className="text-heading font-semibold">APIs</strong>,{' '}
             <strong className="text-heading font-semibold">databases</strong>, and{' '}

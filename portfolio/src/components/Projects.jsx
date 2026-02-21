@@ -31,7 +31,7 @@ const PROJECTS = [
 
 export default function Projects() {
   return (
-    <section id="projects" className="py-24">
+    <section id="projects" className="py-16 md:py-24">
       <div className="max-w-[1100px] mx-auto px-6">
         <RevealWrapper>
           <SectionHeader number="03" title="Projects" />
