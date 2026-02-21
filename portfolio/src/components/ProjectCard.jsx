@@ -1,7 +1,7 @@
 export default function ProjectCard({ title, subtitle, description, tags, liveUrl, repoUrl, delay = 0 }) {
   return (
     <article
-      className="group bg-card border border-border rounded-xl p-7 flex flex-col relative overflow-hidden
+      className="group bg-card border border-border rounded-xl p-5 md:p-7 flex flex-col relative overflow-hidden
                  float-2 will-change-transform transition-[box-shadow,border-color,background-color] duration-300 ease-out
                  hover:border-border-hover hover:bg-card-hover
                  hover:shadow-[0_20px_50px_rgba(0,0,0,0.3),0_0_40px_var(--color-accent-dim)]"
@@ -16,13 +16,13 @@ export default function ProjectCard({ title, subtitle, description, tags, liveUr
         <div className="flex gap-3">
           {liveUrl && (
             <a href={liveUrl} target="_blank" rel="noopener" aria-label="Live Demo"
-               className="text-dim text-lg p-1.5 rounded-md transition-colors hover:text-accent hover:bg-accent-dim">
+               className="text-dim text-lg p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md transition-colors hover:text-accent hover:bg-accent-dim">
               <i className="fa-solid fa-arrow-up-right-from-square" />
             </a>
           )}
           {repoUrl && (
             <a href={repoUrl} target="_blank" rel="noopener" aria-label="GitHub Repo"
-               className="text-dim text-lg p-1.5 rounded-md transition-colors hover:text-accent hover:bg-accent-dim">
+               className="text-dim text-lg p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md transition-colors hover:text-accent hover:bg-accent-dim">
               <i className="fa-brands fa-github" />
             </a>
           )}

@@ -55,7 +55,11 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 70px;
-  scrollbar-gutter: stable;
+}
+
+/* Only reserve scrollbar gutter on desktop (mobile has overlay scrollbars) */
+@media (min-width: 768px) {
+  html { scrollbar-gutter: stable; }
 }
 
 body {
@@ -120,8 +124,16 @@ a, button, [role="button"],
   will-change: transform;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  pointer-events: auto;          /* children stay interactive */
-  transform: translateZ(0);      /* force GPU layer */
+  pointer-events: auto;
+  transform: translateZ(0);
+}
+
+/* Disable page float on mobile — prevents jank and saves battery */
+@media (max-width: 767px) {
+  #floating-container {
+    animation: none;
+    will-change: auto;
+  }
 }
 
 /* ===== Scroll-Reveal system (GPU-accelerated, transform+opacity only) ===== */
@@ -163,6 +175,14 @@ a, button, [role="button"],
   will-change: transform;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+}
+
+/* Disable card floats on mobile — prevents GPU jank on low-end devices */
+@media (max-width: 767px) {
+  .float-1, .float-2, .float-3 {
+    animation: none;
+    will-change: auto;
+  }
 }
 
 /* ===== Profile photo shine sweep on hover ===== */

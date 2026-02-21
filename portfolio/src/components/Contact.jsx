@@ -165,7 +165,7 @@ export default function Contact() {
                   <div>
                     <h4 className="text-xs font-semibold text-dim uppercase tracking-wider mb-0.5">{label}</h4>
                     {href ? (
-                      <a href={href} className="text-[0.92rem] text-muted hover:text-accent transition-colors">{value}</a>
+                      <a href={href} className="text-[0.92rem] text-muted hover:text-accent transition-colors break-all">{value}</a>
                     ) : (
                       <p className="text-[0.92rem] text-muted">{value}</p>
                     )}

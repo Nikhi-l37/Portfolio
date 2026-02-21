@@ -105,9 +105,9 @@ export default function About() {
             </div>
           </BentoCard>
 
-          {/* ─── ROW 1 — Photo Card (col 3, square) ─── */}
+          {/* ─── ROW 1 — Photo Card (col 3, square on desktop) ─── */}
           <BentoCard
-            className="flex items-center justify-center aspect-square"
+            className="flex items-center justify-center md:aspect-square py-10 md:py-0"
             glow="cyan"
           >
             <div className="photo-card relative group cursor-pointer">

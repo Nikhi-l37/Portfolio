@@ -13,7 +13,7 @@ export default function Hero() {
   return (
     <section id="hero" className="relative min-h-screen flex items-center pt-[120px] pb-20 overflow-hidden">
       {/* Background glow */}
-      <div className="absolute w-[600px] h-[600px] rounded-full top-[-200px] right-[-150px] pointer-events-none opacity-30 animate-[float_8s_ease-in-out_infinite]"
+      <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full top-[-100px] md:top-[-200px] right-[-80px] md:right-[-150px] pointer-events-none opacity-20 md:opacity-30 animate-[float_8s_ease-in-out_infinite]"
            style={{ background: 'radial-gradient(circle, var(--color-accent-glow) 0%, transparent 70%)' }} />
 
       <div className="relative z-10 max-w-[1100px] mx-auto px-6 w-full">
@@ -45,12 +45,12 @@ export default function Hero() {
         </RevealWrapper>
 
         <RevealWrapper delay={450}>
-          <p className="text-[1.05rem] text-muted max-w-[540px] mb-10 leading-relaxed">
+          <p className="text-[1.05rem] text-muted max-w-[540px] mb-6 md:mb-10 leading-relaxed">
             Full-Stack Developer focused on building{' '}
             <strong className="text-heading font-semibold">scalable backend systems</strong> and{' '}
             <strong className="text-heading font-semibold">clean, responsive web applications</strong>.
           </p>
-          <p className="text-[1.05rem] text-muted max-w-[540px] mb-10 leading-relaxed">
+          <p className="text-[1.05rem] text-muted max-w-[540px] mb-6 md:mb-10 leading-relaxed">
             Strong in backend development with hands-on experience in{' '}
             <strong className="text-heading font-semibold">APIs</strong>,{' '}
             <strong className="text-heading font-semibold">databases</strong>, and{' '}

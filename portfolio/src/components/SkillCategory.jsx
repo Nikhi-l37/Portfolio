@@ -1,7 +1,7 @@
 export default function SkillCategory({ icon, title, skills, delay = 0 }) {
   return (
     <div
-      className="group h-full bg-card border border-border rounded-xl py-7 px-6 text-center
+      className="group h-full bg-card border border-border rounded-xl py-5 px-4 md:py-7 md:px-6 text-center
                  float-3 will-change-transform transition-[box-shadow,border-color] duration-300 ease-out
                  hover:border-border-hover
                  hover:shadow-[0_12px_40px_rgba(0,0,0,0.25)]"

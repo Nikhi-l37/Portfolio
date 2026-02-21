@@ -76,14 +76,21 @@ export default function Navbar() {
               ${menuOpen ? 'top-[17px] -rotate-45' : 'top-[21px]'}`} />
           </button>
 
+          {/* Mobile backdrop overlay */}
+          {menuOpen && (
+            <div
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[998] md:hidden"
+              onClick={toggleMenu}
+            />
+          )}
+
           {/* Nav Links */}
           <ul className={`list-none flex items-center gap-1
-            md:flex md:static md:w-auto md:max-w-none md:h-auto md:flex-row md:p-0 md:bg-transparent md:border-none md:shadow-none
-            ${menuOpen
-              ? 'fixed top-0 right-0 w-[70%] max-w-[320px] h-screen bg-secondary flex-col items-start pt-24 px-8 gap-1 border-l border-border shadow-[-10px_0_40px_rgba(0,0,0,0.5)]'
-              : 'fixed top-0 -right-full w-[70%] max-w-[320px] h-screen bg-secondary flex-col items-start pt-24 px-8 gap-1 border-l border-border md:relative md:right-0 md:h-auto md:flex-row md:items-center md:pt-0 md:px-0'
-            }
-            transition-[right] duration-400 ease-out`}
+            md:flex md:static md:w-auto md:max-w-none md:h-auto md:flex-row md:p-0 md:bg-transparent md:border-none md:shadow-none md:translate-x-0
+            fixed top-0 right-0 w-[70%] max-w-[320px] h-screen bg-secondary flex-col items-start pt-24 px-8 gap-1 border-l border-border shadow-[-10px_0_40px_rgba(0,0,0,0.5)]
+            z-[999] transition-transform duration-300 ease-out
+            ${menuOpen ? 'translate-x-0' : 'translate-x-full'}
+            md:relative md:h-auto md:flex-row md:items-center md:pt-0 md:px-0 md:shadow-none md:border-none`}
           >
             {NAV_LINKS.map(({ label, href }) => (
               <li key={href}>
@@ -98,6 +105,22 @@ export default function Navbar() {
                 </a>
               </li>
             ))}
+
+            {/* Theme + GitHub — visible inside mobile menu */}
+            <li className="md:hidden flex items-center gap-2 mt-6 pt-4 border-t border-border w-full">
+              <button
+                onClick={toggleTheme}
+                aria-label="Toggle theme"
+                className="w-10 h-10 flex items-center justify-center text-muted hover:text-accent
+                           hover:bg-accent-dim rounded-lg transition-colors duration-300 cursor-pointer"
+              >
+                <i className={`text-base ${theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'}`} />
+              </button>
+              <a href="https://github.com/Nikhi-I37" target="_blank" rel="noopener"
+                 className="w-10 h-10 flex items-center justify-center text-muted hover:text-accent hover:bg-accent-dim rounded-lg transition-colors">
+                <i className="fa-brands fa-github text-base" />
+              </a>
+            </li>
           </ul>
 
           {/* Divider + Icon buttons — always visible on desktop */}

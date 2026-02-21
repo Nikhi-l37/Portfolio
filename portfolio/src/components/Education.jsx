@@ -49,11 +49,11 @@ export default function Education() {
 
             return (
               <RevealWrapper key={item.degree} delay={(i + 1) * 100}>
-                <div className={`relative flex flex-col md:flex-row items-center mb-16 last:mb-0 ${isRight ? 'md:justify-end' : 'md:justify-start'}`}>
+                <div className={`relative flex flex-col md:flex-row items-center mb-10 md:mb-16 last:mb-0 ${isRight ? 'md:justify-end' : 'md:justify-start'}`}>
 
                   {/* Card — mobile: full width, desktop: 45% on alternating sides */}
                   <div className={`w-full md:w-[45%] ${isRight ? 'md:ml-auto md:pl-0' : 'md:mr-auto md:pr-0'} order-2 md:order-none`}>
-                    <div className="group relative bg-card border border-border rounded-xl p-7
+                    <div className="group relative bg-card border border-border rounded-xl p-5 md:p-7
                                     float-1 will-change-transform transition-[box-shadow,border-color] duration-300 ease-out
                                     hover:border-border-hover hover:shadow-[0_16px_40px_rgba(0,0,0,0.3),0_0_30px_var(--color-accent-dim)]">
 
