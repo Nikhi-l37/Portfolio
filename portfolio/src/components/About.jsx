@@ -109,28 +109,35 @@ export default function About() {
             className="flex items-center justify-center aspect-square"
             glow="cyan"
           >
-            <div className="relative group cursor-pointer">
-              <div className="absolute -inset-4 rounded-full bg-gradient-to-br from-emerald-500/30 to-cyan-500/30
-                              blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+            <div className="photo-card relative group cursor-pointer">
+              {/* Glow backdrop */}
+              <div className="absolute -inset-5 rounded-full bg-gradient-to-br from-emerald-500/25 to-cyan-500/25
+                              blur-2xl opacity-0 group-hover:opacity-100
+                              transition-opacity duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-none" />
 
+              {/* Photo circle */}
               <div className="relative w-44 h-44 lg:w-52 lg:h-52 rounded-full overflow-hidden
                               ring-2 ring-emerald-500/20 ring-offset-2 ring-offset-card
-                              transition-[ring-color,box-shadow,transform] duration-700 ease-out
-                              group-hover:ring-emerald-400/60 group-hover:shadow-[0_0_60px_rgba(16,185,129,0.25)]
-                              group-hover:scale-105">
+                              transition-[ring-color,box-shadow,transform] duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)]
+                              group-hover:ring-emerald-400/60 group-hover:shadow-[0_0_70px_rgba(16,185,129,0.3)]
+                              group-hover:scale-[1.06] group-hover:rotate-[1.5deg]">
                 <img
                   src={profileImg}
                   alt="Sivada Nikhil Reddy"
                   className="w-full h-full object-cover object-top
-                             grayscale-[20%] contrast-[1.05]
-                             transition-[filter,transform] duration-700 ease-out
-                             group-hover:grayscale-0 group-hover:contrast-[1.1] group-hover:scale-115"
+                             grayscale-[20%] contrast-[1.05] brightness-[0.95]
+                             transition-[filter,transform] duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)]
+                             group-hover:grayscale-0 group-hover:contrast-[1.08] group-hover:brightness-100
+                             group-hover:scale-[1.12]"
                 />
+                {/* Shine sweep overlay */}
+                <div className="shine rounded-full" />
               </div>
 
+              {/* Outer ring — breathing */}
               <div className="absolute -inset-3 rounded-full border border-emerald-500/10 pointer-events-none
-                              transition-[border-color,opacity] duration-700
-                              group-hover:border-emerald-400/30 group-hover:opacity-80
+                              transition-[border-color,opacity] duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)]
+                              group-hover:border-emerald-400/40 group-hover:opacity-90
                               animate-[pulse_3s_ease-in-out_infinite]" />
             </div>
           </BentoCard>
@@ -257,16 +264,15 @@ export default function About() {
               target="_blank"
               rel="noopener"
               onClick={fireCenterConfetti}
-              className="inline-flex items-center gap-2 px-5 py-2.5
+              className="resume-btn group/btn inline-flex items-center gap-2 px-6 py-2.5
                          bg-accent-dim backdrop-blur-md
                          border border-emerald-500/25 text-emerald-400 text-sm font-semibold rounded-full
-                         float-1 transition-[box-shadow,background-color,border-color,color] duration-300
-                         hover:bg-emerald-500/10 hover:border-emerald-400/40
-                         hover:shadow-[0_0_25px_rgba(16,185,129,0.15)]
+                         transition-[background-color,border-color,color] duration-300
+                         hover:bg-emerald-500/10 hover:border-emerald-400/50
                          active:scale-95"
             >
               Download Resume
-              <ExternalLink className="w-3.5 h-3.5" />
+              <ExternalLink className="resume-arrow w-3.5 h-3.5" />
             </a>
           </BentoCard>
 
