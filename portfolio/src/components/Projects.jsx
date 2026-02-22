@@ -32,7 +32,7 @@ const PROJECTS = [
     description:
       'Built an Android app to track screen time of selected apps, set usage rules, and generate streaks when users follow their limits.',
     tags: ['Android', 'Java', 'Screen Time', 'Habit Tracking'],
-    repoUrl: 'https://github.com/Nikhi-l37/Screen-Tracker',
+    repoUrl: 'https://github.com/Nikhi-137/Screen-Tracker',
     icon: 'fa-solid fa-mobile-screen',
     accent: 'purple',
   },

@@ -8,7 +8,7 @@ const EMAIL_PHRASES = ['you@example.com', 'What is your best email?'];
 const MESSAGE_PHRASES = ["What's on your mind?", "Let's talk about a project!", 'I have a question about Vedic Vox...'];
 
 const SOCIALS = [
-  { icon: 'fa-brands fa-github', url: 'https://github.com/Nikhi-l37', label: 'GitHub' },
+  { icon: 'fa-brands fa-github', url: 'https://github.com/Nikhi-137', label: 'GitHub' },
   { icon: 'fa-brands fa-linkedin-in', url: 'https://linkedin.com/in/sivada-nikhil-reddy-409706292', label: 'LinkedIn' },
   { icon: 'fa-solid fa-code', url: 'https://www.geeksforgeeks.org/profile/snikhilre097c', label: 'GeeksforGeeks' },
   { icon: 'fa-solid fa-laptop-code', url: 'https://leetcode.com/u/NikhilReddy3446/', label: 'LeetCode' },
