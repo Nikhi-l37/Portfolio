@@ -71,7 +71,7 @@ export default function Contact() {
           {/* Form */}
           <RevealWrapper>
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              <input type="hidden" name="access_key" value="1cd41c31-68bf-4e0a-b432-2de3138020f7" />
+              <input type="hidden" name="access_key" value={import.meta.env.VITE_WEB3FORMS_KEY} />
               <input type="hidden" name="subject" value="New message from Portfolio" />
               <input type="checkbox" name="botcheck" className="hidden" />
               <div className="flex flex-col gap-1.5">
@@ -176,7 +176,7 @@ export default function Contact() {
               {/* Social Icons */}
               <div className="flex gap-3.5 mt-3">
                 {SOCIALS.map(({ icon, url, label }) => (
-                  <a key={label} href={url} target="_blank" rel="noopener" aria-label={label}
+                  <a key={label} href={url} target="_blank" rel="noopener noreferrer" aria-label={label}
                      className="w-12 h-12 flex items-center justify-center bg-card border border-border rounded-full
                                 text-muted text-lg float-2 will-change-transform
                                 transition-[box-shadow,background-color,border-color,color] duration-300 ease-out

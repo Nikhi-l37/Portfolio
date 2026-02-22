@@ -38,6 +38,11 @@ export default function Navbar() {
     return () => observer.disconnect();
   }, []);
 
+  // Reset overflow on unmount (e.g. if component unmounts while menu is open)
+  useEffect(() => {
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
   const handleClick = (e, href) => {
     e.preventDefault();
     setMenuOpen(false);
@@ -116,7 +121,7 @@ export default function Navbar() {
               >
                 <i className={`text-base ${theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'}`} />
               </button>
-              <a href="https://github.com/Nikhi-I37" target="_blank" rel="noopener"
+              <a href="https://github.com/Nikhi-I37" target="_blank" rel="noopener noreferrer"
                  className="w-10 h-10 flex items-center justify-center text-muted hover:text-accent hover:bg-accent-dim rounded-lg transition-colors">
                 <i className="fa-brands fa-github text-base" />
               </a>
@@ -133,7 +138,7 @@ export default function Navbar() {
             >
               <i className={`text-base ${theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'}`} />
             </button>
-            <a href="https://github.com/Nikhi-I37" target="_blank" rel="noopener"
+            <a href="https://github.com/Nikhi-I37" target="_blank" rel="noopener noreferrer"
                className="w-9 h-9 flex items-center justify-center text-muted hover:text-accent hover:bg-accent-dim rounded-lg transition-colors">
               <i className="fa-brands fa-github text-base" />
             </a>
