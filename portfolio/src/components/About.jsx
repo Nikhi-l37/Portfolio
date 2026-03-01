@@ -3,10 +3,10 @@ import {
   Download, ExternalLink, Sparkles,
 } from 'lucide-react';
 import SectionHeader from './SectionHeader';
-import RevealWrapper from './RevealWrapper';
-import profileImg from '../assets/Nikhil.jpg';
 import { fireCenterConfetti } from '../utils/confetti';
 import { useTheme } from '../hooks/useTheme';
+import { useRef } from 'react';
+import { useGSAPScrollReveal } from '../hooks/useGSAPAnimations';
 
 /* ===== theme-aware accent helpers ===== */
 const GLOW_DARK = {
@@ -34,10 +34,6 @@ const A_DARK = {
   orbBg:    'bg-emerald-500/8',
   orbAlt:   'bg-cyan-500/5',
   orbEm:    'bg-emerald-500/5',
-  ring:     'ring-emerald-500/20',
-  ringHover:'group-hover:ring-emerald-400/40 group-hover:shadow-[0_0_50px_rgba(16,185,129,0.15)]',
-  outerRing:'border-emerald-500/10',
-  outerHov: 'group-hover:border-emerald-400/25',
   resumeBorder:'border-emerald-500/25',
   resumeText:  'text-emerald-400',
   resumeHover: 'hover:bg-emerald-500/10 hover:border-emerald-400/50',
@@ -59,10 +55,6 @@ const A_LIGHT = {
   orbBg:    'bg-emerald-400/10',
   orbAlt:   'bg-cyan-400/8',
   orbEm:    'bg-emerald-400/8',
-  ring:     'ring-emerald-400/30',
-  ringHover:'group-hover:ring-emerald-500/50 group-hover:shadow-[0_0_40px_rgba(16,185,129,0.12)]',
-  outerRing:'border-emerald-400/15',
-  outerHov: 'group-hover:border-emerald-500/30',
   resumeBorder:'border-emerald-400/35',
   resumeText:  'text-emerald-700',
   resumeHover: 'hover:bg-emerald-500/8 hover:border-emerald-500/50',
@@ -76,14 +68,14 @@ function BentoCard({ children, className = '', glow = 'emerald', isLight }) {
   const glows = isLight ? GLOW_LIGHT : GLOW_DARK;
 
   return (
-    <RevealWrapper
-      className={`group relative overflow-hidden bg-card/80 backdrop-blur-sm border border-border
+    <div
+      className={`gsap-card group relative overflow-hidden bg-card/80 backdrop-blur-sm border border-border
                   rounded-[16px] p-5 md:p-6 float-2 transition-[transform,box-shadow,border-color,background-color] duration-400 ease-out
                   will-change-transform backface-hidden hover:bg-card-hover
                   ${glows[glow]} ${className}`}
     >
       {children}
-    </RevealWrapper>
+    </div>
   );
 }
 
@@ -92,20 +84,20 @@ export default function About() {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const a = isLight ? A_LIGHT : A_DARK;
+  const sectionRef = useRef(null);
+  useGSAPScrollReveal(sectionRef);
 
   return (
-    <section id="about" className="py-16 md:py-24">
+    <section id="about" ref={sectionRef} className="py-16 md:py-24">
       <div className="max-w-[1100px] mx-auto px-6">
         {/* Section header */}
-        <RevealWrapper>
-          <SectionHeader number="01" title="About Me" />
-        </RevealWrapper>
+        <SectionHeader number="01" title="About Me" />
 
         {/* ===== Bento Grid — 3 col, 24px gap ===== */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-          {/* ─── ROW 1 — Hero Card (col 1-2) ─── */}
-          <BentoCard className="md:col-span-2 flex flex-col justify-center" glow="emerald" isLight={isLight}>
+          {/* ─── ROW 1 — Hero Card (full width) ─── */}
+          <BentoCard className="md:col-span-3 flex flex-col justify-center" glow="emerald" isLight={isLight}>
             <div className={`absolute -top-20 -left-20 w-60 h-60 ${a.orbBg} rounded-full blur-3xl pointer-events-none`} />
 
             <div className="relative z-10">
@@ -136,41 +128,6 @@ export default function About() {
               <p className="text-muted text-sm leading-relaxed max-w-xl">
                 I enjoy solving real-world problems and continuously improving my technical skills.
               </p>
-            </div>
-          </BentoCard>
-
-          {/* ─── ROW 1 — Photo Card (col 3, square on desktop) ─── */}
-          <BentoCard className="flex items-center justify-center md:aspect-square py-10 md:py-0" glow="cyan" isLight={isLight}>
-            <div className="photo-card relative group cursor-pointer">
-              {/* Glow backdrop */}
-              <div className={`absolute -inset-5 rounded-full bg-gradient-to-br ${isLight ? 'from-emerald-400/8 to-cyan-400/8' : 'from-emerald-500/12 to-cyan-500/12'}
-                              blur-2xl opacity-0 group-hover:opacity-100
-                              transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-none`} />
-
-              {/* Photo circle */}
-              <div className={`relative w-44 h-44 lg:w-52 lg:h-52 rounded-full overflow-hidden
-                              ring-2 ${a.ring} ring-offset-2 ring-offset-card
-                              transition-[ring-color,box-shadow,transform] duration-[2200ms] ease-[cubic-bezier(0.22,1,0.36,1)]
-                              ${a.ringHover}
-                              group-hover:scale-[1.02] group-hover:rotate-[0.3deg]`}>
-                <img
-                  src={profileImg}
-                  alt="Sivada Nikhil Reddy"
-                  className="w-full h-full object-cover object-top
-                             grayscale-[20%] contrast-[1.05] brightness-[0.95]
-                             transition-[filter,transform] duration-[2200ms] ease-[cubic-bezier(0.22,1,0.36,1)]
-                             group-hover:grayscale-0 group-hover:contrast-[1.08] group-hover:brightness-100
-                             group-hover:scale-[1.03]"
-                />
-                {/* Shine sweep overlay */}
-                <div className="shine rounded-full" />
-              </div>
-
-              {/* Outer ring — breathing */}
-              <div className={`absolute -inset-3 rounded-full border ${a.outerRing} pointer-events-none
-                              transition-[border-color,opacity] duration-[1600ms] ease-[cubic-bezier(0.22,1,0.36,1)]
-                              ${a.outerHov} group-hover:opacity-90
-                              animate-[pulse_3s_ease-in-out_infinite]`} />
             </div>
           </BentoCard>
 

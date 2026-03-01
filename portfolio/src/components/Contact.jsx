@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import RevealWrapper from './RevealWrapper';
+import { useState, useRef } from 'react';
 import SectionHeader from './SectionHeader';
 import TypewriterInput from './TypewriterInput';
+import { useGSAPScrollReveal } from '../hooks/useGSAPAnimations';
 
 const NAME_PHRASES = ['Enter your name...', 'How should I call you?'];
 const EMAIL_PHRASES = ['you@example.com', 'What is your best email?'];
@@ -33,6 +33,8 @@ const SOCIALS = [
 export default function Contact() {
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
   const [formKey, setFormKey] = useState(0);
+  const sectionRef = useRef(null);
+  useGSAPScrollReveal(sectionRef);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,27 +72,22 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-16 md:py-24">
+    <section id="contact" ref={sectionRef} className="py-16 md:py-24">
       <div className="max-w-[1100px] mx-auto px-6">
-        <RevealWrapper>
-          <SectionHeader number="05" title="Get In Touch" />
-        </RevealWrapper>
+        <SectionHeader number="05" title="Get In Touch" />
 
-        <RevealWrapper>
-          <p className="text-[0.95rem] md:text-[1.05rem] text-muted max-w-[600px] mb-8 md:mb-12">
+        <p className="gsap-text text-[0.95rem] md:text-[1.05rem] text-muted max-w-[600px] mb-8 md:mb-12">
             I'm currently looking for new opportunities! Whether you have a question, a project idea,
             or just want to say hi — my inbox is always open.
-          </p>
-        </RevealWrapper>
+        </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Form */}
-          <RevealWrapper>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <input type="hidden" name="access_key" value={import.meta.env.VITE_WEB3FORMS_KEY} />
               <input type="hidden" name="subject" value="New message from Portfolio" />
               <input type="checkbox" name="botcheck" className="hidden" />
-              <div className="flex flex-col gap-1.5">
+              <div className="gsap-form-field flex flex-col gap-1.5">
                 <label htmlFor="name" className="text-xs font-semibold text-dim uppercase tracking-wider">
                   Name
                 </label>
@@ -103,7 +100,7 @@ export default function Contact() {
                              focus:border-accent focus:shadow-[0_0_0_3px_var(--color-accent-dim)]"
                 />
               </div>
-              <div className="flex flex-col gap-1.5">
+              <div className="gsap-form-field flex flex-col gap-1.5">
                 <label htmlFor="email" className="text-xs font-semibold text-dim uppercase tracking-wider">
                   Email
                 </label>
@@ -116,7 +113,7 @@ export default function Contact() {
                              focus:border-accent focus:shadow-[0_0_0_3px_var(--color-accent-dim)]"
                 />
               </div>
-              <div className="flex flex-col gap-1.5">
+              <div className="gsap-form-field flex flex-col gap-1.5">
                 <label htmlFor="message" className="text-xs font-semibold text-dim uppercase tracking-wider">
                   Message
                 </label>
@@ -133,7 +130,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={status === 'sending'}
-                className={`inline-flex items-center justify-center gap-2.5 w-full px-7 py-3.5 text-[0.95rem] font-semibold rounded-lg
+                className={`gsap-form-field inline-flex items-center justify-center gap-2.5 w-full px-7 py-3.5 text-[0.95rem] font-semibold rounded-lg
                   cursor-pointer transition-[transform,box-shadow,opacity,background-color,color] duration-300 ease-out border-none
                   ${btnClass[status]}`}
               >
@@ -162,19 +159,17 @@ export default function Contact() {
                   </>
                 )}
               </button>
-            </form>
-          </RevealWrapper>
+          </form>
 
           {/* Contact Info */}
-          <RevealWrapper delay={150}>
-            <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5">
               {[
                 { icon: 'fa-solid fa-envelope', label: 'Email', value: 's.nikhilreddy3446@gmail.com', href: 'mailto:s.nikhilreddy3446@gmail.com' },
                 { icon: 'fa-solid fa-phone', label: 'Phone', value: '+91 8008043446', href: 'tel:+918008043446' },
                 { icon: 'fa-solid fa-location-dot', label: 'Location', value: 'India' },
               ].map(({ icon, label, value, href }) => (
                 <div key={label}
-                  className="flex items-center gap-4 p-5 bg-card border border-border rounded-lg float-3 transition-[border-color,box-shadow] duration-300 ease-out hover:border-border-hover">
+                  className="gsap-contact-item flex items-center gap-4 p-5 bg-card border border-border rounded-lg float-3 transition-[border-color,box-shadow] duration-300 ease-out hover:border-border-hover">
                   <div className="w-11 h-11 rounded-full bg-accent-dim flex items-center justify-center text-xl text-accent shrink-0">
                     <i className={icon} />
                   </div>
@@ -193,7 +188,7 @@ export default function Contact() {
               <div className="flex gap-3.5 mt-3">
                 {SOCIALS.map(({ icon, svg, url, label }) => (
                   <a key={label} href={url} target="_blank" rel="noopener noreferrer" aria-label={label}
-                     className="w-12 h-12 flex items-center justify-center bg-card border border-border rounded-full
+                     className="gsap-contact-item w-12 h-12 flex items-center justify-center bg-card border border-border rounded-full
                                 text-muted text-lg float-2 will-change-transform
                                 transition-[box-shadow,background-color,border-color,color] duration-300 ease-out
                                 hover:bg-accent hover:border-accent hover:text-primary
@@ -202,8 +197,7 @@ export default function Contact() {
                   </a>
                 ))}
               </div>
-            </div>
-          </RevealWrapper>
+          </div>
         </div>
       </div>
     </section>

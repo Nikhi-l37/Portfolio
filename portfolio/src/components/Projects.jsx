@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import RevealWrapper from './RevealWrapper';
 import SectionHeader from './SectionHeader';
 import { useTheme } from '../hooks/useTheme';
+import { useGSAPScrollReveal } from '../hooks/useGSAPAnimations';
 import pageFlipSound from '../assets/freesound_community-small-page-103398.mp3';
 
 /* ───────────── project data ───────────── */
@@ -178,6 +178,8 @@ export default function Projects() {
   const [flipping, setFlipping] = useState(null);   // page index being flipped
   const [flipDir, setFlipDir] = useState(null);      // 'next' | 'prev'
   const busy = useRef(false);
+  const sectionRef = useRef(null);
+  useGSAPScrollReveal(sectionRef);
 
   // Touch/swipe
   const touchX = useRef(null);
@@ -200,13 +202,6 @@ export default function Projects() {
     }, 1000);
   }, [currentPage, total]);
 
-  /* jump to any page index (flips one step at a time visually) */
-  const goTo = useCallback((target) => {
-    if (busy.current || target === currentPage || target < 0 || target >= total) return;
-    if (target > currentPage) goNext();
-    else goPrev();
-  }, [currentPage, total]);
-
   const goPrev = useCallback(() => {
     if (busy.current || currentPage <= 0) return;
     busy.current = true;
@@ -219,6 +214,13 @@ export default function Projects() {
       busy.current = false;
     }, 1000);
   }, [currentPage]);
+
+  /* jump to any page index (flips one step at a time visually) */
+  const goTo = useCallback((target) => {
+    if (busy.current || target === currentPage || target < 0 || target >= total) return;
+    if (target > currentPage) goNext();
+    else goPrev();
+  }, [currentPage, total, goNext, goPrev]);
 
   /* ── keyboard ── */
   useEffect(() => {
@@ -261,14 +263,11 @@ export default function Projects() {
   }, [goNext, goPrev]);
 
   return (
-    <section id="projects" className="py-16 md:py-24">
+    <section id="projects" ref={sectionRef} className="py-16 md:py-24">
       <div className="max-w-[1100px] mx-auto px-6">
-        <RevealWrapper>
-          <SectionHeader number="03" title="Projects" />
-        </RevealWrapper>
+        <SectionHeader number="03" title="Projects" />
 
-        <RevealWrapper delay={150}>
-          <div className="book-perspective mx-auto max-w-2xl">
+        <div className="gsap-card book-perspective mx-auto max-w-2xl">
             {/* The 3D book */}
             <div
               className="book-container relative w-full"
@@ -386,8 +385,7 @@ export default function Projects() {
             <p className="text-center text-dim/40 text-xs mt-3 md:hidden">
               Swipe left or right to flip pages
             </p>
-          </div>
-        </RevealWrapper>
+        </div>
       </div>
     </section>
   );

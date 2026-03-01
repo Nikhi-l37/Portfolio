@@ -71,6 +71,12 @@ body {
   overflow-x: hidden;
 }
 
+/* Hide default cursor on desktop when custom cursor is active */
+@media (min-width: 768px) and (pointer: fine) {
+  html { cursor: none !important; }
+  *, *::before, *::after { cursor: none !important; }
+}
+
 /* ===== GPU-accelerate interactive elements to prevent layout shift ===== */
 a, button, [role="button"],
 .group, article, .gpu-layer {
@@ -107,10 +113,16 @@ a, button, [role="button"],
   50% { transform: translate(-30px, 20px) scale(1.05); }
 }
 
-/* ===== Scroll pulse ===== */
-@keyframes scroll-pulse {
-  0%, 100% { opacity: 0.3; transform: scaleY(1); }
-  50% { opacity: 1; transform: scaleY(0.67); }
+/* ===== Scroll indicator bounce ===== */
+@keyframes scrollBounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(12px);
+    opacity: 0.3;
+  }
 }
 
 /* ===== Global floating container — very slow, gentle ===== */
@@ -137,22 +149,6 @@ a, button, [role="button"],
 @keyframes gentle-float-mobile {
   0%   { transform: translateY(0) translateZ(0); }
   100% { transform: translateY(-7px) translateZ(0); }
-}
-
-/* ===== Scroll-Reveal system (GPU-accelerated, transform+opacity only) ===== */
-.reveal {
-  opacity: 0;
-  transform: translateY(30px) translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  will-change: transform, opacity;
-  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0) translateZ(0);
 }
 
 /* ===== Unified card/button float — same amplitude, staggered start ===== */

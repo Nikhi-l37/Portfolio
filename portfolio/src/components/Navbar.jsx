@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useTheme } from '../hooks/useTheme';
+import gsap from 'gsap';
 
 const NAV_LINKS = [
   { label: 'Home', href: '#hero' },
@@ -15,6 +16,15 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const navRef = useRef(null);
+
+  // GSAP entrance
+  useLayoutEffect(() => {
+    if (!navRef.current) return;
+    gsap.fromTo(navRef.current, { y: -80, opacity: 0 }, {
+      y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.1,
+    });
+  }, []);
 
   // Scroll shadow
   useEffect(() => {
@@ -59,6 +69,7 @@ export default function Navbar() {
 
   return (
     <nav
+      ref={navRef}
       className={`fixed top-0 left-0 right-0 z-[1000] h-[70px] flex items-center border-b border-border
         backdrop-blur-2xl transition-[background-color,box-shadow] duration-300
         ${scrolled ? 'bg-primary/92 shadow-[0_4px_30px_rgba(0,0,0,0.4)]' : 'bg-primary/70'}`}
