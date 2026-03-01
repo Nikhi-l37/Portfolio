@@ -72,7 +72,9 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" ref={sectionRef} className="py-16 md:py-24">
+    <section id="contact" ref={sectionRef} className="relative py-16 md:py-24">
+      {/* Subtle section tint */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-fuchsia-500/[0.012] to-transparent pointer-events-none" />
       <div className="max-w-[1100px] mx-auto px-6">
         <SectionHeader number="05" title="Get In Touch" />
 

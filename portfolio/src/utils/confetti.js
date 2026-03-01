@@ -43,3 +43,47 @@ export function fireCenterConfetti() {
     disableForReducedMotion: true,
   });
 }
+
+/**
+ * Fire small celebratory bursts from the left and right edges of a DOM element.
+ * Designed for the profile photo — compact particles that fan out sideways.
+ * @param {HTMLElement} el — the element to anchor the bursts to
+ */
+export function fireProfileConfetti(el) {
+  if (!el) return;
+
+  // Find the actual photo circle inside the wrapper
+  const photo = el.querySelector('.photo-card') || el;
+  const rect = photo.getBoundingClientRect();
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // Anchor to the true left/right edges and vertical center of the photo
+  const cy = (rect.top + rect.height / 2) / vh;
+  const leftX = rect.left / vw;
+  const rightX = rect.right / vw;
+
+  const base = {
+    particleCount: 30,
+    spread: 55,
+    startVelocity: 26,
+    ticks: 80,
+    gravity: 1,
+    scalar: 0.75,
+    colors: COLORS,
+    shapes: ['circle', 'square'],
+    zIndex: 9999,
+    disableForReducedMotion: true,
+  };
+
+  // Left edge — shoots outward-left
+  confetti({ ...base, angle: 150, origin: { x: leftX, y: cy } });
+  // Right edge — shoots outward-right
+  confetti({ ...base, angle: 30, origin: { x: rightX, y: cy } });
+
+  // Delayed secondary sparkle
+  setTimeout(() => {
+    confetti({ ...base, particleCount: 15, spread: 40, startVelocity: 18, angle: 160, origin: { x: leftX, y: cy } });
+    confetti({ ...base, particleCount: 15, spread: 40, startVelocity: 18, angle: 20, origin: { x: rightX, y: cy } });
+  }, 200);
+}

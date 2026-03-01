@@ -14,11 +14,12 @@ export default function Footer() {
   return (
     <footer ref={footerRef} className="relative py-12 md:py-16 border-t border-border overflow-hidden">
       {/* Subtle gradient glow at top */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[30%] h-px bg-gradient-to-r from-transparent via-accent-alt/25 to-transparent" />
 
       <div className="max-w-[1100px] mx-auto px-6 flex flex-col items-center gap-6">
         {/* Logo */}
-        <a href="#hero" className="gsap-card font-mono text-2xl font-bold text-accent tracking-tight hover:opacity-80 transition-opacity">
+        <a href="#hero" className="gsap-card font-mono text-2xl font-bold bg-gradient-to-r from-accent to-accent-alt bg-clip-text text-transparent tracking-tight hover:opacity-80 transition-opacity">
           &lt;NR /&gt;
         </a>
 

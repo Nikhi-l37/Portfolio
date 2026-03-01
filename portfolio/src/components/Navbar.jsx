@@ -70,9 +70,11 @@ export default function Navbar() {
   return (
     <nav
       ref={navRef}
-      className={`fixed top-0 left-0 right-0 z-[1000] h-[70px] flex items-center border-b border-border
-        backdrop-blur-2xl transition-[background-color,box-shadow] duration-300
-        ${scrolled ? 'bg-primary/92 shadow-[0_4px_30px_rgba(0,0,0,0.4)]' : 'bg-primary/70'}`}
+      className={`fixed top-0 left-0 right-0 z-[1000] h-[70px] flex items-center
+        transition-all duration-500 ease-out
+        ${scrolled
+          ? 'bg-primary/85 backdrop-blur-2xl border-b border-border shadow-[0_4px_30px_rgba(0,0,0,0.4)]'
+          : 'bg-transparent border-b border-transparent'}`}
     >
       <div className="max-w-[1100px] w-full mx-auto px-6 flex items-center justify-between">
         {/* Logo */}

@@ -88,7 +88,9 @@ export default function About() {
   useGSAPScrollReveal(sectionRef);
 
   return (
-    <section id="about" ref={sectionRef} className="py-16 md:py-24">
+    <section id="about" ref={sectionRef} className="relative py-16 md:py-24">
+      {/* Subtle section tint */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/[0.015] to-transparent pointer-events-none" />
       <div className="max-w-[1100px] mx-auto px-6">
         {/* Section header */}
         <SectionHeader number="01" title="About Me" />

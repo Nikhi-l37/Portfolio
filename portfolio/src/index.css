@@ -2,21 +2,23 @@
 
 /* ===== Custom Theme (Dark — Default) ===== */
 @theme {
-  --color-primary: #0a0a0f;
-  --color-secondary: #111118;
-  --color-surface: #16161f;
-  --color-card: #1a1a25;
-  --color-card-hover: #1f1f2e;
+  --color-primary: #07070d;
+  --color-secondary: #0e0e17;
+  --color-surface: #141420;
+  --color-card: #18182a;
+  --color-card-hover: #1e1e34;
 
   --color-accent: #00d4ff;
   --color-accent-dim: rgba(0, 212, 255, 0.15);
   --color-accent-glow: rgba(0, 212, 255, 0.4);
   --color-accent-alt: #7c3aed;
+  --color-accent-warm: #f59e0b;
+  --color-accent-rose: #f472b6;
 
-  --color-heading: #fafafa;
-  --color-text: #e4e4e7;
-  --color-muted: #a1a1aa;
-  --color-dim: #71717a;
+  --color-heading: #f0f0f8;
+  --color-text: #d4d4e0;
+  --color-muted: #9494a8;
+  --color-dim: #6b6b82;
 
   --color-border: rgba(255, 255, 255, 0.06);
   --color-border-hover: rgba(0, 212, 255, 0.3);
@@ -37,6 +39,8 @@
   --color-accent-dim: rgba(8, 145, 178, 0.1);
   --color-accent-glow: rgba(8, 145, 178, 0.25);
   --color-accent-alt: #6d28d9;
+  --color-accent-warm: #d97706;
+  --color-accent-rose: #db2777;
 
   --color-heading: #0f172a;
   --color-text: #1e293b;

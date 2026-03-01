@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect, useState } from 'react';
+import { useRef, useLayoutEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionHeader from './SectionHeader';
@@ -6,245 +6,307 @@ import { useGSAPScrollReveal } from '../hooks/useGSAPAnimations';
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ── Data ── */
+/* ─────────────────────────────────────────────
+   Icons — lightweight inline SVGs
+   ───────────────────────────────────────────── */
+const IconCode = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+    <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
+  </svg>
+);
+const IconServer = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+    <rect x="2" y="2" width="20" height="8" rx="2" />
+    <rect x="2" y="14" width="20" height="8" rx="2" />
+    <line x1="6" y1="6" x2="6.01" y2="6" />
+    <line x1="6" y1="18" x2="6.01" y2="18" />
+  </svg>
+);
+const IconDatabase = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+    <ellipse cx="12" cy="5" rx="9" ry="3" />
+    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+  </svg>
+);
+const IconWrench = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+  </svg>
+);
+const IconBrain = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+    <path d="M9.5 2A5.5 5.5 0 0 0 4 7.5c0 1.58.7 3 1.8 4A4.5 4.5 0 0 0 4 15.5 4.5 4.5 0 0 0 8.5 20h.5v2h6v-2h.5a4.5 4.5 0 0 0 4.5-4.5c0-1.58-.7-3-1.8-4A5.5 5.5 0 0 0 14.5 2h-5z" />
+  </svg>
+);
+const IconAward = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+    <circle cx="12" cy="8" r="6" />
+    <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+  </svg>
+);
+
+/* ─────────────────────────────────────────────
+   Skill Category Data
+   ───────────────────────────────────────────── */
 const CATEGORIES = [
   {
     key: 'frontend',
     label: 'Frontend',
-    accent: '#00d4ff',
-    skills: [
-      { name: 'HTML5', level: 90 },
-      { name: 'CSS3', level: 85 },
-      { name: 'JavaScript', level: 80 },
-    ],
+    icon: IconCode,
+    accent: '#22d3ee',
+    skills: ['HTML5', 'CSS3', 'JavaScript', 'React', 'Tailwind CSS'],
   },
   {
     key: 'backend',
     label: 'Backend',
-    accent: '#7c3aed',
-    skills: [
-      { name: 'Java', level: 85 },
-      { name: 'Node.js', level: 80 },
-      { name: 'Express.js', level: 78 },
-      { name: 'REST APIs', level: 85 },
-      { name: 'CRUD', level: 82 },
-    ],
+    icon: IconServer,
+    accent: '#a78bfa',
+    skills: ['Java', 'Node.js', 'Express.js', 'REST APIs', 'CRUD Operations'],
   },
   {
     key: 'database',
     label: 'Database',
-    accent: '#10b981',
-    skills: [
-      { name: 'Supabase', level: 75 },
-      { name: 'MongoDB Atlas', level: 78 },
-      { name: 'SQL', level: 72 },
-    ],
+    icon: IconDatabase,
+    accent: '#34d399',
+    skills: ['Supabase', 'MongoDB Atlas', 'SQL'],
   },
   {
     key: 'tools',
     label: 'Tools & Platforms',
-    accent: '#f97316',
-    skills: [
-      { name: 'GitHub', level: 88 },
-      { name: 'Postman', level: 82 },
-      { name: 'Figma', level: 70 },
-      { name: 'Render', level: 72 },
-      { name: 'Antigravity', level: 68 },
-      { name: 'Canva', level: 75 },
-      { name: 'Vercel', level: 78 },
-    ],
+    icon: IconWrench,
+    accent: '#fb923c',
+    skills: ['GitHub', 'Postman', 'Figma', 'Render', 'Vercel', 'Canva'],
   },
   {
     key: 'concepts',
-    label: 'Concepts',
-    accent: '#eab308',
-    skills: [
-      { name: 'OOPs', level: 88 },
-      { name: 'SMTP', level: 72 },
-      { name: 'Nodemailer', level: 74 },
-      { name: 'HTTPS', level: 76 },
-      { name: 'Promises', level: 80 },
-      { name: 'Async/Await', level: 82 },
-    ],
+    label: 'Core Concepts',
+    icon: IconBrain,
+    accent: '#facc15',
+    skills: ['OOPs', 'SMTP', 'Nodemailer', 'HTTPS', 'Promises', 'Async/Await'],
   },
   {
     key: 'certs',
     label: 'Certifications',
-    accent: '#ec4899',
-    skills: [
-      { name: 'UiPath AI Associate', level: 100 },
-      { name: 'CodeChef 500', level: 100 },
-    ],
+    icon: IconAward,
+    accent: '#f472b6',
+    skills: ['UiPath AI Associate', 'CodeChef 500+'],
   },
 ];
 
-/* ── Tab button ── */
-function Tab({ cat, active, onClick }) {
+/* ─────────────────────────────────────────────
+   Pill-shaped Skill Tag
+   ───────────────────────────────────────────── */
+function SkillPill({ name, accent }) {
   return (
-    <button
-      onClick={onClick}
-      className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 whitespace-nowrap
-        ${active
-          ? 'text-heading bg-card border border-border-hover shadow-lg'
-          : 'text-muted hover:text-heading hover:bg-card/50 border border-transparent'
-        }`}
-      style={active ? { boxShadow: `0 0 20px ${cat.accent}22, 0 4px 12px rgba(0,0,0,0.3)` } : {}}
+    <span
+      className="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold
+                 tracking-wide transition-all duration-300 hover:scale-105
+                 hover:brightness-125 cursor-default select-none"
+      style={{
+        color: accent,
+        background: `${accent}12`,
+        border: `1px solid ${accent}25`,
+      }}
     >
-      {active && (
-        <span
-          className="absolute inset-x-0 -bottom-[1px] h-[2px] rounded-full"
-          style={{ background: cat.accent }}
-        />
-      )}
-      <span className="inline-block w-2 h-2 rounded-full mr-2 align-middle"
-        style={{ background: cat.accent, opacity: active ? 1 : 0.4 }} />
-      {cat.label}
-    </button>
+      {name}
+    </span>
   );
 }
 
-/* ── Skill bar ── */
-function SkillBar({ name, level, accent, index }) {
-  const barRef = useRef(null);
-  const numRef = useRef(null);
-
-  useLayoutEffect(() => {
-    const bar = barRef.current;
-    const num = numRef.current;
-    if (!bar || !num) return;
-
-    // Reset then animate
-    gsap.set(bar, { width: '0%' });
-    gsap.set(num, { innerText: '0' });
-
-    const tl = gsap.timeline({ delay: index * 0.08 });
-
-    tl.to(bar, {
-      width: `${level}%`,
-      duration: 1,
-      ease: 'power3.out',
-    })
-    .to(num, {
-      innerText: level,
-      duration: 1,
-      ease: 'power3.out',
-      snap: { innerText: 1 },
-    }, 0);
-
-    return () => tl.kill();
-  }, [level, index]);
+/* ─────────────────────────────────────────────
+   Bento Card
+   ───────────────────────────────────────────── */
+function BentoCard({ category }) {
+  const { label, icon: Icon, accent, skills } = category;
 
   return (
-    <div className="group flex items-center gap-4 py-3 px-4 rounded-xl
-      hover:bg-white/[0.02] transition-colors duration-200">
-      {/* Skill name */}
-      <span className="text-sm font-medium text-heading w-32 shrink-0 truncate
-        group-hover:text-accent transition-colors duration-200">
-        {name}
-      </span>
+    <div
+      className="gsap-card group relative rounded-2xl h-full
+                 border border-border bg-card/80 backdrop-blur-sm
+                 p-7 md:p-8 transition-all duration-500 ease-out
+                 hover:scale-[1.02] hover:border-border-hover
+                 overflow-hidden"
+      style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.25)' }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow =
+          `0 4px 40px ${accent}15, 0 0 60px ${accent}08`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = '0 2px 20px rgba(0,0,0,0.25)';
+      }}
+    >
+      {/* Corner accent glow (hover-only) */}
+      <div
+        className="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-0
+                   group-hover:opacity-100 transition-opacity duration-700
+                   blur-3xl pointer-events-none"
+        style={{ background: accent }}
+      />
 
-      {/* Track */}
-      <div className="flex-1 h-2 rounded-full bg-white/[0.04] overflow-hidden relative">
-        {/* Subtle track lines */}
-        <div className="absolute inset-0 flex justify-between px-[1px]">
-          {[...Array(10)].map((_, i) => (
-            <div key={i} className="w-[1px] h-full bg-white/[0.03]" />
-          ))}
-        </div>
-        {/* Fill */}
+      {/* Header row */}
+      <div className="relative flex items-center gap-3 mb-5">
         <div
-          ref={barRef}
-          className="h-full rounded-full relative"
-          style={{
-            background: `linear-gradient(90deg, ${accent}88, ${accent})`,
-            boxShadow: `0 0 12px ${accent}44`,
-            width: '0%',
-          }}
+          className="flex items-center justify-center w-9 h-9 rounded-xl
+                     transition-transform duration-300 group-hover:scale-110"
+          style={{ background: `${accent}15`, color: accent }}
         >
-          {/* Shine sweep */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/20 to-transparent
-            -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+          <Icon />
         </div>
+        <h3 className="text-base font-bold tracking-tight text-heading">
+          {label}
+        </h3>
+        <span
+          className="ml-auto text-[11px] font-mono opacity-35
+                     group-hover:opacity-70 transition-opacity duration-300"
+          style={{ color: accent }}
+        >
+          {String(skills.length).padStart(2, '0')}
+        </span>
       </div>
 
-      {/* Percentage */}
-      <span className="text-xs font-mono text-muted w-8 text-right tabular-nums">
-        <span ref={numRef}>0</span>%
-      </span>
+      {/* Skill pills */}
+      <div className="relative flex flex-wrap gap-2.5">
+        {skills.map((s) => (
+          <SkillPill key={s} name={s} accent={accent} />
+        ))}
+      </div>
+
+      {/* Bottom accent line */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px opacity-0
+                   group-hover:opacity-100 transition-opacity duration-500"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${accent}40, transparent)`,
+        }}
+      />
     </div>
   );
 }
 
-/* ── Main Section ── */
-export default function Skills() {
-  const sectionRef = useRef(null);
-  const [activeIdx, setActiveIdx] = useState(0);
-  const activeCat = CATEGORIES[activeIdx];
-
-  useGSAPScrollReveal(sectionRef);
+/* ─────────────────────────────────────────────
+   Stats / Summary micro-card
+   ───────────────────────────────────────────── */
+function StatsCard() {
+  const total = CATEGORIES.reduce((n, c) => n + c.skills.length, 0);
 
   return (
-    <section id="skills" ref={sectionRef} className="py-16 md:py-24">
-      <div className="max-w-[900px] mx-auto px-6">
+    <div
+      className="gsap-card group relative rounded-2xl h-full
+                 border border-border bg-card/80 backdrop-blur-sm
+                 p-7 md:p-8 transition-all duration-500 ease-out
+                 hover:scale-[1.02] hover:border-border-hover
+                 flex flex-col items-center justify-center text-center
+                 overflow-hidden"
+      style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.25)' }}
+    >
+      {/* Gradient ring */}
+      <div className="relative mb-4">
+        <div
+          className="w-20 h-20 rounded-full flex items-center justify-center
+                     border-2 border-dashed border-border
+                     group-hover:border-cyan-400/30 transition-colors duration-500"
+          style={{
+            background:
+              'radial-gradient(circle, rgba(34,211,238,0.06) 0%, transparent 70%)',
+          }}
+        >
+          <span className="text-2xl font-black font-mono text-cyan-400">
+            {total}
+          </span>
+        </div>
+      </div>
+      <p className="text-sm font-semibold text-heading/80">Total Skills</p>
+      <p className="text-xs text-muted mt-1">{CATEGORIES.length} categories</p>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   GSAP – staggered reveal for bento cards
+   ───────────────────────────────────────────── */
+function useBentoAnimations(gridRef) {
+  useLayoutEffect(() => {
+    if (!gridRef.current) return;
+    const cards = gridRef.current.querySelectorAll('.gsap-card');
+    if (!cards.length) return;
+
+    const ctx = gsap.context(() => {
+      gsap.set(cards, { y: 60, opacity: 0, scale: 0.95 });
+
+      ScrollTrigger.batch(cards, {
+        start: 'top 88%',
+        onEnter: (batch) =>
+          gsap.to(batch, {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            stagger: 0.12,
+            overwrite: true,
+          }),
+        once: true,
+      });
+    }, gridRef);
+
+    return () => ctx.revert();
+  }, [gridRef]);
+}
+
+/* ─────────────────────────────────────────────
+   Main — Bento Grid Skills Section
+   ───────────────────────────────────────────── */
+export default function Skills() {
+  const sectionRef = useRef(null);
+  const gridRef = useRef(null);
+
+  useGSAPScrollReveal(sectionRef);
+  useBentoAnimations(gridRef);
+
+  return (
+    <section id="skills" ref={sectionRef} className="relative py-16 md:py-24">
+      {/* Subtle section tint */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/[0.015] to-transparent pointer-events-none" />
+      <div className="max-w-[1100px] mx-auto px-6">
         <SectionHeader number="04" title="Skills & Expertise" />
 
-        {/* ── Terminal-style container ── */}
-        <div className="gsap-skill rounded-2xl border border-border bg-card/60 backdrop-blur-sm
-          overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
-
-          {/* Title bar */}
-          <div className="flex items-center gap-2 px-5 py-3 bg-primary/80 border-b border-border">
-            <span className="w-3 h-3 rounded-full bg-red-500/80" />
-            <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
-            <span className="w-3 h-3 rounded-full bg-green-500/80" />
-            <span className="ml-3 text-xs font-mono text-dim">~/nikhil/skills</span>
-            <span className="ml-auto text-xs font-mono text-dim">
-              {CATEGORIES.reduce((n, c) => n + c.skills.length, 0)} skills
-            </span>
+        {/* ── Asymmetrical Bento Grid ── */}
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6"
+        >
+          {/* Row 1 — Frontend (1 col) · Backend (1 col) · Stats (1 col) */}
+          <div className="lg:col-span-1">
+            <BentoCard category={CATEGORIES[0]} />
+          </div>
+          <div className="lg:col-span-1">
+            <BentoCard category={CATEGORIES[1]} />
+          </div>
+          <div className="md:col-span-2 lg:col-span-1">
+            <StatsCard />
           </div>
 
-          {/* Tabs */}
-          <div className="flex items-center gap-1.5 px-4 py-3 border-b border-border
-            overflow-x-auto scrollbar-none">
-            {CATEGORIES.map((cat, i) => (
-              <Tab key={cat.key} cat={cat} active={i === activeIdx}
-                onClick={() => setActiveIdx(i)} />
-            ))}
+          {/* Row 2 — Database (1 col) · Tools & Platforms (2 cols wide) */}
+          <div className="lg:col-span-1">
+            <BentoCard category={CATEGORIES[2]} />
+          </div>
+          <div className="md:col-span-1 lg:col-span-2">
+            <BentoCard category={CATEGORIES[3]} />
           </div>
 
-          {/* Content area */}
-          <div className="px-2 py-4 md:px-4 min-h-[280px]">
-            {/* Category header inside content */}
-            <div className="flex items-center gap-3 px-4 mb-4">
-              <div className="w-3 h-3 rounded-sm"
-                style={{ background: activeCat.accent }} />
-              <h3 className="text-lg font-bold text-heading">{activeCat.label}</h3>
-              <span className="text-xs text-dim font-mono ml-auto">
-                {activeCat.skills.length} item{activeCat.skills.length > 1 ? 's' : ''}
-              </span>
-            </div>
-
-            {/* Skill bars */}
-            <div className="space-y-0.5">
-              {activeCat.skills.map((skill, i) => (
-                <SkillBar
-                  key={`${activeCat.key}-${skill.name}`}
-                  name={skill.name}
-                  level={skill.level}
-                  accent={activeCat.accent}
-                  index={i}
-                />
-              ))}
-            </div>
-
-            {/* Average indicator */}
-            <div className="mt-5 pt-4 px-4 border-t border-border/50 flex items-center justify-between">
-              <span className="text-xs text-dim font-mono">avg. proficiency</span>
-              <span className="text-sm font-bold font-mono"
-                style={{ color: activeCat.accent }}>
-                {Math.round(activeCat.skills.reduce((s, sk) => s + sk.level, 0) / activeCat.skills.length)}%
-              </span>
-            </div>
+          {/* Row 3 — Core Concepts (2 cols wide) · Certifications (1 col) */}
+          <div className="md:col-span-1 lg:col-span-2">
+            <BentoCard category={CATEGORIES[4]} />
+          </div>
+          <div className="lg:col-span-1">
+            <BentoCard category={CATEGORIES[5]} />
           </div>
         </div>
       </div>

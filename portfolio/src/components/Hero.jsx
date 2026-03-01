@@ -396,16 +396,26 @@ function BouncingLettersBackground({ mouseRef }) {
   return (
     <>
       <div className="absolute inset-0 overflow-hidden">
-        {/* Deep navy-to-black base */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#020a1a] via-[#07112b] to-[#030712]" />
+        {/* Deep navy-to-black base with purple undertone */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#020a1a] via-[#0a0d2e] to-[#0c0514]" />
 
-        {/* Subtle center glow so text area stays readable */}
+        {/* Primary center glow — cyan/blue tint for readability */}
         <div
           className="absolute pointer-events-none"
           style={{
             width: '70%', height: '55%', left: '15%', top: '22%',
-            background: 'radial-gradient(ellipse at center, rgba(30,58,138,0.12) 0%, transparent 60%)',
+            background: 'radial-gradient(ellipse at center, rgba(30,58,138,0.14) 0%, transparent 60%)',
             filter: 'blur(60px)',
+          }}
+        />
+
+        {/* Secondary warm glow — bottom-left rose accent for depth */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            width: '45%', height: '40%', left: '0%', bottom: '5%',
+            background: 'radial-gradient(ellipse at center, rgba(124,58,237,0.06) 0%, transparent 70%)',
+            filter: 'blur(80px)',
           }}
         />
 
@@ -556,30 +566,43 @@ export default function Hero() {
         y: 20,
       });
 
-      // --- SplitText for all text elements (except name) ---
+      // --- SplitText ---
       const splitGreeting = SplitText.create(greetingRef.current, { type: 'chars', mask: 'overflow' });
       const split1 = SplitText.create(desc1Ref.current, { type: 'words', mask: 'overflow' });
       const split2 = SplitText.create(desc2Ref.current, { type: 'words', mask: 'overflow' });
 
-      // Set initial state - hidden below with 3D rotation
-      gsap.set(splitGreeting.chars, { y: '100%', opacity: 0 });
-      gsap.set(split1.words, { y: '100%', opacity: 0, rotateX: -80 });
-      gsap.set(split2.words, { y: '100%', opacity: 0, rotateX: -80 });
+      // Initial states — each element gets a unique hidden state
+      // Greeting: scattered horizontally with blur feel (scale + x offset)
+      gsap.set(splitGreeting.chars, {
+        y: '100%',
+        opacity: 0,
+        rotateY: -60,
+        scaleX: 0.6,
+        transformOrigin: '0% 50%',
+      });
+      // Paragraphs: words slide up smoothly
+      gsap.set(split1.words, { y: '110%', opacity: 0 });
+      gsap.set(split2.words, { y: '110%', opacity: 0 });
 
-      // Staggered entrance animation timeline
-      // Greeting - character by character
+      // ── Greeting — chars sweep in from left with rotateY (typewriter-like) ──
       tl.to(splitGreeting.chars, {
         y: '0%',
         opacity: 1,
-        duration: 0.4,
-        ease: 'power3.out',
-        stagger: 0.03,
+        rotateY: 0,
+        scaleX: 1,
+        duration: 0.45,
+        ease: 'power4.out',
+        stagger: 0.035,
       }, 0.3)
+
+      // ── Name fade-up ──
       .to(nameRef.current, {
         opacity: 1,
         y: 0,
         duration: 0.9,
       }, 0.5)
+
+      // ── Profile photo elastic entrance ──
       .to(profileRef.current, {
         opacity: 1,
         scale: 1,
@@ -587,29 +610,33 @@ export default function Hero() {
         duration: 1.2,
         ease: 'elastic.out(1, 0.5)',
       }, 0.4)
-      // SplitText word-by-word roll for paragraph 1
+
+      // ── Paragraph 1 — word-by-word smooth slide up ──
       .to(split1.words, {
         y: '0%',
         opacity: 1,
-        rotateX: 0,
-        duration: 0.5,
-        ease: 'power3.out',
-        stagger: 0.03,
-      }, 0.8)
-      // SplitText word-by-word roll for paragraph 2
+        duration: 0.55,
+        ease: 'power2.out',
+        stagger: 0.04,
+      }, 0.9)
+
+      // ── Paragraph 2 — word-by-word smooth slide up ──
       .to(split2.words, {
         y: '0%',
         opacity: 1,
-        rotateX: 0,
-        duration: 0.5,
-        ease: 'power3.out',
-        stagger: 0.03,
-      }, 1.4)
+        duration: 0.55,
+        ease: 'power2.out',
+        stagger: 0.04,
+      }, 1.5)
+
+      // ── CTA buttons ──
       .to(ctaRef.current, {
         opacity: 1,
         y: 0,
         duration: 0.8,
       }, 2.0)
+
+      // ── Scroll indicator ──
       .to(scrollIndicatorRef.current, {
         opacity: 0.4,
         y: 0,
@@ -687,7 +714,7 @@ export default function Hero() {
                   <span className="invisible font-inherit pointer-events-none" aria-hidden="true">
                     Sivada Nikhil Reddy.
                   </span>
-                  <span className="absolute left-0 top-0 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  <span className="absolute left-0 top-0 bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-500 bg-clip-text text-transparent">
                     {typedName}
                   </span>
                   <span className="inline-block w-[3px] h-[0.85em] ml-0.5 bg-accent rounded-sm align-baseline relative top-[0.08em] animate-[blink-caret_0.75s_step-end_infinite]" />
@@ -695,20 +722,20 @@ export default function Hero() {
               </h1>
             </div>
 
-            <div className="overflow-hidden" style={{ perspective: '600px' }}>
-              <p ref={desc1Ref} className="text-[0.95rem] md:text-[1.05rem] text-slate-300 max-w-[540px] mx-auto lg:mx-0 mb-4 leading-relaxed">
+            <div className="overflow-hidden">
+              <p ref={desc1Ref} className="text-[0.95rem] md:text-[1.05rem] text-muted max-w-[540px] mx-auto lg:mx-0 mb-4 leading-relaxed">
                 Full-Stack Developer focused on building{' '}
                 <strong className="text-cyan-400 font-semibold">scalable backend systems</strong> and{' '}
-                <strong className="text-cyan-400 font-semibold">clean, responsive web applications</strong>.
+                <strong className="text-blue-400 font-semibold">clean, responsive web applications</strong>.
               </p>
             </div>
 
-            <div className="overflow-hidden" style={{ perspective: '600px' }}>
-              <p ref={desc2Ref} className="text-[0.9rem] md:text-[1rem] text-slate-400 max-w-[540px] mx-auto lg:mx-0 mb-5 md:mb-10 leading-relaxed">
+            <div className="overflow-hidden">
+              <p ref={desc2Ref} className="text-[0.9rem] md:text-[1rem] text-dim max-w-[540px] mx-auto lg:mx-0 mb-5 md:mb-10 leading-relaxed">
                 Strong in backend development with hands-on experience in{' '}
-                <strong className="text-purple-400 font-medium">APIs</strong>,{' '}
+                <strong className="text-violet-400 font-medium">APIs</strong>,{' '}
                 <strong className="text-purple-400 font-medium">databases</strong>, and{' '}
-                <strong className="text-purple-400 font-medium">server-side logic</strong>.
+                <strong className="text-fuchsia-400 font-medium">server-side logic</strong>.
                 I also create modern, beautiful user interfaces using AI-assisted tools.
               </p>
             </div>
