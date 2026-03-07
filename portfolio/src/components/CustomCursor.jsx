@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
 
 /**
- * Custom cursor follower — a dot + ring that smoothly tracks the mouse.
- * The ring expands on hovering interactive elements.
- * Hidden on mobile / touch devices via CSS.
+ * Custom cursor follower — lightweight single-RAF loop.
+ * No mixBlendMode (extremely expensive compositor work).
+ * No GSAP quickTo (4 tween engines per mousemove).
+ * Uses raw CSS transforms for minimal overhead.
  */
 export default function CustomCursor() {
   const dotRef = useRef(null);
@@ -15,39 +15,42 @@ export default function CustomCursor() {
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
-    // GSAP quickTo for buttery smooth following
-    const xDot = gsap.quickTo(dot, 'x', { duration: 0.15, ease: 'power2.out' });
-    const yDot = gsap.quickTo(dot, 'y', { duration: 0.15, ease: 'power2.out' });
-    const xRing = gsap.quickTo(ring, 'x', { duration: 0.35, ease: 'power2.out' });
-    const yRing = gsap.quickTo(ring, 'y', { duration: 0.35, ease: 'power2.out' });
+    let mx = 0, my = 0;         // actual mouse position
+    let rx = 0, ry = 0;         // ring interpolated
+    let hovering = false;
+    let visible = false;
+    let rafId = null;
+
+    // RAF loop — only the ring lerps; dot is updated instantly in onMove
+    const tick = () => {
+      rx += (mx - rx) * 0.12;  // ring follows slow
+      ry += (my - ry) * 0.12;
+
+      ring.style.transform = `translate3d(${rx}px,${ry}px,0)${hovering ? ' scale(2)' : ''}`;
+
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
 
     const onMove = (e) => {
-      xDot(e.clientX);
-      yDot(e.clientY);
-      xRing(e.clientX);
-      yRing(e.clientY);
+      mx = e.clientX;
+      my = e.clientY;
+      // Dot snaps instantly to the real cursor position — no lerp
+      dot.style.transform = `translate3d(${mx}px,${my}px,0)`;
+      if (!visible) {
+        visible = true;
+        dot.style.opacity = '1';
+        ring.style.opacity = '0.6';
+      }
     };
 
-    // Grow ring when hovering interactive elements
-    const onEnter = () => {
-      gsap.to(ring, { scale: 2, opacity: 0.5, duration: 0.3, ease: 'power2.out' });
-      gsap.to(dot, { scale: 0.5, duration: 0.3, ease: 'power2.out' });
-    };
-    const onLeave = () => {
-      gsap.to(ring, { scale: 1, opacity: 1, duration: 0.3, ease: 'power2.out' });
-      gsap.to(dot, { scale: 1, duration: 0.3, ease: 'power2.out' });
-    };
+    const onEnter = () => { hovering = true; dot.style.opacity = '0.5'; };
+    const onLeave = () => { hovering = false; dot.style.opacity = '1'; };
 
-    // Hide cursor when mouse leaves window
-    const onOut = () => {
-      gsap.to([dot, ring], { opacity: 0, duration: 0.2 });
-    };
-    const onOver = () => {
-      gsap.to(dot, { opacity: 1, duration: 0.2 });
-      gsap.to(ring, { opacity: 1, duration: 0.2 });
-    };
+    const onOut = () => { visible = false; dot.style.opacity = '0'; ring.style.opacity = '0'; };
+    const onOver = () => { visible = true; dot.style.opacity = '1'; ring.style.opacity = '0.6'; };
 
-    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mousemove', onMove, { passive: true });
     document.addEventListener('mouseleave', onOut);
     document.addEventListener('mouseenter', onOver);
 
@@ -58,19 +61,24 @@ export default function CustomCursor() {
       el.addEventListener('mouseleave', onLeave);
     });
 
-    // Also handle dynamically added elements via MutationObserver
+    // Debounced MutationObserver for dynamically added elements
+    let moTimer = null;
     const mo = new MutationObserver(() => {
-      const newInteractives = document.querySelectorAll('a, button, [role="button"], input, textarea, .magnetic');
-      newInteractives.forEach((el) => {
-        el.removeEventListener('mouseenter', onEnter);
-        el.removeEventListener('mouseleave', onLeave);
-        el.addEventListener('mouseenter', onEnter);
-        el.addEventListener('mouseleave', onLeave);
-      });
+      clearTimeout(moTimer);
+      moTimer = setTimeout(() => {
+        const els = document.querySelectorAll('a, button, [role="button"], input, textarea, .magnetic');
+        els.forEach((el) => {
+          el.removeEventListener('mouseenter', onEnter);
+          el.removeEventListener('mouseleave', onLeave);
+          el.addEventListener('mouseenter', onEnter);
+          el.addEventListener('mouseleave', onLeave);
+        });
+      }, 1000);
     });
     mo.observe(document.body, { childList: true, subtree: true });
 
     return () => {
+      cancelAnimationFrame(rafId);
       window.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseleave', onOut);
       document.removeEventListener('mouseenter', onOver);
@@ -78,16 +86,16 @@ export default function CustomCursor() {
         el.removeEventListener('mouseenter', onEnter);
         el.removeEventListener('mouseleave', onLeave);
       });
+      clearTimeout(moTimer);
       mo.disconnect();
     };
   }, []);
 
   return (
     <>
-      {/* Dot — small center point */}
       <div
         ref={dotRef}
-        className="custom-cursor-dot pointer-events-none fixed top-0 left-0 z-[9999] hidden md:block"
+        className="pointer-events-none fixed top-0 left-0 z-[9999] hidden md:block"
         style={{
           width: 8,
           height: 8,
@@ -95,13 +103,13 @@ export default function CustomCursor() {
           marginTop: -4,
           borderRadius: '50%',
           backgroundColor: 'var(--color-accent)',
-          mixBlendMode: 'difference',
+          opacity: 0,
+          willChange: 'transform',
         }}
       />
-      {/* Ring — outer circle */}
       <div
         ref={ringRef}
-        className="custom-cursor-ring pointer-events-none fixed top-0 left-0 z-[9998] hidden md:block"
+        className="pointer-events-none fixed top-0 left-0 z-[9998] hidden md:block"
         style={{
           width: 36,
           height: 36,
@@ -109,8 +117,9 @@ export default function CustomCursor() {
           marginTop: -18,
           borderRadius: '50%',
           border: '1.5px solid var(--color-accent)',
-          opacity: 0.6,
-          mixBlendMode: 'difference',
+          opacity: 0,
+          willChange: 'transform',
+          transition: 'transform 0.15s ease-out',
         }}
       />
     </>

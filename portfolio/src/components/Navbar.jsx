@@ -73,14 +73,14 @@ export default function Navbar() {
       className={`fixed top-0 left-0 right-0 z-[1000] h-[70px] flex items-center
         transition-all duration-500 ease-out
         ${scrolled
-          ? 'bg-primary/85 backdrop-blur-2xl border-b border-border shadow-[0_4px_30px_rgba(0,0,0,0.4)]'
+          ? 'bg-primary/95 border-b border-border shadow-[0_4px_30px_rgba(0,0,0,0.4)]'
           : 'bg-transparent border-b border-transparent'}`}
     >
       <div className="max-w-[1100px] w-full mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <a href="#hero" onClick={(e) => handleClick(e, '#hero')}
            className="font-mono text-xl font-bold text-accent tracking-tight">
-          &lt;NR /&gt;
+          NR
         </a>
 
         {/* Right side: links + icons */}
@@ -97,7 +97,7 @@ export default function Navbar() {
           {/* Mobile backdrop overlay */}
           {menuOpen && (
             <div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[998] md:hidden"
+              className="fixed inset-0 bg-black/60 z-[998] md:hidden"
               onClick={toggleMenu}
             />
           )}

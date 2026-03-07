@@ -57,7 +57,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 70px;
 }
 
@@ -78,12 +77,11 @@ body {
 /* Hide default cursor on desktop when custom cursor is active */
 @media (min-width: 768px) and (pointer: fine) {
   html { cursor: none !important; }
-  *, *::before, *::after { cursor: none !important; }
+  a, button, [role="button"], input, textarea { cursor: none !important; }
 }
 
-/* ===== GPU-accelerate interactive elements to prevent layout shift ===== */
-a, button, [role="button"],
-.group, article, .gpu-layer {
+/* ===== GPU-accelerate interactive elements (scoped to .gpu-layer only) ===== */
+.gpu-layer {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   transform: translateZ(0);
@@ -129,73 +127,13 @@ a, button, [role="button"],
   }
 }
 
-/* ===== Global floating container — very slow, gentle ===== */
-@keyframes gentle-float {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-14px); }
-}
-
+/* ===== Global floating container — static wrapper (animation removed for perf) ===== */
 #floating-container {
-  animation: gentle-float 2.8s ease-in-out infinite alternate;
-  will-change: transform;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
   pointer-events: auto;
-  transform: translateZ(0);
 }
 
-/* Subtle page float on mobile — lighter than desktop to stay smooth */
-@media (max-width: 767px) {
-  #floating-container {
-    animation: gentle-float-mobile 4s ease-in-out infinite alternate;
-  }
-}
-@keyframes gentle-float-mobile {
-  0%   { transform: translateY(0) translateZ(0); }
-  100% { transform: translateY(-7px) translateZ(0); }
-}
-
-/* ===== Unified card/button float — same amplitude, staggered start ===== */
-@keyframes card-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
-}
-
-.float-1 {
-  animation: card-float 2.8s ease-in-out infinite;
-  will-change: transform;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-.float-2 {
-  animation: card-float 2.8s ease-in-out 0.4s infinite;
-  will-change: transform;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-.float-3 {
-  animation: card-float 2.8s ease-in-out 0.8s infinite;
-  will-change: transform;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-/* Subtle card floats on mobile — reduced amplitude */
-@keyframes card-float-mobile {
-  0%, 100% { transform: translateY(0) translateZ(0); }
-  50%      { transform: translateY(-6px) translateZ(0); }
-}
-@media (max-width: 767px) {
-  .float-1 {
-    animation: card-float-mobile 3s ease-in-out infinite;
-  }
-  .float-2 {
-    animation: card-float-mobile 3s ease-in-out 0.4s infinite;
-  }
-  .float-3 {
-    animation: card-float-mobile 3s ease-in-out 0.8s infinite;
-  }
-}
+/* ===== Card float classes — animation removed for perf ===== */
+/* .float-1, .float-2, .float-3 — kept as class names for markup, no styles needed */
 
 /* ===== Profile photo shine sweep on hover ===== */
 @keyframes shine-sweep {
@@ -232,7 +170,6 @@ a, button, [role="button"],
 
 .resume-arrow {
   animation: arrow-bounce 1.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  will-change: transform;
 }
 
 /* On parent hover: stop bounce */
@@ -340,7 +277,7 @@ body::before {
   inset: 0;
   transform-style: preserve-3d;
   transform-origin: left center;
-  transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1);
   will-change: transform;
   border-radius: 4px 12px 12px 4px;
 }
@@ -352,12 +289,12 @@ body::before {
 
 /* Flip forward (current page turns left) */
 .book-page-flip-next {
-  animation: flipNext 1s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+  animation: flipNext 0.7s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
 }
 
 /* Flip backward (previous page turns back right) */
 .book-page-flip-prev {
-  animation: flipPrev 1s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+  animation: flipPrev 0.7s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
 }
 
 @keyframes flipNext {
@@ -397,6 +334,36 @@ body::before {
   z-index: 2;
 }
 
+/* ── Shimmer sweep on hover ── */
+.book-front::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.02) 60%,
+    transparent 100%
+  );
+  z-index: 50;
+  pointer-events: none;
+  transform: skewX(-15deg);
+}
+
+.book-container:hover .book-front::after {
+  animation: bookShimmer 1s ease forwards;
+}
+
+@keyframes bookShimmer {
+  from { left: -75%; }
+  to   { left: 175%; }
+}
+
 .book-back {
   transform: rotateY(180deg);
   z-index: 1;
@@ -421,7 +388,7 @@ body::before {
     rgba(0, 0, 0, 0.25) 100%
   );
   pointer-events: none;
-  animation: pageShadow 1s ease-in-out;
+  animation: pageShadow 0.7s ease-in-out;
   z-index: 5;
 }
 
@@ -499,6 +466,111 @@ body::before {
     0 4px 24px rgba(0, 0, 0, 0.1),
     0 1px 3px rgba(0, 0, 0, 0.06),
     inset 12px 0 20px -10px rgba(120, 80, 30, 0.06);
+}
+
+[data-theme="light"] .book-front::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 40%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.15) 60%,
+    transparent 100%
+  );
+}
+
+/* ═══════════ Projects section — floating gradient orbs ═══════════ */
+.proj-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.proj-orb-1 {
+  width: 500px;
+  height: 500px;
+  left: -10%;
+  top: 0;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+  animation: proj-drift-1 25s ease-in-out infinite;
+}
+
+.proj-orb-2 {
+  width: 400px;
+  height: 400px;
+  right: -8%;
+  bottom: 5%;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.07) 0%, transparent 70%);
+  animation: proj-drift-2 30s ease-in-out infinite;
+}
+
+.proj-orb-3 {
+  width: 350px;
+  height: 350px;
+  left: 35%;
+  top: 25%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
+  animation: proj-drift-3 22s ease-in-out infinite;
+}
+
+@keyframes proj-drift-1 {
+  0%, 100% { transform: translate(0, 0); }
+  25%      { transform: translate(50px, 30px); }
+  50%      { transform: translate(-20px, 60px); }
+  75%      { transform: translate(40px, -25px); }
+}
+
+@keyframes proj-drift-2 {
+  0%, 100% { transform: translate(0, 0); }
+  33%      { transform: translate(-50px, -35px); }
+  66%      { transform: translate(35px, 45px); }
+}
+
+@keyframes proj-drift-3 {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-40px, -50px); }
+}
+
+[data-theme="light"] .proj-orb-1 {
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.06) 0%, transparent 70%);
+}
+
+[data-theme="light"] .proj-orb-2 {
+  background: radial-gradient(circle, rgba(8, 145, 178, 0.05) 0%, transparent 70%);
+}
+
+[data-theme="light"] .proj-orb-3 {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.04) 0%, transparent 70%);
+}
+
+/* ═══════════ Education section — CSS-driven parallax shapes ═══════════ */
+.edu-shape {
+  transform: translate(-50%, -50%)
+    translate(
+      calc((var(--mx, 0.5) - 0.5) * var(--depth, 0.5) * -50px),
+      calc((var(--my, 0.5) - 0.5) * var(--depth, 0.5) * -50px)
+    )
+    rotate(var(--rot, 0deg));
+  transition: transform 0.6s ease-out;
+  contain: layout style paint;
+}
+
+/* Light-theme shapes: subtle inner glow */
+[data-theme="light"] .edu-shape {
+  box-shadow: 0 10px 25px -8px rgba(0,0,0,0.08), inset 0 1px 2px rgba(255,255,255,0.4) !important;
+}
+
+.edu-grid-bg {
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+[data-theme="light"] .edu-grid-bg {
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.06) 1px, transparent 1px);
 }
 
 /* ═══════════ Reduced-motion preference ═══════════ */

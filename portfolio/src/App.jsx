@@ -27,15 +27,16 @@ function App() {
   // Lenis smooth scroll + GSAP ScrollTrigger sync
   useLayoutEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.0,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       smoothWheel: true,
+      syncTouch: false,
     });
 
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((time) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33); // allow frame-skip recovery from lag spikes
 
     const handleAnchorClick = (e) => {
       const href = e.target.closest('a')?.getAttribute('href');

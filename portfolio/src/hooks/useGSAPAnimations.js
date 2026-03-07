@@ -5,6 +5,10 @@ import { SplitText } from 'gsap/SplitText';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
+// --- Global perf: limit ScrollTrigger callbacks & force GPU compositing ---
+ScrollTrigger.config({ limitCallbacks: true });
+gsap.defaults({ force3D: true });
+
 /**
  * Hook: attach GSAP ScrollTrigger-based reveal animations to a section.
  * Call once per section with a ref to the section element.
@@ -20,17 +24,16 @@ export function useGSAPScrollReveal(sectionRef) {
     if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      // --- Section headers — word-by-word reveal ---
+      // --- Section headers — word-by-word slide-up with overflow mask ---
       const headers = sectionRef.current.querySelectorAll('h2');
       headers.forEach((h2) => {
-        const split = SplitText.create(h2, { type: 'words, chars', mask: 'overflow' });
+        const split = SplitText.create(h2, { type: 'words', mask: 'overflow' });
         gsap.from(split.words, {
-          y: '100%',
+          y: '110%',
           opacity: 0,
-          rotateX: -60,
-          duration: 0.6,
-          ease: 'power3.out',
-          stagger: 0.04,
+          duration: 0.7,
+          ease: 'back.out(1.4)',
+          stagger: 0.06,
           scrollTrigger: {
             trigger: h2,
             start: 'top 85%',
@@ -72,6 +75,138 @@ export function useGSAPScrollReveal(sectionRef) {
           },
         });
       });
+
+      // --- Text animation: words fade-up, important words fly in ---
+      const splitBlocks = sectionRef.current.querySelectorAll('.gsap-split-text');
+
+      // Directions important words can fly from (no filter:blur — too expensive)
+      const flyDirections = [
+        { x: -80, y: -30, rot: -8 },
+        { x: 90, y: -25, rot: 7 },
+        { x: 0, y: -50, rot: -4 },
+        { x: -70, y: 25, rot: 10 },
+        { x: 80, y: 20, rot: -8 },
+      ];
+
+      splitBlocks.forEach((el) => {
+        // Add perspective for 3D char rotation
+        el.style.perspective = '600px';
+
+        const split = SplitText.create(el, { type: 'chars,words' });
+
+        // Identify important words (inside styled spans/links/strongs)
+        const importantWordEls = new Set();
+        el.querySelectorAll('span[class*="font-medium"], span[class*="font-semibold"], a, strong').forEach((wrapper) => {
+          split.words.forEach((wordEl) => {
+            if (wrapper.contains(wordEl)) importantWordEls.add(wordEl);
+          });
+        });
+
+        // Identify chars belonging to important words
+        const importantChars = new Set();
+        const regularChars = [];
+        split.chars.forEach((charEl) => {
+          let isImportant = false;
+          importantWordEls.forEach((wordEl) => {
+            if (wordEl.contains(charEl)) isImportant = true;
+          });
+          if (isImportant) importantChars.add(charEl);
+          else regularChars.push(charEl);
+        });
+
+        // Regular chars: typewriter sweep (same as Hero name/greeting)
+        if (regularChars.length) {
+          gsap.from(regularChars, {
+            y: '100%',
+            opacity: 0,
+            rotateY: -40,
+            scaleX: 0.7,
+            transformOrigin: '0% 50%',
+            duration: 0.35,
+            ease: 'power4.out',
+            stagger: 0.01,
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 88%',
+              toggleActions: 'play none none none',
+            },
+          });
+        }
+
+        // Important word chars: fly in with scale + rotation (punchy entrance)
+        let flyIdx = 0;
+        importantWordEls.forEach((wordEl) => {
+          const dir = flyDirections[flyIdx % flyDirections.length];
+          flyIdx++;
+          // Find all chars inside this word
+          const wordChars = split.chars.filter((c) => wordEl.contains(c));
+          if (wordChars.length) {
+            // Find the index of the first char in this word within the full char array
+            const firstCharIdx = split.chars.indexOf(wordChars[0]);
+            const delay = firstCharIdx * 0.01; // sync timing with regular chars stagger
+
+            gsap.from(wordChars, {
+              x: dir.x,
+              y: dir.y,
+              rotation: dir.rot,
+              scale: 0.4,
+              opacity: 0,
+              duration: 0.5,
+              ease: 'back.out(1.6)',
+              stagger: 0.02,
+              delay,
+              scrollTrigger: {
+                trigger: el,
+                start: 'top 88%',
+                toggleActions: 'play none none none',
+              },
+            });
+          }
+        });
+      });
+
+      // --- Tags — drop/fall into place from above (single ST per group) ---
+      const tags = sectionRef.current.querySelectorAll('.gsap-tag');
+      if (tags.length) {
+        const tagGroups = new Map();
+        tags.forEach((tag) => {
+          const parent = tag.parentElement;
+          if (!tagGroups.has(parent)) tagGroups.set(parent, []);
+          tagGroups.get(parent).push(tag);
+        });
+
+        tagGroups.forEach((groupTags) => {
+          // One ScrollTrigger per group, not per tag
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: groupTags[0].parentElement,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+            },
+          });
+
+          groupTags.forEach((tag, i) => {
+            const dir = i % 2 === 0 ? -1 : 1;
+            tl.fromTo(tag,
+              {
+                y: -40,
+                opacity: 0,
+                rotation: dir * (4 + Math.random() * 8),
+                scale: 0.75,
+              },
+              {
+                y: 0,
+                opacity: 1,
+                rotation: 0,
+                scale: 1,
+                duration: 0.5,
+                ease: 'back.out(1.8)',
+              },
+              i * 0.08
+            );
+          });
+        });
+      }
 
       // --- Skill items — staggered pop ---
       const skillItems = sectionRef.current.querySelectorAll('.gsap-skill');

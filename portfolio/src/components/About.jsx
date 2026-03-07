@@ -69,9 +69,9 @@ function BentoCard({ children, className = '', glow = 'emerald', isLight }) {
 
   return (
     <div
-      className={`gsap-card group relative overflow-hidden bg-card/80 backdrop-blur-sm border border-border
-                  rounded-[16px] p-5 md:p-6 float-2 transition-[transform,box-shadow,border-color,background-color] duration-400 ease-out
-                  will-change-transform backface-hidden hover:bg-card-hover
+      className={`gsap-card group relative overflow-hidden bg-card/80 border border-border
+                  rounded-[16px] p-5 md:p-6 transition-[transform,box-shadow,border-color,background-color] duration-400 ease-out
+                  backface-hidden hover:bg-card-hover
                   ${glows[glow]} ${className}`}
     >
       {children}
@@ -100,7 +100,7 @@ export default function About() {
 
           {/* ─── ROW 1 — Hero Card (full width) ─── */}
           <BentoCard className="md:col-span-3 flex flex-col justify-center" glow="emerald" isLight={isLight}>
-            <div className={`absolute -top-20 -left-20 w-60 h-60 ${a.orbBg} rounded-full blur-3xl pointer-events-none`} />
+            <div className={`absolute -top-20 -left-20 w-60 h-60 ${a.orbBg} rounded-full opacity-30 pointer-events-none`} />
 
             <div className="relative z-10">
               {/* Tags */}
@@ -121,13 +121,13 @@ export default function About() {
                 </span>
               </h3>
 
-              <p className="text-muted text-[0.95rem] leading-relaxed mb-3 max-w-xl">
+              <p className="gsap-split-text text-muted text-[0.95rem] leading-relaxed mb-3">
                 I'm a <span className="text-heading font-medium">backend-focused developer</span> with strong knowledge in building server-side applications, APIs, and working with databases.
               </p>
-              <p className="text-muted text-sm leading-relaxed mb-3 max-w-xl">
+              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-3">
                 While my strength lies in backend development, I also understand frontend fundamentals and create clean, responsive interfaces using modern <span className={`${a.text} font-medium`}>AI-assisted tools</span>.
               </p>
-              <p className="text-muted text-sm leading-relaxed max-w-xl">
+              <p className="gsap-split-text text-muted text-sm leading-relaxed">
                 I enjoy solving real-world problems and continuously improving my technical skills.
               </p>
             </div>
@@ -135,7 +135,7 @@ export default function About() {
 
           {/* ─── ROW 2 — Problem Solving & DSA (col 1-2, wide) ─── */}
           <BentoCard className="md:col-span-2 flex flex-col justify-center" glow="emerald" isLight={isLight}>
-            <div className={`absolute -bottom-16 -right-16 w-48 h-48 ${a.orbEm} rounded-full blur-3xl pointer-events-none`} />
+            <div className={`absolute -bottom-16 -right-16 w-48 h-48 ${a.orbEm} rounded-full opacity-30 pointer-events-none`} />
 
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-3">
@@ -145,7 +145,7 @@ export default function About() {
                 <h4 className="text-lg font-bold text-heading">Problem Solving & DSA</h4>
               </div>
 
-              <p className="text-muted text-sm leading-relaxed mb-2">
+              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-2">
                 Actively solving data structures and algorithms problems on platforms like{' '}
                 <a href="https://leetcode.com/u/NikhilReddy3446/" target="_blank" rel="noopener noreferrer"
                    className={`${a.text} ${a.linkHover} transition-colors font-medium underline ${a.linkDeco} underline-offset-2`}>
@@ -157,7 +157,7 @@ export default function About() {
                   GeeksforGeeks
                 </a>.
               </p>
-              <p className="text-muted text-sm leading-relaxed mb-4">
+              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-4">
                 Strong understanding of problem-solving patterns, logical thinking, and writing optimized solutions.
                 Regular practice strengthens my core computer science fundamentals and analytical skills.
               </p>
@@ -165,7 +165,7 @@ export default function About() {
               <div className="flex flex-wrap gap-2">
                 {['Data Structures', 'Algorithms', 'Logical Thinking', 'Optimization', 'Competitive Coding'].map(tag => (
                   <span key={tag}
-                    className={`px-2.5 py-1 text-xs font-medium rounded-lg border ${a.tagBg}`}>
+                    className={`gsap-tag px-2.5 py-1 text-xs font-medium rounded-lg border ${a.tagBg}`}>
                     {tag}
                   </span>
                 ))}
@@ -175,7 +175,7 @@ export default function About() {
 
           {/* ─── ROW 2 — GitHub & Workflow (col 3, square) ─── */}
           <BentoCard className="flex flex-col justify-center" glow="cyan" isLight={isLight}>
-            <div className={`absolute -top-12 -left-12 w-40 h-40 ${a.orbAlt} rounded-full blur-3xl pointer-events-none`} />
+            <div className={`absolute -top-12 -left-12 w-40 h-40 ${a.orbAlt} rounded-full opacity-30 pointer-events-none`} />
 
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-3">
@@ -185,10 +185,10 @@ export default function About() {
                 <h4 className="text-lg font-bold text-heading">GitHub & Workflow</h4>
               </div>
 
-              <p className="text-muted text-sm leading-relaxed mb-2">
+              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-2">
                 Experienced in using GitHub for version control, collaboration, and project management.
               </p>
-              <p className="text-muted text-sm leading-relaxed mb-4">
+              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-4">
                 Comfortable with branching strategies, pull requests, code reviews, and maintaining clean
                 repository structures.
               </p>
@@ -196,7 +196,7 @@ export default function About() {
               <div className="flex flex-wrap gap-2">
                 {['Git & GitHub', 'Version Control', 'Clean Code', 'Collaboration', 'Project Management'].map(tag => (
                   <span key={tag}
-                    className={`px-2.5 py-1 text-xs font-medium rounded-lg border ${a.tagAltBg}`}>
+                    className={`gsap-tag px-2.5 py-1 text-xs font-medium rounded-lg border ${a.tagAltBg}`}>
                     {tag}
                   </span>
                 ))}
@@ -206,7 +206,7 @@ export default function About() {
 
           {/* ─── ROW 3 — Leadership (col 1, tall/square) ─── */}
           <BentoCard className="group/lead flex flex-col justify-center" glow="emerald" isLight={isLight}>
-            <div className={`absolute -top-12 -right-12 w-36 h-36 ${a.orbEm} rounded-full blur-3xl pointer-events-none`} />
+            <div className={`absolute -top-12 -right-12 w-36 h-36 ${a.orbEm} rounded-full opacity-30 pointer-events-none`} />
 
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-3">
@@ -220,7 +220,7 @@ export default function About() {
                 </div>
               </div>
 
-              <p className="text-muted text-sm leading-relaxed mb-4">
+              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-4">
                 Spearheading a student-led club focused on discussing and building
                 innovative solutions to real-world problems.
               </p>
@@ -253,7 +253,7 @@ export default function About() {
               rel="noopener noreferrer"
               onClick={fireCenterConfetti}
               className={`resume-btn group/btn inline-flex items-center gap-2 px-6 py-2.5
-                         bg-accent-dim backdrop-blur-md
+                         bg-accent-dim
                          border ${a.resumeBorder} ${a.resumeText} text-sm font-semibold rounded-full
                          transition-[background-color,border-color,color] duration-300
                          ${a.resumeHover}

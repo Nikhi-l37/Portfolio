@@ -15,6 +15,7 @@ const PROJECTS = [
     liveUrl: 'https://finder-xjof.onrender.com',
     icon: 'fa-solid fa-magnifying-glass',
     accent: 'emerald',
+    status: 'live',
   },
   {
     title: 'Resume Filter',
@@ -25,6 +26,7 @@ const PROJECTS = [
     liveUrl: 'https://jeevanhackthon.onrender.com',
     icon: 'fa-solid fa-file-lines',
     accent: 'cyan',
+    status: 'prototype',
   },
   {
     title: 'Screen Tracker',
@@ -35,6 +37,7 @@ const PROJECTS = [
     repoUrl: 'https://github.com/Nikhi-137/Screen-Tracker',
     icon: 'fa-solid fa-mobile-screen',
     accent: 'purple',
+    status: 'open-source',
   },
 ];
 
@@ -82,6 +85,18 @@ const ACCENT_LIGHT = {
   },
 };
 
+/* ───── status badges ───── */
+const STATUS_DARK = {
+  live:          { label: 'Live',        dotCls: 'bg-emerald-400 animate-pulse', cls: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20' },
+  prototype:     { label: 'Prototype',   dotCls: 'bg-amber-400',                cls: 'bg-amber-500/10 text-amber-300 border-amber-500/20' },
+  'open-source': { label: 'Open Source', dotCls: 'bg-violet-400',               cls: 'bg-violet-500/10 text-violet-300 border-violet-500/20' },
+};
+const STATUS_LIGHT = {
+  live:          { label: 'Live',        dotCls: 'bg-emerald-500 animate-pulse', cls: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+  prototype:     { label: 'Prototype',   dotCls: 'bg-amber-500',                cls: 'bg-amber-100 text-amber-700 border-amber-200' },
+  'open-source': { label: 'Open Source', dotCls: 'bg-violet-500',               cls: 'bg-violet-100 text-violet-700 border-violet-200' },
+};
+
 /* ───────────── real page-turn sound (MP3) ───────────── */
 // Preload the audio so it's cached and plays instantly on click
 const preloadedFlip = new Audio(pageFlipSound);
@@ -100,30 +115,48 @@ function playPageFlip() {
 /* ───────────── page content ───────────── */
 function PageContent({ project, index, total, theme }) {
   const ACCENT = theme === 'light' ? ACCENT_LIGHT : ACCENT_DARK;
+  const STATUS = theme === 'light' ? STATUS_LIGHT : STATUS_DARK;
   const a = ACCENT[project.accent] || ACCENT.emerald;
+  const s = STATUS[project.status] || STATUS.live;
 
   return (
     <div className="relative h-full flex flex-col p-7 sm:p-10 overflow-hidden select-none">
       {/* Top gradient wash */}
-      <div className={`absolute top-0 left-0 right-0 h-40 bg-gradient-to-b ${a.gradient} pointer-events-none`} />
+      <div className={`absolute top-0 left-0 right-0 h-44 bg-gradient-to-b ${a.gradient} pointer-events-none`} />
       {/* Corner glow orb */}
-      <div className={`absolute -top-20 -right-20 w-60 h-60 ${a.glow} rounded-full blur-3xl pointer-events-none`} />
+      <div className={`absolute -top-20 -right-20 w-60 h-60 ${a.glow} rounded-full opacity-40 pointer-events-none`} />
+      {/* Large watermark page number */}
+      <span className="absolute -bottom-6 -right-3 text-[160px] sm:text-[200px] font-black leading-none select-none pointer-events-none opacity-[0.025] text-heading">
+        {String(index + 1).padStart(2, '0')}
+      </span>
 
       <div className="relative z-10 flex flex-col h-full">
         {/* Header row */}
         <div className="flex items-center justify-between mb-6">
-          <div className={`w-14 h-14 rounded-2xl ${a.iconBg} flex items-center justify-center`}>
-            <i className={`${project.icon} text-2xl ${a.iconText}`} />
+          <div className="flex items-center gap-3">
+            <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${a.iconBg} flex items-center justify-center`}>
+              <i className={`${project.icon} text-xl sm:text-2xl ${a.iconText}`} />
+            </div>
+            {/* Status badge */}
+            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-semibold tracking-wide ${s.cls}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${s.dotCls}`} />
+              {s.label}
+            </div>
           </div>
           <span className="font-mono text-xs text-dim tracking-wider">
-            PROJECT {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+            {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
           </span>
         </div>
 
         <h3 className="text-2xl sm:text-3xl font-extrabold text-heading mb-1 leading-tight">
           {project.title}
         </h3>
-        <p className={`text-sm font-semibold ${a.iconText} mb-5`}>{project.subtitle}</p>
+        <p className={`text-sm font-semibold ${a.iconText} mb-4`}>{project.subtitle}</p>
+
+        {/* Decorative divider */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-dim/15 to-transparent" />
+        </div>
 
         <p className="text-[0.95rem] text-muted leading-relaxed mb-6 max-w-lg">
           {project.description}
@@ -170,6 +203,17 @@ function PageContent({ project, index, total, theme }) {
   );
 }
 
+/* ───────────── section background ───────────── */
+function ProjectsBg() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="proj-orb proj-orb-1" />
+      <div className="proj-orb proj-orb-2" />
+      <div className="proj-orb proj-orb-3" />
+    </div>
+  );
+}
+
 /* ───────────── main section ───────────── */
 export default function Projects() {
   const { theme } = useTheme();
@@ -192,6 +236,7 @@ export default function Projects() {
   const goNext = useCallback(() => {
     if (busy.current || currentPage >= total - 1) return;
     busy.current = true;
+    playPageFlip();
     setFlipDir('next');
     setFlipping(currentPage);
     setTimeout(() => {
@@ -199,12 +244,13 @@ export default function Projects() {
       setFlipping(null);
       setFlipDir(null);
       busy.current = false;
-    }, 1000);
+    }, 700);
   }, [currentPage, total]);
 
   const goPrev = useCallback(() => {
     if (busy.current || currentPage <= 0) return;
     busy.current = true;
+    playPageFlip();
     setFlipDir('prev');
     setFlipping(currentPage - 1);
     setTimeout(() => {
@@ -212,7 +258,7 @@ export default function Projects() {
       setFlipping(null);
       setFlipDir(null);
       busy.current = false;
-    }, 1000);
+    }, 700);
   }, [currentPage]);
 
   /* jump to any page index (flips one step at a time visually) */
@@ -264,12 +310,20 @@ export default function Projects() {
 
   return (
     <section id="projects" ref={sectionRef} className="relative py-16 md:py-24">
-      {/* Subtle section tint */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-500/[0.02] to-transparent pointer-events-none" />
+      <ProjectsBg />
       <div className="max-w-[1100px] mx-auto px-6">
         <SectionHeader number="03" title="Projects" />
 
-        <div className="gsap-card book-perspective mx-auto max-w-2xl">
+        <div className="gsap-card book-perspective mx-auto max-w-2xl relative">
+            {/* Accent glow reflection — static layers with opacity toggle */}
+            <div className="absolute -bottom-6 left-[15%] right-[15%] h-16 pointer-events-none">
+              {PROJECTS.map((p, i) => (
+                <div key={p.accent} className={`absolute inset-0 rounded-full transition-opacity duration-700 ${
+                  i === currentPage ? 'opacity-100' : 'opacity-0'
+                } ${p.accent === 'emerald' ? 'bg-emerald-500/12' : p.accent === 'cyan' ? 'bg-cyan-500/12' : 'bg-purple-500/12'}`} />
+              ))}
+            </div>
+
             {/* The 3D book */}
             <div
               className="book-container relative w-full"
@@ -313,10 +367,17 @@ export default function Projects() {
                     </div>
                     {/* Back face */}
                     <div className="book-face book-back">
-                      <div className="h-full w-full flex items-center justify-center">
-                        <div className="text-center">
-                          <i className="fa-solid fa-book-open text-2xl text-dim/20 mb-2" />
-                          <p className="font-mono text-dim/30 text-xs tracking-widest">• • •</p>
+                      <div className="h-full w-full flex items-center justify-center relative overflow-hidden">
+                        {/* Large watermark icon */}
+                        <i className={`${project.icon} absolute text-[120px] text-heading opacity-[0.03]`} />
+                        {/* Decorative rings */}
+                        <div className="absolute top-8 right-8 w-24 h-24 rounded-full border border-border/20" />
+                        <div className="absolute bottom-12 left-10 w-16 h-16 rounded-full border border-border/10" />
+                        <div className="text-center relative z-10">
+                          <i className={`${project.icon} text-3xl text-dim/25 mb-3 block`} />
+                          <p className="font-mono text-dim/35 text-[11px] tracking-[0.2em] uppercase">
+                            {project.title}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -330,7 +391,7 @@ export default function Projects() {
             {/* Controls */}
             <div className="flex items-center justify-center gap-6 mt-8">
               <button
-                onClick={() => { playPageFlip(); goPrev(); }}
+                onClick={goPrev}
                 disabled={currentPage === 0}
                 aria-label="Previous project"
                 className="group/btn flex items-center gap-2 px-5 py-2.5
@@ -351,7 +412,7 @@ export default function Projects() {
                 {PROJECTS.map((_, i) => (
                   <button key={i}
                     aria-label={`Go to project ${i + 1}`}
-                    onClick={() => { if (i !== currentPage) { playPageFlip(); goTo(i); } }}
+                    onClick={() => { if (i !== currentPage) goTo(i); }}
                     className={`block rounded-full transition-all duration-400 border-0 p-0
                       ${i === currentPage
                         ? 'w-8 h-2.5 bg-accent shadow-[0_0_12px_var(--color-accent-glow)]'
@@ -361,7 +422,7 @@ export default function Projects() {
               </div>
 
               <button
-                onClick={() => { playPageFlip(); goNext(); }}
+                onClick={goNext}
                 disabled={currentPage === total - 1}
                 aria-label="Next project"
                 className="group/btn flex items-center gap-2 px-5 py-2.5

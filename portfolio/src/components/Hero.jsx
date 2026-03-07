@@ -11,13 +11,18 @@ import { SplitText } from 'gsap/SplitText';
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 /* ===== Bouncing Letters Background - NIKHIL ===== */
-function BouncingLettersBackground({ mouseRef }) {
+function BouncingLettersBackground({ mouseRef, isLight }) {
   const canvasRef = useRef(null);
   const lettersRef = useRef(null);
+  const themeRef = useRef(isLight);
   const phaseRef = useRef('aligned'); // 'aligned' | 'blasting' | 'bouncing'
   const blastTimeRef = useRef(null);
   const shockwaveRef = useRef({ active: false, radius: 0, alpha: 0 });
   const sparksRef = useRef([]);
+
+  useEffect(() => {
+    themeRef.current = isLight;
+  }, [isLight]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -84,6 +89,7 @@ function BouncingLettersBackground({ mouseRef }) {
     lettersRef.current = createLetters();
 
     let rafId;
+    let isVisible = true;
     const startTime = performance.now();
     const BLAST_DELAY = 5000;
     const BLAST_DURATION = 600;
@@ -94,6 +100,7 @@ function BouncingLettersBackground({ mouseRef }) {
     const MOUSE_FORCE = 0.12;
 
     const animate = (now) => {
+      if (!isVisible) { rafId = null; return; }
       ctx.clearRect(0, 0, w, h);
       const elapsed = now - startTime;
       const phase = phaseRef.current;
@@ -279,8 +286,9 @@ function BouncingLettersBackground({ mouseRef }) {
       for (let li = 0; li < lettersRef.current.length; li++) {
         const L = lettersRef.current[li];
         const flashBoost = L.bounceFlash * 0.1;
-        const fAlpha = Math.min(L.fillAlpha + flashBoost, 0.18);
-        const sAlpha = Math.min(L.strokeAlpha + flashBoost, 0.22);
+        const lt = themeRef.current; // current theme
+        const fAlpha = lt ? Math.min(L.fillAlpha * 1.8 + flashBoost, 0.28) : Math.min(L.fillAlpha + flashBoost, 0.18);
+        const sAlpha = lt ? Math.min(L.strokeAlpha * 1.8 + flashBoost, 0.35) : Math.min(L.strokeAlpha + flashBoost, 0.22);
         const isBouncing = currentPhase === 'bouncing' || currentPhase === 'blasting';
 
         ctx.save();
@@ -387,49 +395,88 @@ function BouncingLettersBackground({ mouseRef }) {
     };
     window.addEventListener('resize', onResize);
 
+    // Pause canvas RAF when section is off-screen
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible && !rafId) rafId = requestAnimationFrame(animate);
+      },
+      { threshold: 0 },
+    );
+    obs.observe(canvas);
+
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener('resize', onResize);
+      obs.disconnect();
     };
   }, []);
 
   return (
     <>
       <div className="absolute inset-0 overflow-hidden">
-        {/* Deep navy-to-black base with purple undertone */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#020a1a] via-[#0a0d2e] to-[#0c0514]" />
+        {isLight ? (
+          <>
+            {/* Light theme: clean white-to-slate gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/60 to-purple-50/40" />
 
-        {/* Primary center glow — cyan/blue tint for readability */}
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            width: '70%', height: '55%', left: '15%', top: '22%',
-            background: 'radial-gradient(ellipse at center, rgba(30,58,138,0.14) 0%, transparent 60%)',
-            filter: 'blur(60px)',
-          }}
-        />
+            {/* Subtle cyan glow */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                width: '90%', height: '70%', left: '5%', top: '15%',
+                background: 'radial-gradient(ellipse at center, rgba(8,145,178,0.04) 0%, transparent 50%)',
+              }}
+            />
 
-        {/* Secondary warm glow — bottom-left rose accent for depth */}
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            width: '45%', height: '40%', left: '0%', bottom: '5%',
-            background: 'radial-gradient(ellipse at center, rgba(124,58,237,0.06) 0%, transparent 70%)',
-            filter: 'blur(80px)',
-          }}
-        />
+            {/* Subtle purple glow */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                width: '60%', height: '55%', left: '-5%', bottom: '0%',
+                background: 'radial-gradient(ellipse at center, rgba(109,40,217,0.03) 0%, transparent 55%)',
+              }}
+            />
 
-        {/* Film grain */}
-        <div
-          className="absolute inset-0 pointer-events-none mix-blend-overlay"
-          style={{
-            opacity: 0.04,
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")`,
-          }}
-        />
+            {/* Soft edge vignette for depth */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_75%_at_50%_45%,transparent_50%,rgba(241,245,249,0.6)_100%)]" />
+          </>
+        ) : (
+          <>
+            {/* Dark theme: deep navy-to-black base with purple undertone */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#020a1a] via-[#0a0d2e] to-[#0c0514]" />
 
-        {/* Soft vignette */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_75%_at_50%_45%,transparent_50%,rgba(2,10,26,0.5)_100%)]" />
+            {/* Primary center glow — cyan/blue tint for readability */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                width: '90%', height: '70%', left: '5%', top: '15%',
+                background: 'radial-gradient(ellipse at center, rgba(30,58,138,0.1) 0%, transparent 50%)',
+              }}
+            />
+
+            {/* Secondary warm glow — bottom-left rose accent for depth */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                width: '60%', height: '55%', left: '-5%', bottom: '0%',
+                background: 'radial-gradient(ellipse at center, rgba(124,58,237,0.04) 0%, transparent 55%)',
+              }}
+            />
+
+            {/* Film grain */}
+            <div
+              className="absolute inset-0 pointer-events-none mix-blend-overlay"
+              style={{
+                opacity: 0.04,
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")`,
+              }}
+            />
+
+            {/* Soft vignette */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_75%_at_50%_45%,transparent_50%,rgba(2,10,26,0.5)_100%)]" />
+          </>
+        )}
       </div>
 
       {/* Canvas at section-level so z-index competes with z-10 content */}
@@ -444,7 +491,7 @@ function ProfilePhoto({ isLight }) {
     <div className="photo-card relative group cursor-pointer">
       {/* Glow backdrop */}
       <div className={`absolute -inset-6 rounded-full bg-gradient-to-br ${isLight ? 'from-emerald-400/10 to-cyan-400/10' : 'from-emerald-500/15 to-cyan-500/15'}
-                      blur-2xl opacity-0 group-hover:opacity-100
+                      opacity-0 group-hover:opacity-100
                       transition-opacity duration-700 pointer-events-none`} />
 
       {/* Photo circle */}
@@ -502,7 +549,7 @@ function SocialLinks({ isLight }) {
         >
           <Icon className={`w-5 h-5 transition-colors duration-300
                            ${isLight ? 'text-slate-600 group-hover:text-emerald-600' : 'text-white/60 group-hover:text-emerald-400'}`} />
-          <div className={`absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl
+          <div className={`absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300
                           ${isLight ? 'bg-emerald-400/20' : 'bg-emerald-500/30'}`} />
         </a>
       ))}
@@ -568,11 +615,11 @@ export default function Hero() {
 
       // --- SplitText ---
       const splitGreeting = SplitText.create(greetingRef.current, { type: 'chars', mask: 'overflow' });
-      const split1 = SplitText.create(desc1Ref.current, { type: 'words', mask: 'overflow' });
-      const split2 = SplitText.create(desc2Ref.current, { type: 'words', mask: 'overflow' });
+      const split1 = SplitText.create(desc1Ref.current, { type: 'chars', mask: 'overflow' });
+      const split2 = SplitText.create(desc2Ref.current, { type: 'chars', mask: 'overflow' });
 
       // Initial states — each element gets a unique hidden state
-      // Greeting: scattered horizontally with blur feel (scale + x offset)
+      // Greeting: scattered horizontally with perspective
       gsap.set(splitGreeting.chars, {
         y: '100%',
         opacity: 0,
@@ -580,9 +627,21 @@ export default function Hero() {
         scaleX: 0.6,
         transformOrigin: '0% 50%',
       });
-      // Paragraphs: words slide up smoothly
-      gsap.set(split1.words, { y: '110%', opacity: 0 });
-      gsap.set(split2.words, { y: '110%', opacity: 0 });
+      // Paragraphs: chars sweep up like the greeting (typewriter feel)
+      gsap.set(split1.chars, {
+        y: '100%',
+        opacity: 0,
+        rotateY: -40,
+        scaleX: 0.7,
+        transformOrigin: '0% 50%',
+      });
+      gsap.set(split2.chars, {
+        y: '100%',
+        opacity: 0,
+        rotateY: -40,
+        scaleX: 0.7,
+        transformOrigin: '0% 50%',
+      });
 
       // ── Greeting — chars sweep in from left with rotateY (typewriter-like) ──
       tl.to(splitGreeting.chars, {
@@ -611,22 +670,26 @@ export default function Hero() {
         ease: 'elastic.out(1, 0.5)',
       }, 0.4)
 
-      // ── Paragraph 1 — word-by-word smooth slide up ──
-      .to(split1.words, {
+      // ── Paragraph 1 — char-by-char typewriter sweep ──
+      .to(split1.chars, {
         y: '0%',
         opacity: 1,
-        duration: 0.55,
-        ease: 'power2.out',
-        stagger: 0.04,
+        rotateY: 0,
+        scaleX: 1,
+        duration: 0.35,
+        ease: 'power4.out',
+        stagger: 0.012,
       }, 0.9)
 
-      // ── Paragraph 2 — word-by-word smooth slide up ──
-      .to(split2.words, {
+      // ── Paragraph 2 — char-by-char typewriter sweep ──
+      .to(split2.chars, {
         y: '0%',
         opacity: 1,
-        duration: 0.55,
-        ease: 'power2.out',
-        stagger: 0.04,
+        rotateY: 0,
+        scaleX: 1,
+        duration: 0.35,
+        ease: 'power4.out',
+        stagger: 0.012,
       }, 1.5)
 
       // ── CTA buttons ──
@@ -691,7 +754,7 @@ export default function Hero() {
       className="relative min-h-[calc(100vh-70px)] md:min-h-screen flex items-center pt-[80px] md:pt-[120px] pb-10 md:pb-20 overflow-hidden"
     >
       {/* ===== Bouncing Letters Background ===== */}
-      <BouncingLettersBackground mouseRef={mouseRef} />
+      <BouncingLettersBackground mouseRef={mouseRef} isLight={isLight} />
 
       {/* ===== Profile Photo - Top Right ===== */}
       <div ref={profileRef} className="absolute top-24 md:top-32 right-6 md:right-16 lg:right-24 z-20">
@@ -705,7 +768,7 @@ export default function Hero() {
           {/* Left: Text Content */}
           <div className="flex-1 text-center lg:text-left pt-8 md:pt-0">
             <div className="overflow-hidden" style={{ perspective: '600px' }}>
-              <p ref={greetingRef} className="font-mono text-base text-cyan-400 mb-5 tracking-wider">Hi, my name is</p>
+              <p ref={greetingRef} className={`font-mono text-base mb-5 tracking-wider ${isLight ? 'text-cyan-600' : 'text-cyan-400'}`}>Hi, my name is</p>
             </div>
 
             <div ref={nameRef}>
@@ -714,28 +777,30 @@ export default function Hero() {
                   <span className="invisible font-inherit pointer-events-none" aria-hidden="true">
                     Sivada Nikhil Reddy.
                   </span>
-                  <span className="absolute left-0 top-0 bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-500 bg-clip-text text-transparent">
-                    {typedName}
+                  <span className="absolute left-0 top-0 whitespace-nowrap">
+                    <span className={`bg-clip-text text-transparent bg-gradient-to-r ${isLight ? 'from-cyan-600 via-violet-600 to-fuchsia-600' : 'from-cyan-400 via-violet-400 to-fuchsia-500'}`}>
+                      {typedName}
+                    </span>
+                    <span className="inline-block w-[3px] h-[0.85em] ml-0.5 bg-accent rounded-sm align-baseline relative top-[0.08em] animate-[blink-caret_0.75s_step-end_infinite]" />
                   </span>
-                  <span className="inline-block w-[3px] h-[0.85em] ml-0.5 bg-accent rounded-sm align-baseline relative top-[0.08em] animate-[blink-caret_0.75s_step-end_infinite]" />
                 </span>
               </h1>
             </div>
 
-            <div className="overflow-hidden">
+            <div className="overflow-hidden" style={{ perspective: '600px' }}>
               <p ref={desc1Ref} className="text-[0.95rem] md:text-[1.05rem] text-muted max-w-[540px] mx-auto lg:mx-0 mb-4 leading-relaxed">
                 Full-Stack Developer focused on building{' '}
-                <strong className="text-cyan-400 font-semibold">scalable backend systems</strong> and{' '}
-                <strong className="text-blue-400 font-semibold">clean, responsive web applications</strong>.
+                <strong className={`font-semibold ${isLight ? 'text-cyan-700' : 'text-cyan-400'}`}>scalable backend systems</strong> and{' '}
+                <strong className={`font-semibold ${isLight ? 'text-blue-700' : 'text-blue-400'}`}>clean, responsive web applications</strong>.
               </p>
             </div>
 
-            <div className="overflow-hidden">
+            <div className="overflow-hidden" style={{ perspective: '600px' }}>
               <p ref={desc2Ref} className="text-[0.9rem] md:text-[1rem] text-dim max-w-[540px] mx-auto lg:mx-0 mb-5 md:mb-10 leading-relaxed">
                 Strong in backend development with hands-on experience in{' '}
-                <strong className="text-violet-400 font-medium">APIs</strong>,{' '}
-                <strong className="text-purple-400 font-medium">databases</strong>, and{' '}
-                <strong className="text-fuchsia-400 font-medium">server-side logic</strong>.
+                <strong className={`font-medium ${isLight ? 'text-violet-700' : 'text-violet-400'}`}>APIs</strong>,{' '}
+                <strong className={`font-medium ${isLight ? 'text-purple-700' : 'text-purple-400'}`}>databases</strong>, and{' '}
+                <strong className={`font-medium ${isLight ? 'text-fuchsia-700' : 'text-fuchsia-400'}`}>server-side logic</strong>.
                 I also create modern, beautiful user interfaces using AI-assisted tools.
               </p>
             </div>
