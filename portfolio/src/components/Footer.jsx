@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useGSAPScrollReveal } from '../hooks/useGSAPAnimations';
 
 const SOCIALS = [
-  { icon: 'fa-brands fa-github', url: 'https://github.com/NikhilReddy3446', label: 'GitHub' },
+  { icon: 'fa-brands fa-github', url: 'https://github.com/Nikhi-l37', label: 'GitHub' },
   { icon: 'fa-brands fa-linkedin-in', url: 'https://linkedin.com/in/nikhilreddy3446', label: 'LinkedIn' },
   { icon: 'fa-solid fa-envelope', url: 'mailto:snikhilreddy097@gmail.com', label: 'Email' },
 ];

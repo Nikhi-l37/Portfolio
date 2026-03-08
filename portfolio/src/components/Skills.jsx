@@ -3,8 +3,335 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionHeader from './SectionHeader';
 import { useGSAPScrollReveal } from '../hooks/useGSAPAnimations';
+import { useTheme } from '../hooks/useTheme';
 
 gsap.registerPlugin(ScrollTrigger);
+
+/* ===== Circuit/Electric Background ===== */
+function CircuitBackground({ isLight }) {
+  const canvasRef = useRef(null);
+  const mouseRef = useRef({ x: -1000, y: -1000, smoothX: -1000, smoothY: -1000 });
+  const animationRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let width, height, dpr;
+    let time = 0;
+
+    const nodes = [];
+    const NODE_COUNT = 40;
+    const pulses = [];
+    const sparks = [];
+
+    const colors = isLight
+      ? {
+          node: 'rgba(34, 211, 238, 0.7)',
+          nodeGlow: 'rgba(34, 211, 238, 0.3)',
+          line: 'rgba(34, 211, 238, 0.12)',
+          pulse: 'rgba(34, 211, 238, 0.9)',
+          spark: ['rgba(251, 191, 36, 0.9)', 'rgba(34, 211, 238, 0.9)'],
+          mouseOrb: 'rgba(34, 211, 238, 0.2)',
+          grid: 'rgba(34, 211, 238, 0.03)',
+        }
+      : {
+          node: 'rgba(34, 211, 238, 0.9)',
+          nodeGlow: 'rgba(34, 211, 238, 0.4)',
+          line: 'rgba(34, 211, 238, 0.08)',
+          pulse: 'rgba(34, 211, 238, 1)',
+          spark: ['rgba(251, 191, 36, 1)', 'rgba(34, 211, 238, 1)'],
+          mouseOrb: 'rgba(34, 211, 238, 0.25)',
+          grid: 'rgba(34, 211, 238, 0.02)',
+        };
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+    };
+
+    const initNodes = () => {
+      nodes.length = 0;
+      for (let i = 0; i < NODE_COUNT; i++) {
+        nodes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2,
+          size: 2 + Math.random() * 3,
+          connections: [],
+          pulse: Math.random() * Math.PI * 2,
+          active: Math.random() > 0.7,
+        });
+      }
+      // Build connections
+      nodes.forEach((n, i) => {
+        nodes.forEach((m, j) => {
+          if (i !== j && Math.random() < 0.15) {
+            n.connections.push(j);
+          }
+        });
+      });
+    };
+
+    const createPulse = () => {
+      if (pulses.length < 8 && Math.random() < 0.02) {
+        const start = Math.floor(Math.random() * nodes.length);
+        const node = nodes[start];
+        if (node.connections.length > 0) {
+          const end = node.connections[Math.floor(Math.random() * node.connections.length)];
+          pulses.push({ start, end, progress: 0, speed: 0.02 + Math.random() * 0.02 });
+        }
+      }
+    };
+
+    const drawGrid = () => {
+      ctx.strokeStyle = colors.grid;
+      ctx.lineWidth = 1;
+      const spacing = 50;
+      for (let x = 0; x < width; x += spacing) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < height; y += spacing) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+    };
+
+    const drawConnections = () => {
+      nodes.forEach((n, i) => {
+        n.connections.forEach(j => {
+          const m = nodes[j];
+          const dx = m.x - n.x;
+          const dy = m.y - n.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 200) {
+            ctx.beginPath();
+            ctx.moveTo(n.x, n.y);
+            // Create angular lines (circuit-like)
+            const midX = n.x + dx * 0.5;
+            const midY = n.y;
+            ctx.lineTo(midX, midY);
+            ctx.lineTo(midX, m.y);
+            ctx.lineTo(m.x, m.y);
+            ctx.strokeStyle = colors.line;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        });
+      });
+    };
+
+    const drawPulses = () => {
+      for (let i = pulses.length - 1; i >= 0; i--) {
+        const p = pulses[i];
+        const startNode = nodes[p.start];
+        const endNode = nodes[p.end];
+        
+        p.progress += p.speed;
+
+        // Calculate position along angular path
+        let x, y;
+        const dx = endNode.x - startNode.x;
+        const dy = endNode.y - startNode.y;
+        const midX = startNode.x + dx * 0.5;
+
+        if (p.progress < 0.33) {
+          const t = p.progress / 0.33;
+          x = startNode.x + (midX - startNode.x) * t;
+          y = startNode.y;
+        } else if (p.progress < 0.66) {
+          const t = (p.progress - 0.33) / 0.33;
+          x = midX;
+          y = startNode.y + (endNode.y - startNode.y) * t;
+        } else {
+          const t = (p.progress - 0.66) / 0.34;
+          x = midX + (endNode.x - midX) * t;
+          y = endNode.y;
+        }
+
+        // Draw pulse glow
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, 15);
+        gradient.addColorStop(0, colors.pulse);
+        gradient.addColorStop(0.5, colors.pulse.replace(/[\d.]+\)$/, '0.3)'));
+        gradient.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(x, y, 15, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Core
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = colors.pulse;
+        ctx.fill();
+
+        if (p.progress >= 1) {
+          // Spark at end
+          for (let s = 0; s < 3; s++) {
+            sparks.push({
+              x: endNode.x,
+              y: endNode.y,
+              vx: (Math.random() - 0.5) * 4,
+              vy: (Math.random() - 0.5) * 4,
+              life: 1,
+              color: colors.spark[Math.floor(Math.random() * colors.spark.length)],
+            });
+          }
+          pulses.splice(i, 1);
+        }
+      }
+    };
+
+    const drawSparks = () => {
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        const s = sparks[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.vx *= 0.95;
+        s.vy *= 0.95;
+        s.life -= 0.03;
+
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 2 * s.life, 0, Math.PI * 2);
+        ctx.fillStyle = s.color.replace(/[\d.]+\)$/, `${s.life})`);
+        ctx.fill();
+
+        if (s.life <= 0) sparks.splice(i, 1);
+      }
+    };
+
+    const drawNodes = () => {
+      const mouse = mouseRef.current;
+      
+      nodes.forEach((n) => {
+        // Mouse interaction
+        if (mouse.smoothX > 0) {
+          const dx = n.x - mouse.smoothX;
+          const dy = n.y - mouse.smoothY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100 && dist > 0) {
+            const force = (100 - dist) / 100 * 0.008;
+            n.vx += (dx / dist) * force;
+            n.vy += (dy / dist) * force;
+          }
+        }
+
+        n.vx *= 0.99;
+        n.vy *= 0.99;
+        n.x += n.vx;
+        n.y += n.vy;
+        n.pulse += 0.05;
+
+        // Wrap
+        if (n.x < -20) n.x = width + 20;
+        if (n.x > width + 20) n.x = -20;
+        if (n.y < -20) n.y = height + 20;
+        if (n.y > height + 20) n.y = -20;
+
+        const pulseSize = n.size * (1 + Math.sin(n.pulse) * 0.3);
+
+        // Glow
+        const gradient = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, pulseSize * 4);
+        gradient.addColorStop(0, colors.nodeGlow);
+        gradient.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, pulseSize * 4, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Core
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, pulseSize, 0, Math.PI * 2);
+        ctx.fillStyle = colors.node;
+        ctx.fill();
+
+        // Active nodes have extra ring
+        if (n.active) {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, pulseSize + 5, 0, Math.PI * 2);
+          ctx.strokeStyle = colors.node.replace(/[\d.]+\)$/, '0.3)');
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      });
+    };
+
+    const drawMouseOrb = () => {
+      const mouse = mouseRef.current;
+      mouse.smoothX += (mouse.x - mouse.smoothX) * 0.1;
+      mouse.smoothY += (mouse.y - mouse.smoothY) * 0.1;
+
+      if (mouse.smoothX > 0) {
+        const gradient = ctx.createRadialGradient(mouse.smoothX, mouse.smoothY, 0, mouse.smoothX, mouse.smoothY, 60);
+        gradient.addColorStop(0, colors.mouseOrb);
+        gradient.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(mouse.smoothX, mouse.smoothY, 60, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
+    };
+
+    const animate = () => {
+      time++;
+      ctx.clearRect(0, 0, width, height);
+      drawGrid();
+      drawConnections();
+      createPulse();
+      drawPulses();
+      drawSparks();
+      drawNodes();
+      drawMouseOrb();
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    const handleMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current.x = e.clientX - rect.left;
+      mouseRef.current.y = e.clientY - rect.top;
+    };
+
+    const handleMouseLeave = () => {
+      mouseRef.current.x = -1000;
+      mouseRef.current.y = -1000;
+    };
+
+    resize();
+    initNodes();
+    animate();
+
+    window.addEventListener('resize', () => { resize(); initNodes(); });
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      cancelAnimationFrame(animationRef.current);
+      window.removeEventListener('resize', resize);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [isLight]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-auto"
+      style={{ zIndex: 0 }}
+    />
+  );
+}
 
 /* ─────────────────────────────────────────────
    Icons — lightweight inline SVGs
@@ -675,6 +1002,8 @@ function useBentoAnimations(gridRef) {
    Main — Bento Grid Skills Section
    ───────────────────────────────────────────── */
 export default function Skills() {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const sectionRef = useRef(null);
   const gridRef = useRef(null);
 
@@ -682,10 +1011,12 @@ export default function Skills() {
   useBentoAnimations(gridRef);
 
   return (
-    <section id="skills" ref={sectionRef} className="relative py-16 md:py-24">
+    <section id="skills" ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden">
+      {/* Animated Background */}
+      <CircuitBackground isLight={isLight} />
       {/* Subtle section tint */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/[0.015] to-transparent pointer-events-none" />
-      <div className="max-w-[1100px] mx-auto px-6">
+      <div className="relative z-10 max-w-[1100px] mx-auto px-6">
         <SectionHeader number="04" title="Skills & Expertise" />
 
         {/* ── Asymmetrical Bento Grid ── */}

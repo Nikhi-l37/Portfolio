@@ -204,13 +204,288 @@ function PageContent({ project, index, total, theme }) {
 }
 
 /* ───────────── section background ───────────── */
-function ProjectsBg() {
+function GeometricBackground({ isLight }) {
+  const canvasRef = useRef(null);
+  const mouseRef = useRef({ x: -1000, y: -1000, smoothX: -1000, smoothY: -1000 });
+  const animationRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let width, height, dpr;
+    let time = 0;
+
+    const shapes = [];
+    const SHAPE_COUNT = 25;
+    const particles = [];
+    const PARTICLE_COUNT = 40;
+
+    const colors = isLight
+      ? {
+          shapes: ['rgba(139, 92, 246, 0.15)', 'rgba(99, 102, 241, 0.12)', 'rgba(236, 72, 153, 0.1)'],
+          shapeStroke: 'rgba(139, 92, 246, 0.2)',
+          particle: ['rgba(139, 92, 246, 0.7)', 'rgba(99, 102, 241, 0.7)', 'rgba(236, 72, 153, 0.6)'],
+          connection: 'rgba(139, 92, 246, 0.06)',
+          mouseOrb: 'rgba(139, 92, 246, 0.2)',
+        }
+      : {
+          shapes: ['rgba(139, 92, 246, 0.08)', 'rgba(99, 102, 241, 0.06)', 'rgba(236, 72, 153, 0.05)'],
+          shapeStroke: 'rgba(139, 92, 246, 0.12)',
+          particle: ['rgba(139, 92, 246, 0.9)', 'rgba(99, 102, 241, 0.9)', 'rgba(236, 72, 153, 0.8)'],
+          connection: 'rgba(139, 92, 246, 0.04)',
+          mouseOrb: 'rgba(139, 92, 246, 0.25)',
+        };
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+    };
+
+    const initShapes = () => {
+      shapes.length = 0;
+      for (let i = 0; i < SHAPE_COUNT; i++) {
+        const type = Math.floor(Math.random() * 4); // 0: circle, 1: triangle, 2: square, 3: hexagon
+        shapes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          size: 30 + Math.random() * 60,
+          type,
+          rotation: Math.random() * Math.PI * 2,
+          rotationSpeed: (Math.random() - 0.5) * 0.008,
+          color: colors.shapes[Math.floor(Math.random() * colors.shapes.length)],
+          opacity: 0.3 + Math.random() * 0.5,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
+    };
+
+    const initParticles = () => {
+      particles.length = 0;
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          size: 1.5 + Math.random() * 2,
+          color: colors.particle[Math.floor(Math.random() * colors.particle.length)],
+          opacity: 0.4 + Math.random() * 0.6,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
+    };
+
+    const drawShape = (shape) => {
+      ctx.save();
+      ctx.translate(shape.x, shape.y);
+      ctx.rotate(shape.rotation);
+
+      const pulse = 1 + Math.sin(shape.phase) * 0.1;
+      const size = shape.size * pulse;
+
+      ctx.fillStyle = shape.color;
+      ctx.strokeStyle = colors.shapeStroke;
+      ctx.lineWidth = 1;
+
+      ctx.beginPath();
+      switch (shape.type) {
+        case 0: // Circle
+          ctx.arc(0, 0, size / 2, 0, Math.PI * 2);
+          break;
+        case 1: // Triangle
+          const h = size * 0.866;
+          ctx.moveTo(0, -h / 2);
+          ctx.lineTo(-size / 2, h / 2);
+          ctx.lineTo(size / 2, h / 2);
+          ctx.closePath();
+          break;
+        case 2: // Square
+          ctx.rect(-size / 2, -size / 2, size, size);
+          break;
+        case 3: // Hexagon
+          for (let i = 0; i < 6; i++) {
+            const angle = (i / 6) * Math.PI * 2 - Math.PI / 2;
+            const px = Math.cos(angle) * size / 2;
+            const py = Math.sin(angle) * size / 2;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.closePath();
+          break;
+      }
+
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const drawShapes = () => {
+      const mouse = mouseRef.current;
+      
+      shapes.forEach((s) => {
+        // Mouse interaction - gentle push
+        if (mouse.smoothX > 0) {
+          const dx = s.x - mouse.smoothX;
+          const dy = s.y - mouse.smoothY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150 && dist > 0) {
+            const force = (150 - dist) / 150 * 0.005;
+            s.vx += (dx / dist) * force;
+            s.vy += (dy / dist) * force;
+          }
+        }
+
+        s.vx *= 0.99;
+        s.vy *= 0.99;
+        s.x += s.vx;
+        s.y += s.vy;
+        s.rotation += s.rotationSpeed;
+        s.phase += 0.015;
+
+        // Wrap
+        if (s.x < -s.size) s.x = width + s.size;
+        if (s.x > width + s.size) s.x = -s.size;
+        if (s.y < -s.size) s.y = height + s.size;
+        if (s.y > height + s.size) s.y = -s.size;
+
+        drawShape(s);
+      });
+    };
+
+    const drawParticles = () => {
+      const mouse = mouseRef.current;
+
+      // Draw connections first
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100) {
+            const opacity = (1 - dist / 100) * 0.3;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = colors.connection.replace(/[\d.]+\)$/, `${opacity})`);
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+
+      particles.forEach((p) => {
+        if (mouse.smoothX > 0) {
+          const dx = p.x - mouse.smoothX;
+          const dy = p.y - mouse.smoothY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100 && dist > 0) {
+            const force = (100 - dist) / 100 * 0.01;
+            p.vx += (dx / dist) * force;
+            p.vy += (dy / dist) * force;
+          }
+        }
+
+        p.vx *= 0.98;
+        p.vy *= 0.98;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.phase += 0.03;
+
+        // Wrap
+        if (p.x < -10) p.x = width + 10;
+        if (p.x > width + 10) p.x = -10;
+        if (p.y < -10) p.y = height + 10;
+        if (p.y > height + 10) p.y = -10;
+
+        const pulse = 1 + Math.sin(p.phase) * 0.3;
+        const size = p.size * pulse;
+
+        // Glow
+        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, size * 4);
+        gradient.addColorStop(0, p.color.replace(/[\d.]+\)$/, `${p.opacity * 0.6})`));
+        gradient.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, size * 4, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Core
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+      });
+    };
+
+    const drawMouseOrb = () => {
+      const mouse = mouseRef.current;
+      mouse.smoothX += (mouse.x - mouse.smoothX) * 0.08;
+      mouse.smoothY += (mouse.y - mouse.smoothY) * 0.08;
+
+      if (mouse.smoothX > 0) {
+        const gradient = ctx.createRadialGradient(mouse.smoothX, mouse.smoothY, 0, mouse.smoothX, mouse.smoothY, 70);
+        gradient.addColorStop(0, colors.mouseOrb);
+        gradient.addColorStop(0.5, colors.mouseOrb.replace(/[\d.]+\)$/, '0.08)'));
+        gradient.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(mouse.smoothX, mouse.smoothY, 70, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
+    };
+
+    const animate = () => {
+      time++;
+      ctx.clearRect(0, 0, width, height);
+      drawShapes();
+      drawParticles();
+      drawMouseOrb();
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    const handleMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current.x = e.clientX - rect.left;
+      mouseRef.current.y = e.clientY - rect.top;
+    };
+
+    const handleMouseLeave = () => {
+      mouseRef.current.x = -1000;
+      mouseRef.current.y = -1000;
+    };
+
+    resize();
+    initShapes();
+    initParticles();
+    animate();
+
+    window.addEventListener('resize', () => { resize(); initShapes(); initParticles(); });
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      cancelAnimationFrame(animationRef.current);
+      window.removeEventListener('resize', resize);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [isLight]);
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="proj-orb proj-orb-1" />
-      <div className="proj-orb proj-orb-2" />
-      <div className="proj-orb proj-orb-3" />
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-auto"
+      style={{ zIndex: 0 }}
+    />
   );
 }
 
@@ -309,9 +584,9 @@ export default function Projects() {
   }, [goNext, goPrev]);
 
   return (
-    <section id="projects" ref={sectionRef} className="relative py-16 md:py-24">
-      <ProjectsBg />
-      <div className="max-w-[1100px] mx-auto px-6">
+    <section id="projects" ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden">
+      <GeometricBackground isLight={theme === 'light'} />
+      <div className="relative z-10 max-w-[1100px] mx-auto px-6">
         <SectionHeader number="03" title="Projects" />
 
         <div className="gsap-card book-perspective mx-auto max-w-2xl relative">

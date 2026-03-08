@@ -527,7 +527,7 @@ function ProfilePhoto({ isLight }) {
 /* ===== Social Links Component ===== */
 function SocialLinks({ isLight }) {
   const links = [
-    { icon: Github, href: 'https://github.com/NikhilReddy3446', label: 'GitHub' },
+    { icon: Github, href: 'https://github.com/Nikhi-l37', label: 'GitHub' },
     { icon: Linkedin, href: 'https://linkedin.com/in/nikhilreddy3446', label: 'LinkedIn' },
     { icon: Mail, href: 'mailto:snikhilreddy097@gmail.com', label: 'Email' },
   ];
