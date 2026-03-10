@@ -42,16 +42,15 @@ export function useGSAPScrollReveal(sectionRef) {
         });
       });
 
-      // --- Cards — staggered rise ---
+      // --- Cards — staggered fade-up (GPU-friendly: no scale) ---
       const cards = sectionRef.current.querySelectorAll('.gsap-card');
       if (cards.length) {
         gsap.from(cards, {
-          y: 80,
+          y: 50,
           opacity: 0,
-          scale: 0.95,
-          duration: 0.8,
-          ease: 'power3.out',
-          stagger: 0.12,
+          duration: 0.6,
+          ease: 'power2.out',
+          stagger: 0.1,
           scrollTrigger: {
             trigger: cards[0],
             start: 'top 85%',
@@ -76,27 +75,7 @@ export function useGSAPScrollReveal(sectionRef) {
         });
       });
 
-      // --- Text animation: words fade-up (lightweight — no per-char 3D transforms) ---
-      const splitBlocks = sectionRef.current.querySelectorAll('.gsap-split-text');
-
-      splitBlocks.forEach((el) => {
-        const split = SplitText.create(el, { type: 'words' });
-
-        gsap.from(split.words, {
-          y: 20,
-          opacity: 0,
-          duration: 0.4,
-          ease: 'power2.out',
-          stagger: 0.03,
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 88%',
-            toggleActions: 'play none none none',
-          },
-        });
-      });
-
-      // --- Tags — drop/fall into place from above (single ST per group) ---
+      // --- Tags — simple staggered fade-up (one ScrollTrigger per group) ---
       const tags = sectionRef.current.querySelectorAll('.gsap-tag');
       if (tags.length) {
         const tagGroups = new Map();
@@ -107,34 +86,17 @@ export function useGSAPScrollReveal(sectionRef) {
         });
 
         tagGroups.forEach((groupTags) => {
-          // One ScrollTrigger per group, not per tag
-          const tl = gsap.timeline({
+          gsap.from(groupTags, {
+            y: 15,
+            opacity: 0,
+            duration: 0.35,
+            ease: 'power2.out',
+            stagger: 0.05,
             scrollTrigger: {
               trigger: groupTags[0].parentElement,
               start: 'top 85%',
               toggleActions: 'play none none none',
             },
-          });
-
-          groupTags.forEach((tag, i) => {
-            const dir = i % 2 === 0 ? -1 : 1;
-            tl.fromTo(tag,
-              {
-                y: -40,
-                opacity: 0,
-                rotation: dir * (4 + Math.random() * 8),
-                scale: 0.75,
-              },
-              {
-                y: 0,
-                opacity: 1,
-                rotation: 0,
-                scale: 1,
-                duration: 0.5,
-                ease: 'back.out(1.8)',
-              },
-              i * 0.08
-            );
           });
         });
       }

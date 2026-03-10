@@ -10,14 +10,14 @@ import { useGSAPScrollReveal } from '../hooks/useGSAPAnimations';
 
 /* ===== theme-aware accent helpers ===== */
 const GLOW_DARK = {
-  emerald: 'hover:shadow-[0_20px_50px_rgba(0,0,0,0.3),0_0_40px_rgba(16,185,129,0.12)] hover:border-emerald-500/30',
-  cyan:    'hover:shadow-[0_20px_50px_rgba(0,0,0,0.3),0_0_40px_rgba(0,212,255,0.12)]   hover:border-cyan-400/30',
-  purple:  'hover:shadow-[0_20px_50px_rgba(0,0,0,0.3),0_0_40px_rgba(124,58,237,0.12)]  hover:border-purple-500/30',
+  emerald: 'hover:border-emerald-500/30',
+  cyan:    'hover:border-cyan-400/30',
+  purple:  'hover:border-purple-500/30',
 };
 const GLOW_LIGHT = {
-  emerald: 'hover:shadow-[0_12px_35px_rgba(0,0,0,0.08),0_0_30px_rgba(16,185,129,0.1)] hover:border-emerald-500/40',
-  cyan:    'hover:shadow-[0_12px_35px_rgba(0,0,0,0.08),0_0_30px_rgba(6,182,212,0.1)]   hover:border-cyan-500/40',
-  purple:  'hover:shadow-[0_12px_35px_rgba(0,0,0,0.08),0_0_30px_rgba(124,58,237,0.1)]  hover:border-purple-500/40',
+  emerald: 'hover:border-emerald-500/40',
+  cyan:    'hover:border-cyan-500/40',
+  purple:  'hover:border-purple-500/40',
 };
 
 const A_DARK = {
@@ -100,8 +100,6 @@ export default function About() {
 
           {/* ─── ROW 1 — Hero Card (full width) ─── */}
           <BentoCard className="md:col-span-3 flex flex-col justify-center" glow="emerald" isLight={isLight}>
-            <div className={`absolute -top-20 -left-20 w-60 h-60 ${a.orbBg} rounded-full opacity-30 pointer-events-none`} />
-
             <div className="relative z-10">
               {/* Tags */}
               <div className="flex flex-wrap items-center gap-2 mb-5">
@@ -121,13 +119,13 @@ export default function About() {
                 </span>
               </h3>
 
-              <p className="gsap-split-text text-muted text-[0.95rem] leading-relaxed mb-3">
+              <p className="gsap-text text-muted text-[0.95rem] leading-relaxed mb-3">
                 I'm a <span className="text-heading font-medium">backend-focused developer</span> with strong knowledge in building server-side applications, APIs, and working with databases.
               </p>
-              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-3">
+              <p className="gsap-text text-muted text-sm leading-relaxed mb-3">
                 While my strength lies in backend development, I also understand frontend fundamentals and create clean, responsive interfaces using modern <span className={`${a.text} font-medium`}>AI-assisted tools</span>.
               </p>
-              <p className="gsap-split-text text-muted text-sm leading-relaxed">
+              <p className="gsap-text text-muted text-sm leading-relaxed">
                 I enjoy solving real-world problems and continuously improving my technical skills.
               </p>
             </div>
@@ -135,8 +133,6 @@ export default function About() {
 
           {/* ─── ROW 2 — Problem Solving & DSA (col 1-2, wide) ─── */}
           <BentoCard className="md:col-span-2 flex flex-col justify-center" glow="emerald" isLight={isLight}>
-            <div className={`absolute -bottom-16 -right-16 w-48 h-48 ${a.orbEm} rounded-full opacity-30 pointer-events-none`} />
-
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-3">
                 <div className={`w-10 h-10 rounded-xl ${a.bg} flex items-center justify-center`}>
@@ -145,7 +141,7 @@ export default function About() {
                 <h4 className="text-lg font-bold text-heading">Problem Solving & DSA</h4>
               </div>
 
-              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-2">
+              <p className="gsap-text text-muted text-sm leading-relaxed mb-2">
                 Actively solving data structures and algorithms problems on platforms like{' '}
                 <a href="https://leetcode.com/u/NikhilReddy3446/" target="_blank" rel="noopener noreferrer"
                    className={`${a.text} ${a.linkHover} transition-colors font-medium underline ${a.linkDeco} underline-offset-2`}>
@@ -157,7 +153,7 @@ export default function About() {
                   GeeksforGeeks
                 </a>.
               </p>
-              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-4">
+              <p className="gsap-text text-muted text-sm leading-relaxed mb-4">
                 Strong understanding of problem-solving patterns, logical thinking, and writing optimized solutions.
                 Regular practice strengthens my core computer science fundamentals and analytical skills.
               </p>
@@ -175,8 +171,6 @@ export default function About() {
 
           {/* ─── ROW 2 — GitHub & Workflow (col 3, square) ─── */}
           <BentoCard className="flex flex-col justify-center" glow="cyan" isLight={isLight}>
-            <div className={`absolute -top-12 -left-12 w-40 h-40 ${a.orbAlt} rounded-full opacity-30 pointer-events-none`} />
-
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-3">
                 <div className={`w-10 h-10 rounded-xl ${a.bgAlt} flex items-center justify-center`}>
@@ -185,10 +179,10 @@ export default function About() {
                 <h4 className="text-lg font-bold text-heading">GitHub & Workflow</h4>
               </div>
 
-              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-2">
+              <p className="gsap-text text-muted text-sm leading-relaxed mb-2">
                 Experienced in using GitHub for version control, collaboration, and project management.
               </p>
-              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-4">
+              <p className="gsap-text text-muted text-sm leading-relaxed mb-4">
                 Comfortable with branching strategies, pull requests, code reviews, and maintaining clean
                 repository structures.
               </p>
@@ -206,8 +200,6 @@ export default function About() {
 
           {/* ─── ROW 3 — Leadership (col 1, tall/square) ─── */}
           <BentoCard className="group/lead flex flex-col justify-center" glow="emerald" isLight={isLight}>
-            <div className={`absolute -top-12 -right-12 w-36 h-36 ${a.orbEm} rounded-full opacity-30 pointer-events-none`} />
-
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-3">
                 <div className={`w-10 h-10 rounded-xl ${a.bg} flex items-center justify-center
@@ -220,7 +212,7 @@ export default function About() {
                 </div>
               </div>
 
-              <p className="gsap-split-text text-muted text-sm leading-relaxed mb-4">
+              <p className="gsap-text text-muted text-sm leading-relaxed mb-4">
                 Spearheading a student-led club focused on discussing and building
                 innovative solutions to real-world problems.
               </p>
