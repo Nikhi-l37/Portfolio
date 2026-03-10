@@ -76,92 +76,23 @@ export function useGSAPScrollReveal(sectionRef) {
         });
       });
 
-      // --- Text animation: words fade-up, important words fly in ---
+      // --- Text animation: words fade-up (lightweight — no per-char 3D transforms) ---
       const splitBlocks = sectionRef.current.querySelectorAll('.gsap-split-text');
 
-      // Directions important words can fly from (no filter:blur — too expensive)
-      const flyDirections = [
-        { x: -80, y: -30, rot: -8 },
-        { x: 90, y: -25, rot: 7 },
-        { x: 0, y: -50, rot: -4 },
-        { x: -70, y: 25, rot: 10 },
-        { x: 80, y: 20, rot: -8 },
-      ];
-
       splitBlocks.forEach((el) => {
-        // Add perspective for 3D char rotation
-        el.style.perspective = '600px';
+        const split = SplitText.create(el, { type: 'words' });
 
-        const split = SplitText.create(el, { type: 'chars,words' });
-
-        // Identify important words (inside styled spans/links/strongs)
-        const importantWordEls = new Set();
-        el.querySelectorAll('span[class*="font-medium"], span[class*="font-semibold"], a, strong').forEach((wrapper) => {
-          split.words.forEach((wordEl) => {
-            if (wrapper.contains(wordEl)) importantWordEls.add(wordEl);
-          });
-        });
-
-        // Identify chars belonging to important words
-        const importantChars = new Set();
-        const regularChars = [];
-        split.chars.forEach((charEl) => {
-          let isImportant = false;
-          importantWordEls.forEach((wordEl) => {
-            if (wordEl.contains(charEl)) isImportant = true;
-          });
-          if (isImportant) importantChars.add(charEl);
-          else regularChars.push(charEl);
-        });
-
-        // Regular chars: typewriter sweep (same as Hero name/greeting)
-        if (regularChars.length) {
-          gsap.from(regularChars, {
-            y: '100%',
-            opacity: 0,
-            rotateY: -40,
-            scaleX: 0.7,
-            transformOrigin: '0% 50%',
-            duration: 0.35,
-            ease: 'power4.out',
-            stagger: 0.01,
-            scrollTrigger: {
-              trigger: el,
-              start: 'top 88%',
-              toggleActions: 'play none none none',
-            },
-          });
-        }
-
-        // Important word chars: fly in with scale + rotation (punchy entrance)
-        let flyIdx = 0;
-        importantWordEls.forEach((wordEl) => {
-          const dir = flyDirections[flyIdx % flyDirections.length];
-          flyIdx++;
-          // Find all chars inside this word
-          const wordChars = split.chars.filter((c) => wordEl.contains(c));
-          if (wordChars.length) {
-            // Find the index of the first char in this word within the full char array
-            const firstCharIdx = split.chars.indexOf(wordChars[0]);
-            const delay = firstCharIdx * 0.01; // sync timing with regular chars stagger
-
-            gsap.from(wordChars, {
-              x: dir.x,
-              y: dir.y,
-              rotation: dir.rot,
-              scale: 0.4,
-              opacity: 0,
-              duration: 0.5,
-              ease: 'back.out(1.6)',
-              stagger: 0.02,
-              delay,
-              scrollTrigger: {
-                trigger: el,
-                start: 'top 88%',
-                toggleActions: 'play none none none',
-              },
-            });
-          }
+        gsap.from(split.words, {
+          y: 20,
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power2.out',
+          stagger: 0.03,
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            toggleActions: 'play none none none',
+          },
         });
       });
 
