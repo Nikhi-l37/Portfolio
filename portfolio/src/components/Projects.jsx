@@ -134,7 +134,8 @@ function PageContent({ project, index, total, theme }) {
         {/* Header row */}
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl ${a.iconBg} flex items-center justify-center`}>
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl ${a.iconBg} flex items-center justify-center
+                            animate-[iconFloat_3s_ease-in-out_infinite]`}>
               <i className={`${project.icon} text-lg sm:text-xl md:text-2xl ${a.iconText}`} />
             </div>
             {/* Status badge */}
@@ -163,8 +164,11 @@ function PageContent({ project, index, total, theme }) {
         </p>
 
         <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-8">
-          {project.tags.map((tag) => (
-            <span key={tag} className={`px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium rounded-lg border ${a.tagBg}`}>
+          {project.tags.map((tag, i) => (
+            <span key={tag}
+              className={`px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium rounded-lg border
+                          animate-[tagPop_0.4s_ease-out_both] ${a.tagBg}`}
+              style={{ animationDelay: `${i * 80}ms` }}>
               {tag}
             </span>
           ))}
@@ -303,10 +307,10 @@ export default function Projects() {
         <SectionHeader number="03" title="Projects" />
 
         <div className="gsap-card book-perspective mx-auto max-w-2xl relative px-2 sm:px-0">
-            {/* Accent glow reflection — static layers with opacity toggle */}
+            {/* Accent glow reflection — breathing pulse */}
             <div className="absolute -bottom-6 left-[15%] right-[15%] h-16 pointer-events-none hidden sm:block">
               {PROJECTS.map((p, i) => (
-                <div key={p.accent} className={`absolute inset-0 rounded-full transition-opacity duration-700 ${
+                <div key={p.accent} className={`absolute inset-0 rounded-full transition-opacity duration-700 animate-[glowPulse_4s_ease-in-out_infinite] ${
                   i === currentPage ? 'opacity-100' : 'opacity-0'
                 } ${p.accent === 'emerald' ? 'bg-emerald-500/12' : p.accent === 'cyan' ? 'bg-cyan-500/12' : 'bg-purple-500/12'}`} />
               ))}
@@ -351,6 +355,15 @@ export default function Projects() {
                     {/* Front face */}
                     <div className="book-face book-front">
                       <PageContent project={project} index={i} total={total} theme={theme} />
+                      {/* Corner curl hint — only on current page, hidden on last page */}
+                      {isCurrent && i < total - 1 && (
+                        <div className="absolute top-0 right-0 w-12 h-12 pointer-events-none z-30 hidden sm:block">
+                          <div className="absolute top-0 right-0 w-0 h-0
+                                          border-t-[48px] border-t-border/20
+                                          border-l-[48px] border-l-transparent
+                                          animate-[cornerCurl_2s_ease-in-out_infinite]" />
+                        </div>
+                      )}
                     </div>
                     {/* Back face */}
                     <div className="book-face book-back">

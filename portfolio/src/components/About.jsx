@@ -68,13 +68,20 @@ function BentoCard({ children, className = '', glow = 'emerald', isLight }) {
   const glows = isLight ? GLOW_LIGHT : GLOW_DARK;
 
   return (
-    <div
-      className={`gsap-card group relative overflow-hidden bg-card/80 border border-border
-                  rounded-[16px] p-5 md:p-6 transition-[transform,box-shadow,border-color,background-color] duration-400 ease-out
-                  backface-hidden hover:bg-card-hover
-                  ${glows[glow]} ${className}`}
-    >
-      {children}
+    <div className="[perspective:800px]">
+      <div
+        className={`gsap-card group relative overflow-hidden bg-card/80 border border-border
+                    rounded-[16px] p-5 md:p-6
+                    transition-[transform,border-color,background-color] duration-400 ease-out
+                    backface-hidden hover:bg-card-hover
+                    hover:-translate-y-1 md:hover:[transform:perspective(800px)_rotateX(2deg)_rotateY(-1deg)_translateY(-4px)]
+                    ${glows[glow]} ${className}`}
+      >
+        {/* Hover shine sweep */}
+        <div className="absolute inset-0 -translate-x-full skew-x-[-15deg] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent
+                        group-hover:translate-x-[200%] transition-transform duration-700 ease-out pointer-events-none z-20" />
+        {children}
+      </div>
     </div>
   );
 }
@@ -114,7 +121,8 @@ export default function About() {
 
               <h3 className="text-3xl lg:text-4xl font-extrabold text-heading mb-5 leading-tight">
                 Hi, I'm{' '}
-                <span className={`bg-gradient-to-r ${isLight ? 'from-emerald-600 to-cyan-600' : 'from-emerald-400 to-cyan-400'} bg-clip-text text-transparent`}>
+                <span className={`bg-clip-text text-transparent bg-[length:200%_100%] animate-[shimmer_3s_ease-in-out_infinite]
+                                  ${isLight ? 'bg-gradient-to-r from-emerald-600 via-cyan-500 to-emerald-600' : 'bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-400'}`}>
                   Nikhil
                 </span>
               </h3>
@@ -135,7 +143,8 @@ export default function About() {
           <BentoCard className="md:col-span-2 flex flex-col justify-center" glow="emerald" isLight={isLight}>
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 rounded-xl ${a.bg} flex items-center justify-center`}>
+                <div className={`w-10 h-10 rounded-xl ${a.bg} flex items-center justify-center
+                                transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
                   <Brain className={`w-5 h-5 ${a.text}`} />
                 </div>
                 <h4 className="text-lg font-bold text-heading">Problem Solving & DSA</h4>
@@ -173,7 +182,8 @@ export default function About() {
           <BentoCard className="flex flex-col justify-center" glow="cyan" isLight={isLight}>
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 rounded-xl ${a.bgAlt} flex items-center justify-center`}>
+                <div className={`w-10 h-10 rounded-xl ${a.bgAlt} flex items-center justify-center
+                                transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3`}>
                   <GitBranch className={`w-5 h-5 ${a.textAlt}`} />
                 </div>
                 <h4 className="text-lg font-bold text-heading">GitHub & Workflow</h4>
@@ -234,7 +244,8 @@ export default function About() {
                        bg-gradient-to-br ${a.gradFrom} via-transparent ${a.gradTo}`}
             glow="emerald" isLight={isLight}
           >
-            <div className={`w-14 h-14 rounded-2xl ${a.bg} flex items-center justify-center mb-4`}>
+            <div className={`w-14 h-14 rounded-2xl ${a.bg} flex items-center justify-center mb-4
+                            transition-transform duration-300 group-hover:scale-110`}>
               <Download className={`resume-arrow w-7 h-7 ${a.text}`} />
             </div>
             <h4 className="text-base font-bold text-heading mb-1">Want to know more?</h4>

@@ -103,6 +103,36 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
+/* ===== Gradient shimmer for "Nikhil" heading ===== */
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ===== Floating icon in Projects ===== */
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* ===== Tag pop-in for Projects page ===== */
+@keyframes tagPop {
+  from { opacity: 0; transform: translateY(8px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ===== Glow pulse under book ===== */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; transform: scaleX(1); }
+  50% { opacity: 1; transform: scaleX(1.05); }
+}
+
+/* ===== Corner curl hint on book page ===== */
+@keyframes cornerCurl {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.15); }
+}
+
 /* ===== Blinking Caret ===== */
 @keyframes blink-caret {
   0%, 100% { opacity: 1; }
