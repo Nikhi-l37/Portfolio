@@ -18,6 +18,7 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
   const blastTimeRef = useRef(null);
   const shockwaveRef = useRef({ active: false, radius: 0, alpha: 0 });
   const sparksRef = useRef([]);
+  const isMobileRef = useRef(false);
 
   useEffect(() => {
     themeRef.current = isLight;
@@ -26,6 +27,12 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    
+    // Check if mobile - disable animation for performance
+    const isMobile = window.innerWidth < 768;
+    isMobileRef.current = isMobile;
+    if (isMobile) return; // Skip animation on mobile
+    
     const ctx = canvas.getContext('2d');
     let w, h;
 
@@ -494,7 +501,7 @@ function ProfilePhoto({ isLight }) {
                       transition-opacity duration-700 pointer-events-none`} />
 
       {/* Photo circle */}
-      <div className={`relative w-56 h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden
+      <div className={`relative w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden
                       ring-2 ${isLight ? 'ring-emerald-400/40' : 'ring-emerald-500/30'} ring-offset-4 ring-offset-background
                       transition-all duration-700 ease-out
                       ${isLight ? 'group-hover:ring-emerald-500/60 group-hover:shadow-[0_0_60px_rgba(16,185,129,0.15)]' : 'group-hover:ring-emerald-400/50 group-hover:shadow-[0_0_80px_rgba(16,185,129,0.2)]'}
@@ -708,13 +715,24 @@ export default function Hero() {
       id="hero"
       ref={sectionRef}
       onMouseMove={handleMouseMove}
-      className="relative min-h-[calc(100vh-70px)] md:min-h-screen flex items-center pt-[80px] md:pt-[120px] pb-10 md:pb-20 overflow-hidden"
+      className="relative min-h-[calc(100vh-70px)] md:min-h-screen flex flex-col md:flex-row items-center pt-[70px] md:pt-[100px] pb-8 md:pb-20 overflow-hidden"
     >
-      {/* ===== Bouncing Letters Background ===== */}
-      <BouncingLettersBackground mouseRef={mouseRef} isLight={isLight} />
+      {/* ===== Bouncing Letters Background - hidden on mobile for performance ===== */}
+      <div className="hidden md:block absolute inset-0">
+        <BouncingLettersBackground mouseRef={mouseRef} isLight={isLight} />
+      </div>
 
-      {/* ===== Profile Photo - Top Right ===== */}
-      <div ref={profileRef} className="absolute top-24 md:top-32 right-6 md:right-16 lg:right-24 z-20">
+      {/* ===== Mobile-friendly simple gradient background ===== */}
+      <div className="md:hidden absolute inset-0">
+        {isLight ? (
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-cyan-50/60 to-purple-50/40" />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-[#020a1a] via-[#0a0d2e] to-[#0c0514]" />
+        )}
+      </div>
+
+      {/* ===== Profile Photo - centered on mobile, absolute top-right on desktop ===== */}
+      <div ref={profileRef} className="relative z-20 flex justify-center w-full md:w-auto md:absolute md:top-32 md:right-16 lg:right-24 mb-4 md:mb-0">
         <ProfilePhoto isLight={isLight} />
       </div>
 
@@ -723,9 +741,9 @@ export default function Hero() {
         <div className="flex flex-col lg:flex-row items-start gap-10 lg:gap-16">
           
           {/* Left: Text Content */}
-          <div className="flex-1 text-center lg:text-left pt-8 md:pt-0">
+          <div className="flex-1 text-center lg:text-left pt-0 md:pt-0">
             <div>
-              <p ref={greetingRef} className={`font-mono text-base mb-5 tracking-wider ${isLight ? 'text-cyan-600' : 'text-cyan-400'}`}>Hi, my name is</p>
+              <p ref={greetingRef} className={`font-mono text-sm sm:text-base mb-3 sm:mb-5 tracking-wider ${isLight ? 'text-cyan-600' : 'text-cyan-400'}`}>Hi, my name is</p>
             </div>
 
             <div ref={nameRef}>
@@ -745,7 +763,7 @@ export default function Hero() {
             </div>
 
             <div>
-              <p ref={desc1Ref} className="text-[0.95rem] md:text-[1.05rem] text-muted max-w-[540px] mx-auto lg:mx-0 mb-4 leading-relaxed">
+              <p ref={desc1Ref} className="text-[0.85rem] sm:text-[0.95rem] md:text-[1.05rem] text-muted max-w-[540px] mx-auto lg:mx-0 mb-3 sm:mb-4 leading-relaxed">
                 Full-Stack Developer focused on building{' '}
                 <strong className={`font-semibold ${isLight ? 'text-cyan-700' : 'text-cyan-400'}`}>scalable backend systems</strong> and{' '}
                 <strong className={`font-semibold ${isLight ? 'text-blue-700' : 'text-blue-400'}`}>clean, responsive web applications</strong>.
@@ -753,7 +771,7 @@ export default function Hero() {
             </div>
 
             <div>
-              <p ref={desc2Ref} className="text-[0.9rem] md:text-[1rem] text-dim max-w-[540px] mx-auto lg:mx-0 mb-5 md:mb-10 leading-relaxed">
+              <p ref={desc2Ref} className="text-[0.8rem] sm:text-[0.9rem] md:text-[1rem] text-dim max-w-[540px] mx-auto lg:mx-0 mb-4 sm:mb-5 md:mb-10 leading-relaxed">
                 Strong in backend development with hands-on experience in{' '}
                 <strong className={`font-medium ${isLight ? 'text-violet-700' : 'text-violet-400'}`}>APIs</strong>,{' '}
                 <strong className={`font-medium ${isLight ? 'text-purple-700' : 'text-purple-400'}`}>databases</strong>, and{' '}
