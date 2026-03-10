@@ -6,9 +6,8 @@ import { useTheme } from '../hooks/useTheme';
 import { Github, Linkedin, Mail, ChevronDown } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SplitText } from 'gsap/SplitText';
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
+gsap.registerPlugin(ScrollTrigger);
 
 /* ===== Bouncing Letters Background - NIKHIL ===== */
 function BouncingLettersBackground({ mouseRef, isLight }) {
@@ -587,7 +586,7 @@ export default function Hero() {
     pauseBefore: 600,
   });
 
-  // GSAP Entrance Animations
+  // GSAP Entrance Animations (simplified - no SplitText for better performance)
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       // Master timeline for entrance animations
@@ -598,113 +597,71 @@ export default function Hero() {
         }
       });
 
-      // Set initial states
-      gsap.set([nameRef.current, ctaRef.current], {
+      // Set initial states - simple fade up for all text elements
+      gsap.set([greetingRef.current, nameRef.current, desc1Ref.current, desc2Ref.current, ctaRef.current], {
         opacity: 0,
-        y: 60,
+        y: 30,
       });
       gsap.set(profileRef.current, {
         opacity: 0,
-        scale: 0.8,
-        x: 50,
+        scale: 0.9,
+        x: 30,
       });
       gsap.set(scrollIndicatorRef.current, {
         opacity: 0,
         y: 20,
       });
 
-      // --- SplitText ---
-      const splitGreeting = SplitText.create(greetingRef.current, { type: 'chars', mask: 'overflow' });
-      const split1 = SplitText.create(desc1Ref.current, { type: 'chars', mask: 'overflow' });
-      const split2 = SplitText.create(desc2Ref.current, { type: 'chars', mask: 'overflow' });
-
-      // Initial states — each element gets a unique hidden state
-      // Greeting: scattered horizontally with perspective
-      gsap.set(splitGreeting.chars, {
-        y: '100%',
-        opacity: 0,
-        rotateY: -60,
-        scaleX: 0.6,
-        transformOrigin: '0% 50%',
-      });
-      // Paragraphs: chars sweep up like the greeting (typewriter feel)
-      gsap.set(split1.chars, {
-        y: '100%',
-        opacity: 0,
-        rotateY: -40,
-        scaleX: 0.7,
-        transformOrigin: '0% 50%',
-      });
-      gsap.set(split2.chars, {
-        y: '100%',
-        opacity: 0,
-        rotateY: -40,
-        scaleX: 0.7,
-        transformOrigin: '0% 50%',
-      });
-
-      // ── Greeting — chars sweep in from left with rotateY (typewriter-like) ──
-      tl.to(splitGreeting.chars, {
-        y: '0%',
+      // ── Greeting — simple fade up ──
+      tl.to(greetingRef.current, {
         opacity: 1,
-        rotateY: 0,
-        scaleX: 1,
-        duration: 0.45,
-        ease: 'power4.out',
-        stagger: 0.035,
-      }, 0.3)
+        y: 0,
+        duration: 0.6,
+      }, 0.2)
 
       // ── Name fade-up ──
       .to(nameRef.current, {
         opacity: 1,
         y: 0,
-        duration: 0.9,
-      }, 0.5)
+        duration: 0.7,
+      }, 0.4)
 
-      // ── Profile photo elastic entrance ──
+      // ── Profile photo entrance ──
       .to(profileRef.current, {
         opacity: 1,
         scale: 1,
         x: 0,
-        duration: 1.2,
-        ease: 'elastic.out(1, 0.5)',
-      }, 0.4)
+        duration: 0.8,
+        ease: 'power2.out',
+      }, 0.3)
 
-      // ── Paragraph 1 — char-by-char typewriter sweep ──
-      .to(split1.chars, {
-        y: '0%',
+      // ── Paragraph 1 — simple fade up ──
+      .to(desc1Ref.current, {
         opacity: 1,
-        rotateY: 0,
-        scaleX: 1,
-        duration: 0.35,
-        ease: 'power4.out',
-        stagger: 0.012,
-      }, 0.9)
+        y: 0,
+        duration: 0.6,
+      }, 0.6)
 
-      // ── Paragraph 2 — char-by-char typewriter sweep ──
-      .to(split2.chars, {
-        y: '0%',
+      // ── Paragraph 2 — simple fade up ──
+      .to(desc2Ref.current, {
         opacity: 1,
-        rotateY: 0,
-        scaleX: 1,
-        duration: 0.35,
-        ease: 'power4.out',
-        stagger: 0.012,
-      }, 1.5)
+        y: 0,
+        duration: 0.6,
+      }, 0.8)
 
       // ── CTA buttons ──
       .to(ctaRef.current, {
         opacity: 1,
         y: 0,
-        duration: 0.8,
-      }, 2.0)
+        duration: 0.6,
+      }, 1.0)
 
       // ── Scroll indicator ──
       .to(scrollIndicatorRef.current, {
         opacity: 0.4,
         y: 0,
-        duration: 0.6,
-      }, 2.3);
+        duration: 0.5,
+      }, 1.2);
 
       // Scroll-triggered parallax for content
       gsap.to(contentRef.current, {
@@ -767,7 +724,7 @@ export default function Hero() {
           
           {/* Left: Text Content */}
           <div className="flex-1 text-center lg:text-left pt-8 md:pt-0">
-            <div className="overflow-hidden" style={{ perspective: '600px' }}>
+            <div>
               <p ref={greetingRef} className={`font-mono text-base mb-5 tracking-wider ${isLight ? 'text-cyan-600' : 'text-cyan-400'}`}>Hi, my name is</p>
             </div>
 
@@ -787,7 +744,7 @@ export default function Hero() {
               </h1>
             </div>
 
-            <div className="overflow-hidden" style={{ perspective: '600px' }}>
+            <div>
               <p ref={desc1Ref} className="text-[0.95rem] md:text-[1.05rem] text-muted max-w-[540px] mx-auto lg:mx-0 mb-4 leading-relaxed">
                 Full-Stack Developer focused on building{' '}
                 <strong className={`font-semibold ${isLight ? 'text-cyan-700' : 'text-cyan-400'}`}>scalable backend systems</strong> and{' '}
@@ -795,7 +752,7 @@ export default function Hero() {
               </p>
             </div>
 
-            <div className="overflow-hidden" style={{ perspective: '600px' }}>
+            <div>
               <p ref={desc2Ref} className="text-[0.9rem] md:text-[1rem] text-dim max-w-[540px] mx-auto lg:mx-0 mb-5 md:mb-10 leading-relaxed">
                 Strong in backend development with hands-on experience in{' '}
                 <strong className={`font-medium ${isLight ? 'text-violet-700' : 'text-violet-400'}`}>APIs</strong>,{' '}

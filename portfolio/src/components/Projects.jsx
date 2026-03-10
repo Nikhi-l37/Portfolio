@@ -120,51 +120,51 @@ function PageContent({ project, index, total, theme }) {
   const s = STATUS[project.status] || STATUS.live;
 
   return (
-    <div className="relative h-full flex flex-col p-7 sm:p-10 overflow-hidden select-none">
+    <div className="relative h-full flex flex-col p-5 sm:p-7 md:p-10 overflow-hidden select-none">
       {/* Top gradient wash */}
-      <div className={`absolute top-0 left-0 right-0 h-44 bg-gradient-to-b ${a.gradient} pointer-events-none`} />
+      <div className={`absolute top-0 left-0 right-0 h-32 sm:h-44 bg-gradient-to-b ${a.gradient} pointer-events-none`} />
       {/* Corner glow orb */}
-      <div className={`absolute -top-20 -right-20 w-60 h-60 ${a.glow} rounded-full opacity-40 pointer-events-none`} />
+      <div className={`absolute -top-16 -right-16 sm:-top-20 sm:-right-20 w-40 h-40 sm:w-60 sm:h-60 ${a.glow} rounded-full opacity-40 pointer-events-none`} />
       {/* Large watermark page number */}
-      <span className="absolute -bottom-6 -right-3 text-[160px] sm:text-[200px] font-black leading-none select-none pointer-events-none opacity-[0.025] text-heading">
+      <span className="absolute -bottom-4 -right-2 sm:-bottom-6 sm:-right-3 text-[100px] sm:text-[160px] md:text-[200px] font-black leading-none select-none pointer-events-none opacity-[0.025] text-heading">
         {String(index + 1).padStart(2, '0')}
       </span>
 
       <div className="relative z-10 flex flex-col h-full">
         {/* Header row */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${a.iconBg} flex items-center justify-center`}>
-              <i className={`${project.icon} text-xl sm:text-2xl ${a.iconText}`} />
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl ${a.iconBg} flex items-center justify-center`}>
+              <i className={`${project.icon} text-lg sm:text-xl md:text-2xl ${a.iconText}`} />
             </div>
             {/* Status badge */}
-            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-semibold tracking-wide ${s.cls}`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${s.dotCls}`} />
+            <div className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full border text-[10px] sm:text-[11px] font-semibold tracking-wide ${s.cls}`}>
+              <span className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${s.dotCls}`} />
               {s.label}
             </div>
           </div>
-          <span className="font-mono text-xs text-dim tracking-wider">
+          <span className="font-mono text-[10px] sm:text-xs text-dim tracking-wider">
             {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
           </span>
         </div>
 
-        <h3 className="text-2xl sm:text-3xl font-extrabold text-heading mb-1 leading-tight">
+        <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-heading mb-1 leading-tight">
           {project.title}
         </h3>
-        <p className={`text-sm font-semibold ${a.iconText} mb-4`}>{project.subtitle}</p>
+        <p className={`text-xs sm:text-sm font-semibold ${a.iconText} mb-3 sm:mb-4`}>{project.subtitle}</p>
 
         {/* Decorative divider */}
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-3 mb-3 sm:mb-4">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-dim/15 to-transparent" />
         </div>
 
-        <p className="text-[0.95rem] text-muted leading-relaxed mb-6 max-w-lg">
+        <p className="text-[0.85rem] sm:text-[0.95rem] text-muted leading-relaxed mb-4 sm:mb-6 max-w-lg">
           {project.description}
         </p>
 
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-8">
           {project.tags.map((tag) => (
-            <span key={tag} className={`px-3 py-1 text-xs font-medium rounded-lg border ${a.tagBg}`}>
+            <span key={tag} className={`px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium rounded-lg border ${a.tagBg}`}>
               {tag}
             </span>
           ))}
@@ -172,24 +172,24 @@ function PageContent({ project, index, total, theme }) {
 
         <div className="flex-1" />
 
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           {project.liveUrl && (
             <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
-               className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-dim border border-accent/20
-                          text-accent text-sm font-semibold rounded-full transition-all duration-300
+               className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-accent-dim border border-accent/20
+                          text-accent text-xs sm:text-sm font-semibold rounded-full transition-all duration-300
                           hover:bg-accent/15 hover:border-accent/40 hover:-translate-y-0.5
                           hover:shadow-[0_0_20px_var(--color-accent-dim)]">
-              <i className="fa-solid fa-arrow-up-right-from-square text-xs" />
+              <i className="fa-solid fa-arrow-up-right-from-square text-[10px] sm:text-xs" />
               Live Demo
             </a>
           )}
           {project.repoUrl && (
             <a href={project.repoUrl} target="_blank" rel="noopener noreferrer"
-               className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-dim border border-accent/20
-                          text-accent text-sm font-semibold rounded-full transition-all duration-300
+               className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-accent-dim border border-accent/20
+                          text-accent text-xs sm:text-sm font-semibold rounded-full transition-all duration-300
                           hover:bg-accent/15 hover:border-accent/40 hover:-translate-y-0.5
                           hover:shadow-[0_0_20px_var(--color-accent-dim)]">
-              <i className="fa-brands fa-github text-sm" />
+              <i className="fa-brands fa-github text-xs sm:text-sm" />
               Source Code
             </a>
           )}
@@ -197,7 +197,7 @@ function PageContent({ project, index, total, theme }) {
       </div>
 
       {/* Spine shadow — left edge binding */}
-      <div className="absolute top-0 left-0 bottom-0 w-10
+      <div className="absolute top-0 left-0 bottom-0 w-6 sm:w-10
                       bg-gradient-to-r from-black/15 to-transparent pointer-events-none" />
     </div>
   );
@@ -302,9 +302,9 @@ export default function Projects() {
       <div className="relative z-10 max-w-[1100px] mx-auto px-6">
         <SectionHeader number="03" title="Projects" />
 
-        <div className="gsap-card book-perspective mx-auto max-w-2xl relative">
+        <div className="gsap-card book-perspective mx-auto max-w-2xl relative px-2 sm:px-0">
             {/* Accent glow reflection — static layers with opacity toggle */}
-            <div className="absolute -bottom-6 left-[15%] right-[15%] h-16 pointer-events-none">
+            <div className="absolute -bottom-6 left-[15%] right-[15%] h-16 pointer-events-none hidden sm:block">
               {PROJECTS.map((p, i) => (
                 <div key={p.accent} className={`absolute inset-0 rounded-full transition-opacity duration-700 ${
                   i === currentPage ? 'opacity-100' : 'opacity-0'
@@ -312,10 +312,9 @@ export default function Projects() {
               ))}
             </div>
 
-            {/* The 3D book */}
+            {/* The 3D book - taller on mobile for better readability */}
             <div
-              className="book-container relative w-full"
-              style={{ aspectRatio: '4 / 3' }}
+              className="book-container relative w-full aspect-[3/4] sm:aspect-[4/3]"
               onTouchStart={onTouchStart}
               onTouchEnd={onTouchEnd}
               onMouseDown={onMouseDown}
