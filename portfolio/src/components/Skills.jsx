@@ -513,6 +513,9 @@ function BentoCard({ category }) {
 
   /* ── Hover: gently return pills to original positions ── */
   const handleMouseEnter = (e) => {
+    // On touch devices skip the "return home" behaviour entirely — pills keep bouncing
+    if (e.pointerType === 'touch' || window.matchMedia('(pointer: coarse)').matches) return;
+
     isHovered.current = true;
     e.currentTarget.style.boxShadow = `0 4px 40px ${accent}15, 0 0 60px ${accent}08`;
 
@@ -529,7 +532,7 @@ function BentoCard({ category }) {
         y: 0,
         rotation: 0,
         scale: 1.06,
-        duration: 1.4 + i * 0.08,
+        duration: 0.5 + i * 0.03,
         ease: 'power3.out',
         onUpdate: () => {
           s.x = gsap.getProperty(s.pill, 'x') || 0;
@@ -538,7 +541,7 @@ function BentoCard({ category }) {
         onComplete: () => {
           s.x = 0;
           s.y = 0;
-          gsap.to(s.pill, { scale: 1, duration: 0.3, ease: 'power2.out' });
+          gsap.to(s.pill, { scale: 1, duration: 0.2, ease: 'power2.out' });
         },
       });
     });
@@ -546,6 +549,9 @@ function BentoCard({ category }) {
 
   /* ── Leave: resume physics ── */
   const handleMouseLeave = (e) => {
+    // On touch devices this never fired the enter, nothing to undo
+    if (e.pointerType === 'touch' || window.matchMedia('(pointer: coarse)').matches) return;
+
     isHovered.current = false;
     e.currentTarget.style.boxShadow = '0 2px 20px rgba(0,0,0,0.25)';
 
@@ -575,8 +581,8 @@ function BentoCard({ category }) {
                  hover:border-border-hover
                  overflow-hidden min-h-[220px] md:min-h-[260px]"
       style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.25)' }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onPointerEnter={handleMouseEnter}
+      onPointerLeave={handleMouseLeave}
     >
       {/* Corner accent glow (hover-only) — large radial gradient for soft glow without blur filter */}
       <div
