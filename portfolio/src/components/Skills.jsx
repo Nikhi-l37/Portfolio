@@ -205,9 +205,13 @@ function BentoCard({ category }) {
         onToggle: (self) => {
           if (self.isActive) {
             if (!blastDone.current) {
+              // First entry: blast fires; mobileCenterActiveRef set true so
+              // Phase 5 of blast knows to calm pills after explosion.
+              mobileCenterActiveRef.current = true;
               blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, true), 80);
+            } else {
+              triggerMobileCenterEnter();
             }
-            triggerMobileCenterEnter();
           } else {
             triggerMobileCenterLeave();
           }
@@ -366,16 +370,33 @@ function BentoCard({ category }) {
       );
     }, null, '-=0.4');
 
-    // Phase 5 — Start physics after explosion settles
+    // Phase 5 — After explosion settles
     tl.call(() => {
-      startPhysicsLoop();
+      if (isMobile && mobileCenterActiveRef.current) {
+        // Card is in center zone — bring pills home (calm state)
+        isHovered.current = true;
+        startPhysicsLoop(); // brief physics so pills scatter a bit first
+        setTimeout(() => {
+          stopPhysics();
+          if (physicsRef.current) {
+            animatePillsHome(physicsRef.current.state, true, () => {
+              if (!physicsRef.current || !mobileCenterActiveRef.current) return;
+              physicsRef.current.state.forEach((s) => {
+                s.vx = 0; s.vy = 0; s.x = 0; s.y = 0;
+              });
+            });
+          }
+        }, 600);
+      } else {
+        startPhysicsLoop();
+      }
     }, null, '+=0.7');
 
     // Pause physics when off-screen
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) stopPhysics();
-        else if (blastDone.current && !isHovered.current && !rafId.current) startPhysicsLoop();
+        else if (blastDone.current && !isHovered.current && !mobileCenterActiveRef.current && !rafId.current) startPhysicsLoop();
       },
       { threshold: 0 },
     );
@@ -561,7 +582,8 @@ function BentoCard({ category }) {
 
     mobileCenterActiveRef.current = true;
 
-    isHovered.current = false;
+    // Center = calm: stop physics and bring pills home
+    isHovered.current = true;
     gsap.killTweensOf(card);
     gsap.to(card, {
       boxShadow: `0 4px 36px ${accent}12, 0 0 44px ${accent}08`,
@@ -569,17 +591,16 @@ function BentoCard({ category }) {
       ease: 'power2.out',
     });
 
-    // If pills are parked near home, kick them gently so motion is visible in center zone.
-    phys.state.forEach((s) => {
-      if (Math.abs(s.x) < 0.6 && Math.abs(s.y) < 0.6) {
-        const a = Math.random() * Math.PI * 2;
-        const spd = 0.55 + Math.random() * 0.45;
-        s.vx = Math.cos(a) * spd;
-        s.vy = Math.sin(a) * spd;
-      }
+    stopPhysics();
+    animatePillsHome(phys.state, true, () => {
+      if (!physicsRef.current || !mobileCenterActiveRef.current) return;
+      physicsRef.current.state.forEach((s) => {
+        s.vx = 0;
+        s.vy = 0;
+        s.x = 0;
+        s.y = 0;
+      });
     });
-
-    startPhysicsLoop();
   };
 
   const triggerMobileCenterLeave = () => {
@@ -589,17 +610,20 @@ function BentoCard({ category }) {
 
     mobileCenterActiveRef.current = false;
 
-    isHovered.current = true;
-    animatePillsHome(phys.state, true, () => {
-      if (!physicsRef.current || mobileCenterActiveRef.current) return;
-      physicsRef.current.state.forEach((s) => {
-        s.vx = 0;
-        s.vy = 0;
-        s.x = 0;
-        s.y = 0;
-      });
-      stopPhysics();
+    // Off-center = chaos: kick pills and start physics
+    isHovered.current = false;
+
+    phys.state.forEach((s) => {
+      gsap.killTweensOf(s.pill);
+      s.x = gsap.getProperty(s.pill, 'x') || 0;
+      s.y = gsap.getProperty(s.pill, 'y') || 0;
+      const a = Math.random() * Math.PI * 2;
+      const spd = 0.8 + Math.random() * 1.2;
+      s.vx = Math.cos(a) * spd;
+      s.vy = Math.sin(a) * spd;
     });
+
+    startPhysicsLoop();
 
     gsap.to(card, {
       boxShadow: '0 2px 20px rgba(0,0,0,0.25)',
