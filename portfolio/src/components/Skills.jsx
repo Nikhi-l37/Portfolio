@@ -186,7 +186,18 @@ function BentoCard({ category }) {
     let st;
 
     if (isMobile) {
-      blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, true), 500);
+      // Use IntersectionObserver so blast fires when card scrolls into view
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            observer.disconnect();
+            blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, true), 400);
+          }
+        },
+        { threshold: 0.15 },
+      );
+      observer.observe(card);
+      cleanups.current.push(() => observer.disconnect());
     } else {
       st = ScrollTrigger.create({
         trigger: card,
@@ -218,6 +229,11 @@ function BentoCard({ category }) {
   function runBlastAndPhysics(card, container, pills, isMobile = false) {
     if (blastDone.current) return;
     blastDone.current = true;
+
+    // On mobile set a minimum card height so pills have room to bounce
+    if (isMobile && card.clientHeight < 280) {
+      card.style.minHeight = '280px';
+    }
 
     // Use FULL card area (clientWidth/Height) so pills reach the actual border
     const cardRect = card.getBoundingClientRect();
@@ -320,7 +336,7 @@ function BentoCard({ category }) {
             s.x = tx;
             s.y = ty;
             const a = Math.random() * Math.PI * 2;
-            const spd = isMobile ? 1.1 + Math.random() * 1.4 : 0.8 + Math.random() * 1.2;
+            const spd = isMobile ? 1.6 + Math.random() * 1.8 : 0.8 + Math.random() * 1.2;
             s.vx = Math.cos(a) * spd;
             s.vy = Math.sin(a) * spd;
           },

@@ -69,8 +69,9 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
       const startX = (w - totalWidth) / 2;
       const centerY = h * (isMobileRef.current ? 0.4 : 0.46);
 
+      const mob = isMobileRef.current;
       return CHARS.map((char, i) => {
-        const size = baseSize + Math.random() * 15;
+        const size = baseSize + Math.random() * (mob ? 8 : 15);
         return {
           char,
           x: startX + i * spacing,
@@ -83,8 +84,8 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
           rotation: 0,
           rotSpeed: 0,
           rgb: COLOR_RGB[i % COLOR_RGB.length],
-          fillAlpha: 0.15 + Math.random() * 0.06,
-          strokeAlpha: 0.25 + Math.random() * 0.10,
+          fillAlpha: mob ? 0.45 + Math.random() * 0.1 : 0.15 + Math.random() * 0.06,
+          strokeAlpha: mob ? 0.65 + Math.random() * 0.1 : 0.25 + Math.random() * 0.10,
           bounceFlash: 0,
           breathOffset: Math.random() * Math.PI * 2,
         };
@@ -95,7 +96,7 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
     let rafId;
     let isVisible = true;
     const startTime = performance.now();
-    const BLAST_DELAY = isMobileRef.current ? 800 : 5000;
+    const BLAST_DELAY = isMobileRef.current ? 300 : 5000;
     const BLAST_DURATION = isMobileRef.current ? 460 : 600;
     const BOUNCE_SPEED = isMobileRef.current ? 1.1 : 1.15;
     const MAX_SPEED = isMobileRef.current ? 3.2 : 5;
@@ -292,12 +293,13 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
         const L = lettersRef.current[li];
         const flashBoost = L.bounceFlash * 0.1;
         const lt = themeRef.current; // current theme
+        const mob = isMobileRef.current;
         const fAlpha = lt
-          ? Math.min(L.fillAlpha * 1.8 + flashBoost, isMobileRef.current ? 0.4 : 0.28)
-          : Math.min((L.fillAlpha + flashBoost) * (isMobileRef.current ? 1.9 : 1), isMobileRef.current ? 0.34 : 0.18);
+          ? Math.min(L.fillAlpha * 1.8 + flashBoost, mob ? 0.7 : 0.28)
+          : Math.min(L.fillAlpha + flashBoost, mob ? 0.6 : 0.18);
         const sAlpha = lt
-          ? Math.min(L.strokeAlpha * 1.8 + flashBoost, isMobileRef.current ? 0.5 : 0.35)
-          : Math.min((L.strokeAlpha + flashBoost) * (isMobileRef.current ? 1.9 : 1), isMobileRef.current ? 0.42 : 0.22);
+          ? Math.min(L.strokeAlpha * 1.8 + flashBoost, mob ? 0.85 : 0.35)
+          : Math.min(L.strokeAlpha + flashBoost, mob ? 0.8 : 0.22);
         const isBouncing = currentPhase === 'bouncing' || currentPhase === 'blasting';
 
         ctx.save();
