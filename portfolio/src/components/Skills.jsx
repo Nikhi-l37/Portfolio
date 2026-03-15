@@ -183,17 +183,23 @@ function BentoCard({ category }) {
     if (!pills.length) return;
 
     let blastTimer;
-    const st = ScrollTrigger.create({
-      trigger: card,
-      start: 'top 85%',
-      once: true,
-      onEnter: () => {
-        blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, isMobile), isMobile ? 1400 : 3000);
-      },
-    });
+    let st;
+
+    if (isMobile) {
+      blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, true), 500);
+    } else {
+      st = ScrollTrigger.create({
+        trigger: card,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => {
+          blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, false), 3000);
+        },
+      });
+    }
 
     return () => {
-      st.kill();
+      if (st) st.kill();
       clearTimeout(blastTimer);
       stopPhysics();
       cleanups.current.forEach((fn) => fn());
@@ -314,7 +320,7 @@ function BentoCard({ category }) {
             s.x = tx;
             s.y = ty;
             const a = Math.random() * Math.PI * 2;
-            const spd = isMobile ? 0.55 + Math.random() * 0.6 : 0.8 + Math.random() * 1.2;
+            const spd = isMobile ? 1.1 + Math.random() * 1.4 : 0.8 + Math.random() * 1.2;
             s.vx = Math.cos(a) * spd;
             s.vy = Math.sin(a) * spd;
           },
@@ -358,9 +364,9 @@ function BentoCard({ category }) {
       }
 
       const isMobile = phys.isMobile;
-      const FRICTION = isMobile ? 0.9975 : 0.9988;
-      const MAX_SPEED = isMobile ? 1.8 : 2.8;
-      const MIN_SPEED = isMobile ? 0.35 : 0.6;
+      const FRICTION = isMobile ? 0.9984 : 0.9988;
+      const MAX_SPEED = isMobile ? 2.8 : 2.8;
+      const MIN_SPEED = isMobile ? 0.65 : 0.6;
       const BOUNCE = isMobile ? 0.88 : 0.92;
       const COLLISION_BOOST = isMobile ? 1.0 : 1.1;
 

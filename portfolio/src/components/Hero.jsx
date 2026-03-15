@@ -63,11 +63,11 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
 
     // Create letters in aligned formation (centered, spelling NIKHIL)
     const createLetters = () => {
-      const baseSize = Math.min(w, h) * 0.13;
+      const baseSize = Math.min(w, h) * (isMobileRef.current ? 0.16 : 0.13);
       const spacing = baseSize * 0.78;
       const totalWidth = (CHARS.length - 1) * spacing;
       const startX = (w - totalWidth) / 2;
-      const centerY = h * 0.46;
+      const centerY = h * (isMobileRef.current ? 0.4 : 0.46);
 
       return CHARS.map((char, i) => {
         const size = baseSize + Math.random() * 15;
@@ -95,7 +95,7 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
     let rafId;
     let isVisible = true;
     const startTime = performance.now();
-    const BLAST_DELAY = isMobileRef.current ? 2200 : 5000;
+    const BLAST_DELAY = isMobileRef.current ? 800 : 5000;
     const BLAST_DURATION = isMobileRef.current ? 460 : 600;
     const BOUNCE_SPEED = isMobileRef.current ? 1.1 : 1.15;
     const MAX_SPEED = isMobileRef.current ? 3.2 : 5;
@@ -120,7 +120,7 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
           const dx = L.x - cx;
           const dy = L.y - cy;
           const dist = Math.max(Math.sqrt(dx * dx + dy * dy), 40);
-          const blastForce = 8 + Math.random() * 6;
+          const blastForce = isMobileRef.current ? 6 + Math.random() * 4 : 8 + Math.random() * 6;
           L.vx = (dx / dist) * blastForce + (Math.random() - 0.5) * 5;
           L.vy = (dy / dist) * blastForce + (Math.random() - 0.5) * 5;
           L.rotSpeed = (Math.random() - 0.5) * 0.04;
@@ -292,8 +292,12 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
         const L = lettersRef.current[li];
         const flashBoost = L.bounceFlash * 0.1;
         const lt = themeRef.current; // current theme
-        const fAlpha = lt ? Math.min(L.fillAlpha * 1.8 + flashBoost, 0.28) : Math.min(L.fillAlpha + flashBoost, 0.18);
-        const sAlpha = lt ? Math.min(L.strokeAlpha * 1.8 + flashBoost, 0.35) : Math.min(L.strokeAlpha + flashBoost, 0.22);
+        const fAlpha = lt
+          ? Math.min(L.fillAlpha * 1.8 + flashBoost, isMobileRef.current ? 0.4 : 0.28)
+          : Math.min((L.fillAlpha + flashBoost) * (isMobileRef.current ? 1.9 : 1), isMobileRef.current ? 0.34 : 0.18);
+        const sAlpha = lt
+          ? Math.min(L.strokeAlpha * 1.8 + flashBoost, isMobileRef.current ? 0.5 : 0.35)
+          : Math.min((L.strokeAlpha + flashBoost) * (isMobileRef.current ? 1.9 : 1), isMobileRef.current ? 0.42 : 0.22);
         const isBouncing = currentPhase === 'bouncing' || currentPhase === 'blasting';
 
         ctx.save();
@@ -378,11 +382,11 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
 
       if (phaseRef.current === 'aligned') {
         // Recalculate home positions
-        const baseSize = Math.min(w, h) * 0.13;
+        const baseSize = Math.min(w, h) * (isMobileRef.current ? 0.16 : 0.13);
         const spacing = baseSize * 0.78;
         const totalWidth = (CHARS.length - 1) * spacing;
         const startX = (w - totalWidth) / 2;
-        const centerY = h * 0.46;
+        const centerY = h * (isMobileRef.current ? 0.4 : 0.46);
         lettersRef.current.forEach((L, i) => {
           L.homeX = startX + i * spacing;
           L.homeY = centerY;
