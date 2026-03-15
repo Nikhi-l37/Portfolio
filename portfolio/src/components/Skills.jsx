@@ -177,7 +177,6 @@ function BentoCard({ category }) {
     const card = cardRef.current;
     const container = pillsRef.current;
     if (!card || !container) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const isMobile = window.matchMedia('(max-width: 767px)').matches || window.matchMedia('(pointer: coarse)').matches;
 
     const pills = [...container.querySelectorAll('.skill-pill')];

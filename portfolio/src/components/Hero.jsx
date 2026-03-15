@@ -28,10 +28,8 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isMobile = window.matchMedia('(max-width: 767px)').matches || window.matchMedia('(pointer: coarse)').matches;
     isMobileRef.current = isMobile;
-    if (prefersReducedMotion) return;
     
     const ctx = canvas.getContext('2d');
     let w, h;
