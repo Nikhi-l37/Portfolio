@@ -512,6 +512,31 @@ function BentoCard({ category }) {
   }
 
   /* ── Hover: gently return pills to original positions ── */
+  const animatePillsHome = (state, isMobileTap = false) => {
+    state.forEach((s, i) => {
+      s.vx = 0;
+      s.vy = 0;
+      gsap.killTweensOf(s.pill);
+      gsap.to(s.pill, {
+        x: 0,
+        y: 0,
+        rotation: 0,
+        scale: 1.06,
+        duration: isMobileTap ? 0.22 + i * 0.01 : 0.5 + i * 0.03,
+        ease: 'power3.out',
+        onUpdate: () => {
+          s.x = gsap.getProperty(s.pill, 'x') || 0;
+          s.y = gsap.getProperty(s.pill, 'y') || 0;
+        },
+        onComplete: () => {
+          s.x = 0;
+          s.y = 0;
+          gsap.to(s.pill, { scale: 1, duration: isMobileTap ? 0.14 : 0.2, ease: 'power2.out' });
+        },
+      });
+    });
+  };
+
   const handleMouseEnter = (e) => {
     // On touch devices skip the "return home" behaviour entirely — pills keep bouncing
     if (e.pointerType === 'touch' || window.matchMedia('(pointer: coarse)').matches) return;
@@ -522,29 +547,24 @@ function BentoCard({ category }) {
     if (!physicsRef.current) return;
     const { state } = physicsRef.current;
 
-    // Kill velocities, animate pills home with stagger
-    state.forEach((s, i) => {
-      s.vx = 0;
-      s.vy = 0;
-      gsap.killTweensOf(s.pill);
-      gsap.to(s.pill, {
-        x: 0,
-        y: 0,
-        rotation: 0,
-        scale: 1.06,
-        duration: 0.5 + i * 0.03,
-        ease: 'power3.out',
-        onUpdate: () => {
-          s.x = gsap.getProperty(s.pill, 'x') || 0;
-          s.y = gsap.getProperty(s.pill, 'y') || 0;
-        },
-        onComplete: () => {
-          s.x = 0;
-          s.y = 0;
-          gsap.to(s.pill, { scale: 1, duration: 0.2, ease: 'power2.out' });
-        },
-      });
-    });
+    animatePillsHome(state, false);
+  };
+
+  const handlePointerDown = (e) => {
+    const isTouch = e.pointerType === 'touch' || window.matchMedia('(pointer: coarse)').matches;
+    if (!isTouch || !physicsRef.current) return;
+
+    const card = e.currentTarget;
+    card.style.boxShadow = `0 4px 36px ${accent}12, 0 0 44px ${accent}08`;
+
+    const { state } = physicsRef.current;
+    animatePillsHome(state, true);
+
+    window.setTimeout(() => {
+      if (cardRef.current) {
+        cardRef.current.style.boxShadow = '0 2px 20px rgba(0,0,0,0.25)';
+      }
+    }, 260);
   };
 
   /* ── Leave: resume physics ── */
@@ -581,6 +601,7 @@ function BentoCard({ category }) {
                  hover:border-border-hover
                  overflow-hidden min-h-[220px] md:min-h-[260px]"
       style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.25)' }}
+      onPointerDown={handlePointerDown}
       onPointerEnter={handleMouseEnter}
       onPointerLeave={handleMouseLeave}
     >
