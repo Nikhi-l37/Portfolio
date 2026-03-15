@@ -198,20 +198,26 @@ function BentoCard({ category }) {
     let mobileCenterTrigger;
 
     if (isMobile) {
+      // Mobile: set up pills immediately (no blast), start moving when visible
+      const mobileInitTrigger = ScrollTrigger.create({
+        trigger: card,
+        start: 'top 95%',
+        once: true,
+        onEnter: () => {
+          initMobilePhysics(card, container, pills);
+        },
+      });
+      cleanups.current.push(() => mobileInitTrigger.kill());
+
+      // Center-zone trigger: calm pills when in center, chaos when off-center
       mobileCenterTrigger = ScrollTrigger.create({
         trigger: card,
         start: 'top 68%',
         end: 'bottom 32%',
         onToggle: (self) => {
+          if (!blastDone.current) return; // pills not set up yet
           if (self.isActive) {
-            if (!blastDone.current) {
-              // First entry: blast fires; mobileCenterActiveRef set true so
-              // Phase 5 of blast knows to calm pills after explosion.
-              mobileCenterActiveRef.current = true;
-              blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, true), 80);
-            } else {
-              triggerMobileCenterEnter();
-            }
+            triggerMobileCenterEnter();
           } else {
             triggerMobileCenterLeave();
           }
@@ -243,6 +249,89 @@ function BentoCard({ category }) {
       cancelAnimationFrame(rafId.current);
       rafId.current = null;
     }
+  }
+
+  /* ── Mobile: set up pills for physics without blast animation ── */
+  function initMobilePhysics(card, container, pills) {
+    if (blastDone.current) return;
+    blastDone.current = true;
+
+    if (card.clientHeight < 280) {
+      card.style.minHeight = '280px';
+    }
+
+    const cardRect = card.getBoundingClientRect();
+    const fullW = card.clientWidth;
+    const fullH = card.clientHeight;
+
+    const positions = pills.map((pill) => {
+      const pr = pill.getBoundingClientRect();
+      return {
+        left: pr.left - cardRect.left,
+        top: pr.top - cardRect.top,
+        w: pr.width,
+        h: pr.height,
+      };
+    });
+
+    pills.forEach((pill, i) => {
+      card.appendChild(pill);
+      const p = positions[i];
+      pill.style.position = 'absolute';
+      pill.style.left = `${p.left}px`;
+      pill.style.top = `${p.top}px`;
+      pill.style.margin = '0';
+      pill.style.zIndex = '5';
+      pill.style.transition = 'none';
+    });
+
+    container.style.height = `${container.offsetHeight}px`;
+    container.style.visibility = 'hidden';
+
+    const state = pills.map((pill, i) => ({
+      pill,
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      origLeft: positions[i].left,
+      origTop: positions[i].top,
+      w: positions[i].w,
+      h: positions[i].h,
+      setX: gsap.quickSetter(pill, 'x', 'px'),
+      setY: gsap.quickSetter(pill, 'y', 'px'),
+    }));
+
+    // Give each pill a gentle random velocity to start
+    state.forEach((s) => {
+      const a = Math.random() * Math.PI * 2;
+      const spd = 0.6 + Math.random() * 1.0;
+      s.vx = Math.cos(a) * spd;
+      s.vy = Math.sin(a) * spd;
+    });
+
+    physicsRef.current = {
+      state,
+      boundsW: fullW,
+      boundsH: fullH,
+      card,
+      sparks: [],
+      isMobile: true,
+    };
+
+    // Start physics immediately — pills drift from their original positions
+    startPhysicsLoop();
+
+    // Pause physics when completely off-screen
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) stopPhysics();
+        else if (blastDone.current && !isHovered.current && !mobileCenterActiveRef.current && !rafId.current) startPhysicsLoop();
+      },
+      { threshold: 0 },
+    );
+    obs.observe(card);
+    cleanups.current.push(() => obs.disconnect());
   }
 
   /* ── Blast sequence then start physics ── */
@@ -370,26 +459,9 @@ function BentoCard({ category }) {
       );
     }, null, '-=0.4');
 
-    // Phase 5 — After explosion settles
+    // Phase 5 — Start physics after explosion settles (desktop only)
     tl.call(() => {
-      if (isMobile && mobileCenterActiveRef.current) {
-        // Card is in center zone — bring pills home (calm state)
-        isHovered.current = true;
-        startPhysicsLoop(); // brief physics so pills scatter a bit first
-        setTimeout(() => {
-          stopPhysics();
-          if (physicsRef.current) {
-            animatePillsHome(physicsRef.current.state, true, () => {
-              if (!physicsRef.current || !mobileCenterActiveRef.current) return;
-              physicsRef.current.state.forEach((s) => {
-                s.vx = 0; s.vy = 0; s.x = 0; s.y = 0;
-              });
-            });
-          }
-        }, 600);
-      } else {
-        startPhysicsLoop();
-      }
+      startPhysicsLoop();
     }, null, '+=0.7');
 
     // Pause physics when off-screen
@@ -549,15 +621,16 @@ function BentoCard({ category }) {
       s.vx = 0;
       s.vy = 0;
       gsap.killTweensOf(s.pill);
-      const moveDuration = isMobileTap ? 0.62 + i * 0.03 : 0.5 + i * 0.03;
+      // Smoother, longer animation on mobile for a gentle glide effect
+      const moveDuration = isMobileTap ? 0.75 + i * 0.04 : 0.5 + i * 0.03;
       maxDuration = Math.max(maxDuration, moveDuration);
       gsap.to(s.pill, {
         x: 0,
         y: 0,
         rotation: 0,
-        scale: isMobileTap ? 1.02 : 1.06,
+        scale: isMobileTap ? 1.04 : 1.06,
         duration: moveDuration,
-        ease: isMobileTap ? 'sine.inOut' : 'power3.out',
+        ease: isMobileTap ? 'power2.inOut' : 'power3.out',
         onUpdate: () => {
           s.x = gsap.getProperty(s.pill, 'x') || 0;
           s.y = gsap.getProperty(s.pill, 'y') || 0;
@@ -565,7 +638,7 @@ function BentoCard({ category }) {
         onComplete: () => {
           s.x = 0;
           s.y = 0;
-          gsap.to(s.pill, { scale: 1, duration: isMobileTap ? 0.24 : 0.2, ease: 'sine.out' });
+          gsap.to(s.pill, { scale: 1, duration: isMobileTap ? 0.3 : 0.2, ease: 'sine.out' });
           completed += 1;
           if (completed === state.length && onAllComplete) onAllComplete();
         },
