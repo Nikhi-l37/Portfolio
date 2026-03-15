@@ -181,6 +181,7 @@ function BentoCard({ category }) {
   const isHovered = useRef(false);
   const rafId = useRef(null);
   const cleanups = useRef([]);
+  const lastMobileFocusRef = useRef(0);
 
   /* ── Init: blast, then physics (desktop only) ── */
   useEffect(() => {
@@ -194,6 +195,7 @@ function BentoCard({ category }) {
 
     let blastTimer;
     let st;
+    let mobileCenterTrigger;
 
     if (isMobile) {
       // Use IntersectionObserver so blast fires when card scrolls into view
@@ -208,6 +210,14 @@ function BentoCard({ category }) {
       );
       observer.observe(card);
       cleanups.current.push(() => observer.disconnect());
+
+      mobileCenterTrigger = ScrollTrigger.create({
+        trigger: card,
+        start: 'top 55%',
+        end: 'bottom 45%',
+        onEnter: () => triggerMobileCenterFocus(),
+        onEnterBack: () => triggerMobileCenterFocus(),
+      });
     } else {
       st = ScrollTrigger.create({
         trigger: card,
@@ -221,6 +231,7 @@ function BentoCard({ category }) {
 
     return () => {
       if (st) st.kill();
+      if (mobileCenterTrigger) mobileCenterTrigger.kill();
       clearTimeout(blastTimer);
       stopPhysics();
       cleanups.current.forEach((fn) => fn());
@@ -540,6 +551,44 @@ function BentoCard({ category }) {
     });
   };
 
+  const triggerMobileCenterFocus = () => {
+    const card = cardRef.current;
+    const phys = physicsRef.current;
+    if (!card || !phys) return;
+
+    const now = performance.now();
+    if (now - lastMobileFocusRef.current < 900) return;
+    lastMobileFocusRef.current = now;
+
+    isHovered.current = true;
+    gsap.killTweensOf(card);
+    gsap.to(card, {
+      boxShadow: `0 4px 36px ${accent}12, 0 0 44px ${accent}08`,
+      duration: 0.18,
+      ease: 'power2.out',
+    });
+
+    animatePillsHome(phys.state, true);
+
+    window.setTimeout(() => {
+      if (!cardRef.current || !physicsRef.current) return;
+      const { state } = physicsRef.current;
+      state.forEach((s) => {
+        const a = Math.random() * Math.PI * 2;
+        const spd = 0.3 + Math.random() * 0.25;
+        s.vx = Math.cos(a) * spd;
+        s.vy = Math.sin(a) * spd;
+      });
+      gsap.to(cardRef.current, {
+        boxShadow: '0 2px 20px rgba(0,0,0,0.25)',
+        duration: 0.34,
+        ease: 'power2.inOut',
+      });
+      isHovered.current = false;
+      startPhysicsLoop();
+    }, 520);
+  };
+
   const handleMouseEnter = (e) => {
     // On touch devices skip the "return home" behaviour entirely — pills keep bouncing
     if (e.pointerType === 'touch' || window.matchMedia('(pointer: coarse)').matches) return;
@@ -551,23 +600,6 @@ function BentoCard({ category }) {
     const { state } = physicsRef.current;
 
     animatePillsHome(state, false);
-  };
-
-  const handlePointerDown = (e) => {
-    const isTouch = e.pointerType === 'touch' || window.matchMedia('(pointer: coarse)').matches;
-    if (!isTouch || !physicsRef.current) return;
-
-    const card = e.currentTarget;
-    card.style.boxShadow = `0 4px 36px ${accent}12, 0 0 44px ${accent}08`;
-
-    const { state } = physicsRef.current;
-    animatePillsHome(state, true);
-
-    window.setTimeout(() => {
-      if (cardRef.current) {
-        cardRef.current.style.boxShadow = '0 2px 20px rgba(0,0,0,0.25)';
-      }
-    }, 420);
   };
 
   /* ── Leave: resume physics ── */
@@ -604,7 +636,6 @@ function BentoCard({ category }) {
                  hover:border-border-hover
                  overflow-hidden min-h-[220px] md:min-h-[260px]"
       style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.25)' }}
-      onPointerDown={handlePointerDown}
       onPointerEnter={handleMouseEnter}
       onPointerLeave={handleMouseLeave}
     >
