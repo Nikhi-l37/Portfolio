@@ -28,10 +28,10 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     
-    // Check if mobile - disable animation for performance
-    const isMobile = window.innerWidth < 768;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.matchMedia('(max-width: 767px)').matches || window.matchMedia('(pointer: coarse)').matches;
     isMobileRef.current = isMobile;
-    if (isMobile) return; // Skip animation on mobile
+    if (prefersReducedMotion) return;
     
     const ctx = canvas.getContext('2d');
     let w, h;
@@ -97,13 +97,13 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
     let rafId;
     let isVisible = true;
     const startTime = performance.now();
-    const BLAST_DELAY = 5000;
-    const BLAST_DURATION = 600;
-    const BOUNCE_SPEED = 1.15;
-    const MAX_SPEED = 5;
-    const FRICTION = 0.999;
-    const MOUSE_RADIUS = 180;
-    const MOUSE_FORCE = 0.12;
+    const BLAST_DELAY = isMobileRef.current ? 2200 : 5000;
+    const BLAST_DURATION = isMobileRef.current ? 460 : 600;
+    const BOUNCE_SPEED = isMobileRef.current ? 1.1 : 1.15;
+    const MAX_SPEED = isMobileRef.current ? 3.2 : 5;
+    const FRICTION = isMobileRef.current ? 0.997 : 0.999;
+    const MOUSE_RADIUS = isMobileRef.current ? 0 : 180;
+    const MOUSE_FORCE = isMobileRef.current ? 0 : 0.12;
 
     const animate = (now) => {
       if (!isVisible) { rafId = null; return; }
@@ -154,7 +154,7 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
           // Physics-based movement (blasting + bouncing)
 
           // Mouse repulsion only in bouncing phase
-          if (currentPhase === 'bouncing') {
+          if (currentPhase === 'bouncing' && MOUSE_RADIUS > 0) {
             const mdx = L.x - mouseRef.current.x;
             const mdy = L.y - mouseRef.current.y;
             const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
@@ -248,7 +248,8 @@ function BouncingLettersBackground({ mouseRef, isLight }) {
               const midX = (A.x + B.x) / 2;
               const midY = (A.y + B.y) / 2;
               const sparkRgb = Math.random() > 0.5 ? A.rgb : B.rgb;
-              for (let s = 0; s < 3; s++) {
+              const sparkCount = isMobileRef.current ? 1 : 3;
+              for (let s = 0; s < sparkCount; s++) {
                 const angle = Math.random() * Math.PI * 2;
                 const speed = 1.5 + Math.random() * 2.5;
                 sparksRef.current.push({
@@ -717,18 +718,9 @@ export default function Hero() {
       onMouseMove={handleMouseMove}
       className="relative min-h-[calc(100vh-70px)] md:min-h-screen flex flex-col md:flex-row items-center pt-[70px] md:pt-[100px] pb-8 md:pb-20 overflow-hidden"
     >
-      {/* ===== Bouncing Letters Background - hidden on mobile for performance ===== */}
-      <div className="hidden md:block absolute inset-0">
+      {/* ===== Bouncing Letters Background ===== */}
+      <div className="absolute inset-0">
         <BouncingLettersBackground mouseRef={mouseRef} isLight={isLight} />
-      </div>
-
-      {/* ===== Mobile-friendly simple gradient background ===== */}
-      <div className="md:hidden absolute inset-0">
-        {isLight ? (
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-cyan-50/60 to-purple-50/40" />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-[#020a1a] via-[#0a0d2e] to-[#0c0514]" />
-        )}
       </div>
 
       {/* ===== Profile Photo - centered on mobile, absolute top-right on desktop ===== */}

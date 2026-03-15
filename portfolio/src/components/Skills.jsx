@@ -177,7 +177,8 @@ function BentoCard({ category }) {
     const card = cardRef.current;
     const container = pillsRef.current;
     if (!card || !container) return;
-    if (!window.matchMedia('(min-width: 768px)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const isMobile = window.matchMedia('(max-width: 767px)').matches || window.matchMedia('(pointer: coarse)').matches;
 
     const pills = [...container.querySelectorAll('.skill-pill')];
     if (!pills.length) return;
@@ -188,7 +189,7 @@ function BentoCard({ category }) {
       start: 'top 85%',
       once: true,
       onEnter: () => {
-        blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills), 3000);
+        blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, isMobile), isMobile ? 1400 : 3000);
       },
     });
 
@@ -209,7 +210,7 @@ function BentoCard({ category }) {
   }
 
   /* ── Blast sequence then start physics ── */
-  function runBlastAndPhysics(card, container, pills) {
+  function runBlastAndPhysics(card, container, pills, isMobile = false) {
     if (blastDone.current) return;
     blastDone.current = true;
 
@@ -265,6 +266,7 @@ function BentoCard({ category }) {
       boundsH: fullH,
       card,
       sparks: [],
+      isMobile,
     };
 
     const tl = gsap.timeline();
@@ -313,7 +315,7 @@ function BentoCard({ category }) {
             s.x = tx;
             s.y = ty;
             const a = Math.random() * Math.PI * 2;
-            const spd = 0.8 + Math.random() * 1.2;
+            const spd = isMobile ? 0.55 + Math.random() * 0.6 : 0.8 + Math.random() * 1.2;
             s.vx = Math.cos(a) * spd;
             s.vy = Math.sin(a) * spd;
           },
@@ -347,11 +349,6 @@ function BentoCard({ category }) {
   /* ── Physics loop — boundary bounce + collision + sparks ── */
   function startPhysicsLoop() {
     if (rafId.current) return;
-    const FRICTION = 0.9988;
-    const MAX_SPEED = 2.8;
-    const MIN_SPEED = 0.6;
-    const BOUNCE = 0.92;
-    const COLLISION_BOOST = 1.1;
     const PAD = 1;
 
     function tick() {
@@ -360,6 +357,13 @@ function BentoCard({ category }) {
         rafId.current = null;
         return;
       }
+
+      const isMobile = phys.isMobile;
+      const FRICTION = isMobile ? 0.9975 : 0.9988;
+      const MAX_SPEED = isMobile ? 1.8 : 2.8;
+      const MIN_SPEED = isMobile ? 0.35 : 0.6;
+      const BOUNCE = isMobile ? 0.88 : 0.92;
+      const COLLISION_BOOST = isMobile ? 1.0 : 1.1;
 
       const { state, boundsW, boundsH, card, sparks } = phys;
 
@@ -412,7 +416,7 @@ function BentoCard({ category }) {
         }
 
         if (bounced) {
-          spawnSparks(card, sparkX, sparkY, accent, sparks, 2);
+          spawnSparks(card, sparkX, sparkY, accent, sparks, isMobile ? 1 : 2);
         }
 
         // Speed cap + min speed kick
@@ -476,7 +480,7 @@ function BentoCard({ category }) {
 
             const midX = (aCx + bCx) / 2;
             const midY = (aCy + bCy) / 2;
-            spawnSparks(card, midX, midY, accent, sparks, 3);
+            spawnSparks(card, midX, midY, accent, sparks, isMobile ? 1 : 3);
           }
         }
       }
