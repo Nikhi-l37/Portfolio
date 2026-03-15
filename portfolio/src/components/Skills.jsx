@@ -123,7 +123,7 @@ function SkillPill({ name, accent }) {
 /* ─────────────────────────────────────────────
    Spark Effect — small particles on bounce/collision
    ───────────────────────────────────────────── */
-function spawnSparks(container, x, y, color, sparksArr, count = 3) {
+function spawnSparks(container, x, y, color, sparksArr, count = 3, angleCenter = null, angleSpread = Math.PI * 2) {
   if (sparksArr.length > 15) return;
   for (let i = 0; i < count; i++) {
     const spark = document.createElement('div');
@@ -141,7 +141,9 @@ function spawnSparks(container, x, y, color, sparksArr, count = 3) {
     });
     container.appendChild(spark);
     sparksArr.push(spark);
-    const angle = Math.random() * Math.PI * 2;
+    const angle = angleCenter === null
+      ? Math.random() * Math.PI * 2
+      : angleCenter + (Math.random() - 0.5) * angleSpread;
     const dist = 12 + Math.random() * 20;
     gsap.to(spark, {
       x: Math.cos(angle) * dist,
@@ -157,6 +159,14 @@ function spawnSparks(container, x, y, color, sparksArr, count = 3) {
       },
     });
   }
+}
+
+function spawnCollisionSparks(container, x, y, color, sparksArr, nx, ny, count = 4) {
+  const forwardAngle = Math.atan2(ny, nx);
+  const backwardAngle = Math.atan2(-ny, -nx);
+  const half = Math.max(1, Math.floor(count / 2));
+  spawnSparks(container, x, y, color, sparksArr, half, forwardAngle, Math.PI / 2.8);
+  spawnSparks(container, x, y, color, sparksArr, count - half, backwardAngle, Math.PI / 2.8);
 }
 
 /* ─────────────────────────────────────────────
@@ -436,7 +446,7 @@ function BentoCard({ category }) {
           sparkY = absY + s.h;
         }
 
-        if (bounced) {
+        if (bounced && !isMobile) {
           spawnSparks(card, sparkX, sparkY, accent, sparks, isMobile ? 1 : 2);
         }
 
@@ -481,27 +491,20 @@ function BentoCard({ category }) {
             B.x += nx * overlap;
             B.y += ny * overlap;
 
-            // Elastic + boosted velocity swap
+            // Only treat as a real collision if bodies are moving into each other.
             const dvx = A.vx - B.vx;
             const dvy = A.vy - B.vy;
             const dot = dvx * nx + dvy * ny;
-            if (dot > 0) {
+            if (dot > 0.08) {
               A.vx -= dot * nx * COLLISION_BOOST;
               A.vy -= dot * ny * COLLISION_BOOST;
               B.vx += dot * nx * COLLISION_BOOST;
               B.vy += dot * ny * COLLISION_BOOST;
-            } else {
-              // Even if moving apart, give a small kick
-              const kick = 0.3;
-              A.vx -= nx * kick;
-              A.vy -= ny * kick;
-              B.vx += nx * kick;
-              B.vy += ny * kick;
-            }
 
-            const midX = (aCx + bCx) / 2;
-            const midY = (aCy + bCy) / 2;
-            spawnSparks(card, midX, midY, accent, sparks, isMobile ? 1 : 3);
+              const midX = (aCx + bCx) / 2;
+              const midY = (aCy + bCy) / 2;
+              spawnCollisionSparks(card, midX, midY, accent, sparks, nx, ny, isMobile ? 2 : 4);
+            }
           }
         }
       }
@@ -522,8 +525,8 @@ function BentoCard({ category }) {
         y: 0,
         rotation: 0,
         scale: 1.06,
-        duration: isMobileTap ? 0.22 + i * 0.01 : 0.5 + i * 0.03,
-        ease: 'power3.out',
+        duration: isMobileTap ? 0.42 + i * 0.02 : 0.5 + i * 0.03,
+        ease: isMobileTap ? 'power2.inOut' : 'power3.out',
         onUpdate: () => {
           s.x = gsap.getProperty(s.pill, 'x') || 0;
           s.y = gsap.getProperty(s.pill, 'y') || 0;
@@ -531,7 +534,7 @@ function BentoCard({ category }) {
         onComplete: () => {
           s.x = 0;
           s.y = 0;
-          gsap.to(s.pill, { scale: 1, duration: isMobileTap ? 0.14 : 0.2, ease: 'power2.out' });
+          gsap.to(s.pill, { scale: 1, duration: isMobileTap ? 0.2 : 0.2, ease: 'power2.out' });
         },
       });
     });
@@ -564,7 +567,7 @@ function BentoCard({ category }) {
       if (cardRef.current) {
         cardRef.current.style.boxShadow = '0 2px 20px rgba(0,0,0,0.25)';
       }
-    }, 260);
+    }, 420);
   };
 
   /* ── Leave: resume physics ── */
