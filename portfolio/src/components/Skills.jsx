@@ -179,6 +179,7 @@ function BentoCard({ category }) {
   const physicsRef = useRef(null);
   const blastDone = useRef(false);
   const isHovered = useRef(false);
+  const mobileCenterActiveRef = useRef(false);
   const rafId = useRef(null);
   const cleanups = useRef([]);
 
@@ -199,17 +200,18 @@ function BentoCard({ category }) {
     if (isMobile) {
       mobileCenterTrigger = ScrollTrigger.create({
         trigger: card,
-        start: 'top 62%',
-        end: 'bottom 38%',
-        onEnter: () => {
-          if (!blastDone.current) {
-            blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, true), 120);
+        start: 'top 68%',
+        end: 'bottom 32%',
+        onToggle: (self) => {
+          if (self.isActive) {
+            if (!blastDone.current) {
+              blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, true), 80);
+            }
+            triggerMobileCenterEnter();
+          } else {
+            triggerMobileCenterLeave();
           }
-          triggerMobileCenterEnter();
         },
-        onEnterBack: () => triggerMobileCenterEnter(),
-        onLeave: () => triggerMobileCenterLeave(),
-        onLeaveBack: () => triggerMobileCenterLeave(),
       });
     } else {
       st = ScrollTrigger.create({
@@ -519,8 +521,9 @@ function BentoCard({ category }) {
   }
 
   /* ── Hover: gently return pills to original positions ── */
-  const animatePillsHome = (state, isMobileTap = false) => {
+  const animatePillsHome = (state, isMobileTap = false, onAllComplete) => {
     let maxDuration = 0;
+    let completed = 0;
     state.forEach((s, i) => {
       s.vx = 0;
       s.vy = 0;
@@ -542,6 +545,8 @@ function BentoCard({ category }) {
           s.x = 0;
           s.y = 0;
           gsap.to(s.pill, { scale: 1, duration: isMobileTap ? 0.24 : 0.2, ease: 'sine.out' });
+          completed += 1;
+          if (completed === state.length && onAllComplete) onAllComplete();
         },
       });
     });
@@ -552,7 +557,9 @@ function BentoCard({ category }) {
   const triggerMobileCenterEnter = () => {
     const card = cardRef.current;
     const phys = physicsRef.current;
-    if (!card || !phys) return;
+    if (!card || !phys || mobileCenterActiveRef.current) return;
+
+    mobileCenterActiveRef.current = true;
 
     isHovered.current = false;
     gsap.killTweensOf(card);
@@ -578,19 +585,13 @@ function BentoCard({ category }) {
   const triggerMobileCenterLeave = () => {
     const card = cardRef.current;
     const phys = physicsRef.current;
-    if (!card || !phys) return;
+    if (!card || !phys || !mobileCenterActiveRef.current) return;
+
+    mobileCenterActiveRef.current = false;
 
     isHovered.current = true;
-    const settleDuration = animatePillsHome(phys.state, true);
-
-    gsap.to(card, {
-      boxShadow: '0 2px 20px rgba(0,0,0,0.25)',
-      duration: 0.35,
-      ease: 'power2.inOut',
-    });
-
-    window.setTimeout(() => {
-      if (!physicsRef.current) return;
+    animatePillsHome(phys.state, true, () => {
+      if (!physicsRef.current || mobileCenterActiveRef.current) return;
       physicsRef.current.state.forEach((s) => {
         s.vx = 0;
         s.vy = 0;
@@ -598,7 +599,13 @@ function BentoCard({ category }) {
         s.y = 0;
       });
       stopPhysics();
-    }, Math.round((settleDuration + 0.12) * 1000));
+    });
+
+    gsap.to(card, {
+      boxShadow: '0 2px 20px rgba(0,0,0,0.25)',
+      duration: 0.35,
+      ease: 'power2.inOut',
+    });
   };
 
   const handleMouseEnter = (e) => {
