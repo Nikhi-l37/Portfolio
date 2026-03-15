@@ -181,7 +181,6 @@ function BentoCard({ category }) {
   const isHovered = useRef(false);
   const rafId = useRef(null);
   const cleanups = useRef([]);
-  const lastMobileFocusRef = useRef(0);
 
   /* ── Init: blast, then physics (desktop only) ── */
   useEffect(() => {
@@ -198,25 +197,19 @@ function BentoCard({ category }) {
     let mobileCenterTrigger;
 
     if (isMobile) {
-      // Use IntersectionObserver so blast fires when card scrolls into view
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            observer.disconnect();
-            blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, true), 400);
-          }
-        },
-        { threshold: 0.15 },
-      );
-      observer.observe(card);
-      cleanups.current.push(() => observer.disconnect());
-
       mobileCenterTrigger = ScrollTrigger.create({
         trigger: card,
-        start: 'top 55%',
-        end: 'bottom 45%',
-        onEnter: () => triggerMobileCenterFocus(),
-        onEnterBack: () => triggerMobileCenterFocus(),
+        start: 'top 62%',
+        end: 'bottom 38%',
+        onEnter: () => {
+          if (!blastDone.current) {
+            blastTimer = setTimeout(() => runBlastAndPhysics(card, container, pills, true), 120);
+          }
+          triggerMobileCenterEnter();
+        },
+        onEnterBack: () => triggerMobileCenterEnter(),
+        onLeave: () => triggerMobileCenterLeave(),
+        onLeaveBack: () => triggerMobileCenterLeave(),
       });
     } else {
       st = ScrollTrigger.create({
@@ -551,42 +544,56 @@ function BentoCard({ category }) {
     });
   };
 
-  const triggerMobileCenterFocus = () => {
+  const triggerMobileCenterEnter = () => {
     const card = cardRef.current;
     const phys = physicsRef.current;
     if (!card || !phys) return;
 
-    const now = performance.now();
-    if (now - lastMobileFocusRef.current < 900) return;
-    lastMobileFocusRef.current = now;
-
-    isHovered.current = true;
+    isHovered.current = false;
     gsap.killTweensOf(card);
     gsap.to(card, {
       boxShadow: `0 4px 36px ${accent}12, 0 0 44px ${accent}08`,
-      duration: 0.18,
+      duration: 0.2,
       ease: 'power2.out',
     });
 
-    animatePillsHome(phys.state, true);
-
-    window.setTimeout(() => {
-      if (!cardRef.current || !physicsRef.current) return;
-      const { state } = physicsRef.current;
-      state.forEach((s) => {
+    // If pills are parked near home, kick them gently so motion is visible in center zone.
+    phys.state.forEach((s) => {
+      if (Math.abs(s.x) < 0.6 && Math.abs(s.y) < 0.6) {
         const a = Math.random() * Math.PI * 2;
-        const spd = 0.3 + Math.random() * 0.25;
+        const spd = 0.55 + Math.random() * 0.45;
         s.vx = Math.cos(a) * spd;
         s.vy = Math.sin(a) * spd;
+      }
+    });
+
+    startPhysicsLoop();
+  };
+
+  const triggerMobileCenterLeave = () => {
+    const card = cardRef.current;
+    const phys = physicsRef.current;
+    if (!card || !phys) return;
+
+    isHovered.current = true;
+    animatePillsHome(phys.state, true);
+
+    gsap.to(card, {
+      boxShadow: '0 2px 20px rgba(0,0,0,0.25)',
+      duration: 0.35,
+      ease: 'power2.inOut',
+    });
+
+    window.setTimeout(() => {
+      if (!physicsRef.current) return;
+      physicsRef.current.state.forEach((s) => {
+        s.vx = 0;
+        s.vy = 0;
+        s.x = 0;
+        s.y = 0;
       });
-      gsap.to(cardRef.current, {
-        boxShadow: '0 2px 20px rgba(0,0,0,0.25)',
-        duration: 0.34,
-        ease: 'power2.inOut',
-      });
-      isHovered.current = false;
-      startPhysicsLoop();
-    }, 520);
+      stopPhysics();
+    }, 480);
   };
 
   const handleMouseEnter = (e) => {
